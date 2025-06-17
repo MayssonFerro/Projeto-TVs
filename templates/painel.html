@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    {% if evento and evento|length > 0 and evento[0].link %}
+        <script>
+            window.eventoLink = "{{ evento[0].link }}";
+        </script>
+    {% endif %}
+    {% if evento and evento|length > 0 and evento[0].imagem %}
+        <script>
+            window.eventoImagem = "{{ evento[0].imagem }}";
+        </script>
+    {% endif %}
+    <title>Painel</title>
+</head>
+<body>
+    <main>
+        <div class="container painel">
+            <div class="relogio">
+                <h1 id="data"></h1>
+                <h1 id="hora"></h1>
+            </div>
+            <div class="descricao"></div>
+            <div class="link">
+                {% if evento and evento|length > 0 and evento[0].link %}
+                    <div id="qrcode"></div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer>
+    <div class="noticia">
+        {% for n in noticia %}
+            <span class="noticia-text">{{ n.conteudo }}</span>
+        {% endfor %}
+    </div>
+</footer>
+</body>
+</html>
