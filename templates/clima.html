@@ -4,22 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clima.css') }}" />
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <title>Previsão do Tempo</title>
   </head>
   <body>
     
-    <!-- CORREÇÃO 1: Adicionando o bloco if/else para tratar erros -->
+    
     {% if clima %}
 
-      <!-- Se 'clima' existe, exibe todo o conteúdo normalmente -->
+      
       <div class="cidade">
-        <!-- CORREÇÃO 2: Nome da cidade agora é dinâmico -->
+        
         <span>{{ clima.cidade }}-MS</span>
       </div>
 
       <div class="parent">
 
-        <!-- Card 1: Temperatura e Ícone -->
+        
         <div class="card-com-info">
           <div class="div1">
             <img src="/static/images/sun-dim.png" alt="">
@@ -29,19 +32,19 @@
           </div>
         </div>
 
-        <!-- Card 2: Chance de Chuva -->
+       
         <div class="card-com-info">
           <div class="div2">
             <img src="/static/images/icon-noite-chuva-branco-300x300.png" alt="">
-            <!-- Ícone de guarda-chuva pode ser adicionado aqui, se desejar -->
+            
           </div>
           <div class="info">
-            <!-- CORREÇÃO 4: Nome da variável corrigido para 'chance_chuva' -->
+           
             <span>{{ clima.chance_chuva }}%</span> 
           </div>
         </div>
 
-        <!-- Card 3: Vento -->
+       
         <div class="card-com-info">
           <div class="div3">
             <img src="/static/images/wind.png" alt="">
@@ -51,9 +54,9 @@
           </div>
         </div>
       
-      </div> <!-- Fim da div .parent -->
+      </div> 
 
-      <!-- CORREÇÃO 5: Rodapé movido para fora do .parent para melhor estrutura -->
+      
       <footer>
         <div class="inferior">
             <div class="noticia-rapida">
@@ -64,7 +67,7 @@
       </footer>
 
     {% else %}
-        <!-- Se 'clima' não existe, mostra a mensagem de erro que o Python enviou -->
+        
         <div class="erro-container">
             <h1>Erro ao Carregar os Dados</h1>
             <p>{{ erro }}</p>
@@ -84,5 +87,17 @@
                     <div id="qrcode"></div>
                 {% endif %}
             </div>
+<div class="container painel">
+            <div class="relogio">
+                <h1 id="data"></h1>
+                <h1 id="hora"></h1>
+            </div>
+            <div class="descricao"></div>
+            <div class="link">
+                {% if evento and evento|length > 0 and evento[0].link %}
+                    <div id="qrcode"></div>
+                {% endif %}
+            </div>
+        </div>
   </body>
 </html>

@@ -160,9 +160,9 @@ with app.app_context():
 
 with app.app_context():
     novo_dispositivo = Dispositivo(
-        ip="",
-        nome="",
-        local=""
+        ip="111",
+        nome="22",
+        local="33"
     )
     db.session.add(novo_dispositivo)
     db.session.commit()
