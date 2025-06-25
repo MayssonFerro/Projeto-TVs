@@ -1,10 +1,11 @@
 import json
 import os
 import requests
-import certifi
-
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import UserMixin
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
+
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -15,7 +16,14 @@ app.secret_key = 'uma_chave_muito_secreta_aqui'
 api_key = '4cd224af1c46c58cf99cdbd798e13931'
 city = 'Três Lagoas, br'
 CACHE_FILE = 'clima.json' 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
+# Define como carregar o usuário
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
 
 def fetch_and_cache_weather():
     """
@@ -137,7 +145,7 @@ class Noticia(db.Model):
     status = db.Column(db.String(20), nullable=False)
     dispositivo = db.relationship('Dispositivo', backref=db.backref('noticias', lazy=True))
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
@@ -160,7 +168,7 @@ with app.app_context():
 
 with app.app_context():
     novo_dispositivo = Dispositivo(
-        ip="111",
+        ip="11w1",
         nome="22",
         local="33"
     )
@@ -180,7 +188,30 @@ with app.app_context():
     )
     db.session.add(novo_evento)
     db.session.commit()
-    
+ 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        user = Usuario.query.filter_by(email=email).first()
+
+        if user and user.senha == senha:
+            login_user(user)
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('painel_admin'))  # ou outro painel
+        else:
+            flash('Email ou senha incorretos.', 'error')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Logout realizado com sucesso.", "info")
+    return redirect(url_for('login'))
+
 @app.route("/")
 def show_painel():
     noticia = Noticia.query.all()
@@ -228,8 +259,82 @@ scheduler.start()
 def mostrarAviso():
     return render_template("aviso.html")
 
+
+# --- ROTAS DE GERENCIAMENTO DE CONTEÚDO ---
+
+@app.route('/admin/conteudo/adicionar', methods=['GET', 'POST'])
+def adicionar_conteudo():
+    """
+    Exibe o formulário para adicionar novo conteúdo (GET) e
+    processa o envio do formulário (POST).
+    """
+    if request.method == 'POST':
+        # Obtém a lista de IDs dos dispositivos selecionados
+        dispositivos_ids = request.form.getlist('dispositivos')
+        conteudo_noticia = request.form.get('conteudo_noticia')
+
+        # Validações
+        if not dispositivos_ids:
+            flash("Você deve selecionar ao menos um dispositivo.", "error")
+            return redirect(url_for('adicionar_conteudo'))
+
+        if not conteudo_noticia:
+            flash("O campo de conteúdo não pode estar vazio.", "error")
+            return redirect(url_for('adicionar_conteudo'))
+
+        # Cria uma nova notícia para cada dispositivo selecionado
+        for id_dispositivo in dispositivos_ids:
+            nova_noticia = Noticia(
+                conteudo=conteudo_noticia,
+                status="ativa",
+                dispositivo_id=id_dispositivo
+            )
+            db.session.add(nova_noticia)
+        
+        db.session.commit()
+        flash("Notícia rápida adicionada com sucesso!", "success")
+        return redirect(url_for('painel_admin'))
+
+    # Para o método GET, apenas busca os dispositivos e exibe o formulário
+    dispositivos = Dispositivo.query.order_by(Dispositivo.nome).all()
+    # Lembre-se de incluir a subpasta no caminho do template!
+    return render_template("gerenciador_deconteudo/adicionar_conteudo.html", dispositivos=dispositivos)
+
+
+@app.route('/admin/noticia/excluir/<int:id>', methods=['POST'])
+def excluir_noticia(id):
+    """
+    Encontra uma notícia pelo seu ID e a remove do banco de dados.
+    """
+    noticia_para_excluir = Noticia.query.get_or_404(id)
+    db.session.delete(noticia_para_excluir)
+    db.session.commit()
+    flash("Notícia removida com sucesso.", "success")
+    return redirect(url_for('painel_admin'))
+
+
+@app.route('/admin/mensagem/excluir/<int:id>', methods=['POST'])
+def excluir_mensagem(id):
+    """
+    Encontra uma mensagem programada pelo seu ID e a remove do banco de dados.
+    """
+    mensagem_para_excluir = Mensagem_Temporaria.query.get_or_404(id)
+    db.session.delete(mensagem_para_excluir)
+    db.session.commit()
+    flash("Mensagem programada removida com sucesso.", "success")
+    return redirect(url_for('painel_admin'))
+
+
+
 if __name__ == '__main__':
     print("Executando a busca inicial de clima antes de iniciar o servidor...")
     fetch_and_cache_weather()
 
-    app.run(debug=True, use_reloader=False)
+
+
+
+
+
+
+
+app.run(debug=True, use_reloader=False)

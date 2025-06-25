@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Conteúdo</title>
+</head>
+<body>
+{% extends "gerenciador_deconteudo/base.html" %}
+
+{% block title %}Adicionar Conteúdo{% endblock %}
+
+{% block content %}
+    <h1>Adicionar Novo Conteúdo</h1>
+    
+    <form action="{{ url_for('adicionar_conteudo') }}" method="POST">
+        <label for="tipo_conteudo">Tipo de Conteúdo:</label>
+        <select name="tipo_conteudo" id="tipo_conteudo">
+            <option value="noticia_rapida">Notícia Rápida (Barra inferior)</option>
+            <option value="mensagem_programada">Mensagem Programada (Tela cheia)</option>
+        </select>
+        <hr>
+
+        <!-- Formulário para Notícia Rápida -->
+        <div id="form-noticia">
+            <label for="conteudo_noticia">Conteúdo (máx 150 caracteres):</label>
+            <textarea name="conteudo_noticia" maxlength="150" rows="3"></textarea>
+        </div>
+
+        <!-- Formulário para Mensagem Programada -->
+        <div id="form-mensagem" style="display: none;">
+            <label for="mensagem">Mensagem:</label>
+            <textarea name="mensagem" rows="4"></textarea>
+            
+            <label for="data_inicio">Início:</label>
+            <input type="datetime-local" name="data_inicio">
+            
+            <label for="data_fim">Fim:</label>
+            <input type="datetime-local" name="data_fim">
+            
+            <!-- O campo 'cor_fundo' pode ser adicionado no futuro no modelo e na lógica -->
+        </div>
+        
+        <hr>
+        <h3>Publicar nos Dispositivos:</h3>
+        <div class="checkbox-group">
+             {% for dispositivo in dispositivos %}
+                <label>
+                    <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}">
+                    {{ dispositivo.nome }} (IP: {{ dispositivo.ip }})
+                </label>
+            {% else %}
+                <p>Nenhum dispositivo cadastrado. <a href="{{ url_for('gerenciar_dispositivos') }}">Cadastre um primeiro</a>.</p>
+            {% endfor %}
+        </div>
+       
+        <div class="button-group">
+            <button type="submit">Publicar Conteúdo</button>
+            <!-- 
+              CORREÇÃO APLICADA AQUI: 
+              'admin_painel' foi trocado por 'painel_admin' para corresponder ao nome da função em app.py
+            -->
+            <a href="{{ url_for('painel_admin') }}" class="cancel-link">Cancelar</a>
+        </div>
+    </form>
+
+    <script>
+        // Script para alternar os formulários visíveis
+        document.getElementById('tipo_conteudo').addEventListener('change', function () {
+            const isNoticia = this.value === 'noticia_rapida';
+            document.getElementById('form-noticia').style.display = isNoticia ? 'block' : 'none';
+            document.getElementById('form-mensagem').style.display = isNoticia ? 'none' : 'block';
+        });
+    </script>
+{% endblock %}
+
+</body>
+</html>

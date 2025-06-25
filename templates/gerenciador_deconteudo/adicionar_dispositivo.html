@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>Adicionar Dispositivo</title>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Cadastrar Dispositivo</h1>
+        </div>
+       <div class="content">
+            <form action="/adicionar_dispositivo" method="post">
+            
+                <div class="form-group">
+                    <label for="nome">Nome do Dispositivo:</label>
+                    <input type="text" id="nome" name="nome" required>
+
+                    <label for="local">Local do Dispositivo:</label>
+                    <input type="text" id="local" name="local" required>
+
+                    <label for="ip">IP:</label>
+                    <input type="text" id="ip" name="ip" required>
+                </div>
+
+                <button type="submit" class="btn">+ Dispositivo</button>
+            </form>
+        </div>
+        <div class="footer">
+            <a href="/" class="btn">Voltar</a>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    </div>
+</body>
+</html>

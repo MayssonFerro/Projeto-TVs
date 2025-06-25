@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Dispositivos</title>
+</head>
+<body>
+    <h1>Gerenciar Dispositivos (TVs)</h1>
+    
+    <h3>Dispositivos Cadastrados</h3>
+    <ul>
+        {% for dispositivo in dispositivos %}
+            <li>{{ dispositivo.nome }} - IP: {{ dispositivo.ip }} <a href="{{ url_for('excluir_dispositivo', id=dispositivo.id) }}">[Excluir]</a></li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h3>Cadastrar Novo Dispositivo</h3>
+    <form action="{{ url_for('adicionar_dispositivo') }}" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <br>
+        <label for="ip">IP:</label>
+        <input type="text" id="ip" name="ip" required>
+        <br><br>
+        <button type="submit">Cadastrar dispositivo</button>
+    </form>
+    
+    <br>
+    <a href="{{ url_for('admin_painel') }}">Voltar</a>
+</body>
+</html>
