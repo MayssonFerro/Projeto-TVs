@@ -52,23 +52,67 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 
-    // ======================================================
-    // SEÇÃO 3: LÓGICA DE ROTAÇÃO DE PÁGINAS (QUIOSQUE)
-    // ======================================================
-    const paginas = ['/', '/clima']; // Defina aqui as páginas para o ciclo
-    const tempoDeExibicao = 10000;  // 30 segundos
+// ======================================================
+// SEÇÃO 3: LÓGICA DE ROTAÇÃO DE PÁGINAS (VERSÃO MELHORADA)
+// ======================================================
 
-    const paginaAtualPath = window.location.pathname;
-    const paginaAtualIndex = paginas.indexOf(paginaAtualPath);
+// Adiciona uma linha no console do navegador para sabermos que o script começou
+console.log("--- Iniciando Script de Rotação de Página ---");
 
-    // Só inicia o temporizador se a página atual estiver na lista de rotação
-    if (paginaAtualIndex !== -1) {
-        const proximaPaginaIndex = (paginaAtualIndex + 1) % paginas.length;
-        const proximaPagina = paginas[proximaPaginaIndex];
+    // 1. OBTER DADOS DO PYTHON
+    // O filtro 'tojson' é a forma mais segura de passar variáveis do Jinja2 para o JS
+    // Se este arquivo for servido por Flask/Jinja2, a linha abaixo será processada corretamente.
+    // Caso esteja rodando puro (sem backend), defina manualmente o valor desejado.
+    const deveMostrarAviso = typeof SHOW_AVISO !== "undefined" ? SHOW_AVISO : false;
+    // Exemplo: substitua SHOW_AVISO pelo valor desejado se não estiver usando Jinja2.
+    // const deveMostrarAviso = false;
+    // Se estiver usando Jinja2, descomente a linha abaixo e comente a linha acima:
+    // const deveMostrarAviso = {{ show_aviso|tojson|default('false') }};
+    // Exibe no console se a página de aviso deve ou não ser mostrada
+    console.log("Condição para mostrar a página de aviso:", deveMostrarAviso);
 
-        setTimeout(function() {
-            window.location.href = proximaPagina;
-        }, tempoDeExibicao);
+    // 2. MONTAR A LISTA DE PÁGINAS VÁLIDAS PARA ESTE MOMENTO
+    const paginasBase = ['/', '/clima'];
+    let paginasAtuais = [...paginasBase]; // Cria uma cópia da lista base
+
+    if (deveMostrarAviso) {
+        // Se a condição for verdadeira, adiciona a página de aviso na lista de rotação
+        paginasAtuais.push('/aviso-intervalo');
     }
-});
+    // Mostra no console qual a lista final de páginas para esta rotação
+    console.log("Lista de páginas na rotação atual:", paginasAtuais);
 
+    // 3. DEFINIR TEMPO DE EXIBIÇÃO
+    const tempoDeExibicao = 15000; // Aumentado para 15 segundos
+
+    // 4. DECIDIR QUAL SERÁ A PRÓXIMA PÁGINA
+    const paginaAtualPath = window.location.pathname;
+    console.log("Página atual é:", paginaAtualPath);
+
+    const indexDaPaginaAtual = paginasAtuais.indexOf(paginaAtualPath);
+    console.log("Índice da página atual na lista:", indexDaPaginaAtual, "(Se for -1, a página não está na lista de rotação)");
+
+    let proximaPagina;
+
+    if (indexDaPaginaAtual !== -1) {
+        // CASO 1: A página atual ESTÁ na lista de rotação válida.
+        // Calcula a próxima página do ciclo normalmente.
+        const indexDaProximaPagina = (indexDaPaginaAtual + 1) % paginasAtuais.length;
+        proximaPagina = paginasAtuais[indexDaProximaPagina];
+        console.log("Página está no ciclo. Próxima página será:", proximaPagina);
+
+    } else {
+        // CASO 2: A página atual NÃO ESTÁ na lista de rotação válida.
+        // (Ex: estamos em /aviso-intervalo, mas já passou do tempo de exibi-la).
+        // Para evitar erros, sempre volte para a primeira página do ciclo base.
+        proximaPagina = paginasBase[0]; // Volta para a página "/"
+        console.log("Página atual está FORA do ciclo. Voltando para a página inicial:", proximaPagina);
+    }
+
+    console.log(`Redirecionando para '${proximaPagina}' em ${tempoDeExibicao / 1000} segundos.`);
+
+    // 5. AGENDAR O REDIRECIONAMENTO
+    setTimeout(function() {
+        window.location.href = proximaPagina;
+    }, tempoDeExibicao);
+});
