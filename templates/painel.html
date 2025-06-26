@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script> {# Duplicado, mas mantido como está no seu original #}
     {% if evento and evento|length > 0 and evento[0].link %}
         <script>
             window.eventoLink = "{{ evento[0].link }}";
@@ -36,11 +36,16 @@
     </main>
 
     <footer>
-    <div class="noticia">
-        {% for n in noticia %}
-            <span class="noticia-text">{{ n.conteudo }}</span>
-        {% endfor %}
-    </div>
-</footer>
+        <div class="noticia-rapida"> {# Esta é a div que você quer estilizar como "notícia rápida" #}
+            {% for n in noticia %}
+                <span class="noticia-text">{{ n.conteudo }}</span>
+                <script>    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+            window.location.href = "{{ url_for('login') }}";
+        }
+    });</script>
+            {% endfor %}
+        </div>
+    </footer>
 </body>
 </html>

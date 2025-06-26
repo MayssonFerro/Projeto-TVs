@@ -1,0 +1,19 @@
+# Node.js
+/node_modules
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+
+# Logs e temporários
+*.log
+*.tmp
+
+# Editor
+.vscode/
+
+# macOS
+.DS_Store
