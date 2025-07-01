@@ -2,11 +2,12 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Adicionar Conteúdo</title>
 </head>
 <body>
-{% extends "gerenciador_deconteudo/base.html" %}
-
 {% block title %}Adicionar Conteúdo{% endblock %}
 
 {% block content %}
@@ -55,11 +56,7 @@
        
         <div class="button-group">
             <button type="submit">Publicar Conteúdo</button>
-            <!-- 
-              CORREÇÃO APLICADA AQUI: 
-              'admin_painel' foi trocado por 'painel_admin' para corresponder ao nome da função em app.py
-            -->
-            <a href="{{ url_for('painel_admin') }}" class="cancel-link">Cancelar</a>
+            <a href="{{ url_for('admin') }}" class="cancel-link">Cancelar</a>
         </div>
     </form>
 

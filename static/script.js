@@ -116,3 +116,9 @@ console.log("--- Iniciando Script de Rotação de Página ---");
         window.location.href = proximaPagina;
     }, tempoDeExibicao);
 });
+
+document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        window.location.href = "/login";
+    }
+});

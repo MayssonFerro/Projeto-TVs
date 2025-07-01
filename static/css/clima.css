@@ -49,6 +49,7 @@ body {
 
 .div1, .div2, .div3 {
     width: clamp(250px, 20vw, 320px);
+    height: 100%;
     aspect-ratio: 1.12 / 1;
     background-color: rgba(30, 30, 30, 0.85);
     border-radius: 25px;
@@ -62,7 +63,7 @@ body {
 
 .div1 img {
     width: 50%;
-    height: auto;
+    height: 50%;
 }
 
 .info {
@@ -148,6 +149,7 @@ footer {
 .relogio {
     position: absolute;
     top: 0;
+    right: 0;
     left: 65rem;
     z-index: 10;
     margin: 20px;

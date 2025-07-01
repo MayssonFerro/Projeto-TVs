@@ -58,11 +58,10 @@
 
       
       <footer>
-        <div class="inferior">
-            <div class="noticia-rapida">
-                <span>na CEREL no dia 18/12/2029 • Atenção alunos intervalo em 10 minutos • Cadastrar fotografia na CEREL • </span>
-                <span>na CEREL no dia 18/12/2029 • Atenção alunos intervalo em 10 minutos • Cadastrar fotografia na CEREL • </span>
-            </div>
+        <div class="noticia-rapida">
+            {% for n in noticia %}
+                <span class="noticia-text">{{ n.conteudo }}</span>
+                {% endfor %}
         </div>
       </footer>
 

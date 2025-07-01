@@ -97,37 +97,6 @@ def fetch_and_cache_weather():
         print(f"!!!!!!!!!! AGENDADOR: Erro ao chamar a API: {e} !!!!!!!!!!!")
     print("--------------------------------------------------")
 
-
-@app.route('/clima')
-def clima():
-    # MODIFICADO: Adicionada a chamada da função para passar dados ao template
-    status_intervalo = get_status_intervalo()
-    clima_data = None
-    erro_msg = None
-
-    if not os.path.exists(CACHE_FILE):
-        erro_msg = "Dados do clima ainda não disponíveis. Aguardando a primeira busca."
-    else:
-        try:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-                dados_previsao = json.load(f)
-
-            primeira_previsao = dados_previsao['list'][0]
-            clima_data = {
-                'cidade': dados_previsao['city']['name'],
-                'temperatura': f"{primeira_previsao['main']['temp']:.0f}",
-                'condicao': primeira_previsao['weather'][0]['description'].capitalize(),
-                'chance_chuva': int(primeira_previsao['pop'] * 100),
-                'vento': round(primeira_previsao['wind']['speed'] * 3.6, 1),
-                'icone': primeira_previsao['weather'][0]['icon'],
-            }
-        except (IOError, json.JSONDecodeError, KeyError) as e:
-            print(f"Erro ao ler ou processar o arquivo de cache: {e}")
-            erro_msg = "Ocorreu um erro ao carregar os dados do clima."
-            
-    return render_template('clima.html', clima=clima_data, erro=erro_msg, **status_intervalo)
-
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dispositivos.db'
 db = SQLAlchemy(app)
 
@@ -258,13 +227,13 @@ def adicionar_dispositivo():
         return redirect(url_for('show_dispositivos'))
     return render_template("adicionar_dispositivo.html")
 
-# ROTA MODIFICADA/SUBSTITUÍDA
 @app.route("/aviso-intervalo")
 def aviso_intervalo():
     """Esta rota agora usa a função central para obter os dados do intervalo."""
     noticia = Noticia.query.filter_by(status="ativa").all()
     status_intervalo = get_status_intervalo()
     return render_template('aviso-intervalo.html', noticia=noticia, **status_intervalo)
+
 horarios_agendados = [
     (6, 10), (8, 0), (12, 0), (13, 0), (15, 0),
     (17, 0), (18, 0), (19, 0), (21, 0), (22, 0), (22, 50)
@@ -277,11 +246,14 @@ for hora, minuto in horarios_agendados:
 
 scheduler.start()
 
-
-@app.route('/aviso', methods=["GET"])
-def mostrarAviso():
-    return render_template("aviso.html")
-
+@app.route('/admin')
+# @login_required
+def admin():
+    dispositivos = Dispositivo.query.order_by(Dispositivo.nome).all()
+    noticias = Noticia.query.order_by(Noticia.data_inicio.desc()).all()
+    eventos = Evento.query.order_by(Evento.data_inicio.desc()).all()
+    mensagens_temporarias = Mensagem_Temporaria.query.order_by(Mensagem_Temporaria.data_inicio.desc()).all()
+    return render_template("gerenciador_deconteudo/admin.html", dispositivos=dispositivos, noticias=noticias, eventos=eventos, mensagens_temporarias=mensagens_temporarias)
 
 @app.route('/admin/conteudo/adicionar', methods=['GET', 'POST'])
 def adicionar_conteudo():
@@ -307,7 +279,7 @@ def adicionar_conteudo():
 
         db.session.commit()
         flash("Notícia rápida adicionada com sucesso!", "success")
-        return redirect(url_for('painel_admin'))
+        return redirect(url_for('gerenciador_deconteudo/admin.html'))
 
     dispositivos = Dispositivo.query.order_by(Dispositivo.nome).all()
     return render_template("gerenciador_deconteudo/adicionar_conteudo.html", dispositivos=dispositivos)
@@ -319,7 +291,7 @@ def excluir_noticia(id):
     db.session.delete(noticia_para_excluir)
     db.session.commit()
     flash("Notícia removida com sucesso.", "success")
-    return redirect(url_for('painel_admin'))
+    return redirect(url_for('gerenciador_deconteudo/admin.html'))
 
 
 @app.route('/admin/mensagem/excluir/<int:id>', methods=['POST'])
@@ -328,7 +300,39 @@ def excluir_mensagem(id):
     db.session.delete(mensagem_para_excluir)
     db.session.commit()
     flash("Mensagem programada removida com sucesso.", "success")
-    return redirect(url_for('painel_admin'))
+    return redirect(url_for('gerenciador_deconteudo/admin.html'))
+
+@app.route('/clima')
+def clima():
+    # MODIFICADO: Adicionada a chamada da função para passar dados ao template
+    status_intervalo = get_status_intervalo()
+    clima_data = None
+    erro_msg = None
+    noticia = Noticia.query.all()
+    evento = Evento.query.all()
+
+    if not os.path.exists(CACHE_FILE):
+        erro_msg = "Dados do clima ainda não disponíveis. Aguardando a primeira busca."
+    else:
+        try:
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                dados_previsao = json.load(f)
+
+            primeira_previsao = dados_previsao['list'][0]
+            clima_data = {
+                'cidade': dados_previsao['city']['name'],
+                'temperatura': f"{primeira_previsao['main']['temp']:.0f}",
+                'condicao': primeira_previsao['weather'][0]['description'].capitalize(),
+                'chance_chuva': int(primeira_previsao['pop'] * 100),
+                'vento': round(primeira_previsao['wind']['speed'] * 3.6, 1),
+                'icone': primeira_previsao['weather'][0]['icon'],
+            }
+        except (IOError, json.JSONDecodeError, KeyError) as e:
+            print(f"Erro ao ler ou processar o arquivo de cache: {e}")
+            erro_msg = "Ocorreu um erro ao carregar os dados do clima."
+            
+    return render_template('clima.html', clima=clima_data, erro=erro_msg, **status_intervalo, noticia=noticia, evento=evento)
+
 
 
 if __name__ == '__main__':
