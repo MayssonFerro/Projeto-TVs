@@ -7,29 +7,28 @@ body {
 }
 
 .container {
-    width: 100%; /* Removida a duplicata de 100vw */
-    height: 100vh;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 2rem;
     box-sizing: border-box;
 }
 
 .lista {
     width: 100%;
-    height: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 1.25rem;
 }
 
 .dispositivo {
     width: 100%;
-    height: 80px;
+    min-height: 80px;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     padding-left: 20px;
     align-items: center;
     background-color: #D2CCCC;
@@ -45,16 +44,17 @@ body {
 }
 
 .new-device {
-    width: auto;
     height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #D2CCCC;
-    padding: 0px 10px 0px 10px;
+    padding: 0px 10px;
     cursor: pointer;
     text-decoration: none;
     color: black;
+    border-radius: 5px;
+    font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
 .new-device:hover {
@@ -68,6 +68,10 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #D2CCCC;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    text-align: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
 }
 
 .content {
@@ -78,38 +82,42 @@ body {
 }
 
 form {
-    width: auto;
+    width: 100%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    font-size: 22px;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .form-group {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
 input {
-    width: 450px;
+    width: 100%;
     padding: 8px;
-    font-size: 16px;
+    font-size: 1rem;
     background-color: #D2CCCC;
     border: none;
+    border-radius: 4px;
 }
 
 .btn {
-    height: auto;
-    width: auto;
-    padding: 5px 10px 5px 10px;
+    padding: 10px 20px;
     background-color: #D2CCCC;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     text-decoration: none;
     color: #000;
+    border-radius: 5px;
 }
 
 .btn:hover {
@@ -133,22 +141,23 @@ input {
     position: relative;
     box-sizing: border-box;
     min-height: 100vh;
+    width: 100%;
 }
 
 .relogio {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 20px;
     z-index: 10;
-    margin: 20px;
-    height: 200px;
-    width: 400px;
+    height: auto;
+    width: 300px;
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 50px;
+    border-radius: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
     text-align: center;
 }
 
@@ -160,14 +169,13 @@ input {
 #hora {
     margin: 0;
     color: white;
-    font-size: 72px;
+    font-size: clamp(2rem, 6vw, 4.5rem);
 }
 
 #qrcode {
     position: fixed;
     right: 30px;
-    /* Ajustado para não ficar sobreposto pelo novo footer */
-    bottom: 125px; 
+    bottom: 125px;
     z-index: 200;
     border-radius: 16px;
     background: #fff;
@@ -175,10 +183,7 @@ input {
     box-shadow: 0 2px 12px rgba(0,0,0,0.15);
 }
 
-/* ======================================================= */
-/* === ESTILOS DO FOOTER E NOTÍCIA RÁPIDA (INTEGRADOS) === */
-/* ======================================================= */
-
+/* Footer com notícia */
 footer {
     position: fixed;
     bottom: 0;
@@ -188,14 +193,13 @@ footer {
     background: linear-gradient(90deg, rgba(157, 255, 0, 0.67) 0%, rgba(0, 0, 0, 0) 100%), #469C42;
     display: flex;
     align-items: center;
-    overflow: hidden; /* Mantém o conteúdo dentro dos limites */
-    white-space: nowrap; /* Impede a quebra de linha do conteúdo da notícia */
+    overflow: hidden;
+    white-space: nowrap;
     z-index: 1000;
 }
 
-/* O HTML para isso deve ser <div class="noticia-rapida"><span>Seu texto aqui</span></div> */
 .noticia-rapida {
-    font-size: clamp(2rem, 4vh, 3.5rem);
+    font-size: clamp(1.5rem, 4vh, 3.5rem);
     background-color: #000000;
     color: #ffffff;
     font-weight: 500;
@@ -208,12 +212,50 @@ footer {
     animation-play-state: paused;
 }
 
-/* Animação para a notícia rolar da direita para a esquerda */
 @keyframes scroll-left {
     0% {
         transform: translateX(100vw);
     }
     100% {
         transform: translateX(-100%);
+    }
+}
+
+/* ============================= */
+/* RESPONSIVIDADE GERAL */
+/* ============================= */
+@media (max-width: 768px) {
+    .relogio {
+        position: static;
+        width: 90%;
+        margin: 1rem auto;
+    }
+
+    #qrcode {
+        position: static;
+        margin: 1rem auto;
+    }
+
+    .container {
+        padding: 1.5rem;
+    }
+
+    .title {
+        height: auto;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    input {
+        font-size: 1rem;
+    }
+
+    .new-device {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+
+    form {
+        padding: 0;
     }
 }

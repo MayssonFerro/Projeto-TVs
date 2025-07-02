@@ -18,3 +18,4 @@ instance/
 
 # macOS
 .DS_Store
+.clima.json

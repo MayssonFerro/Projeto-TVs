@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intervalo Restante</title>
+    <title>Aviso de Intervalo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/aviso.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
-<body>
+
+<body data-seconds="{{ tempo_restante_segundos|default(0)|int }}">
+
     <div class="container painel">
         <div class="relogio">
             <h1 id="data"></h1>
             <h1 id="hora"></h1>
         </div>
+
         <div class="box">
             <h1 id="status-evento">{{ mensagem_status }}</h1>
             <p class="tempo" id="countdown-timer">--:--</p>
         </div>
     </div>
+
     <footer>
         <div class="noticia-rapida">
             {% for n in noticia %}
@@ -26,36 +30,53 @@
         </div>
     </footer>
 
-    {% if tempo_restante_segundos %}
     <script>
-        let tempoRestante = Math.floor({{ tempo_restante_segundos|default(0)|int }});
-        const countdownElement = document.getElementById('countdown-timer');
-        const statusElement = document.getElementById('status-evento');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleciona os elementos do DOM
+            const countdownElement = document.getElementById('countdown-timer');
+            const statusElement = document.getElementById('status-evento');
+            
+            // Pega o tempo inicial do atributo 'data-seconds'
+            let tempoRestante = parseInt(document.body.dataset.seconds, 10);
 
-        function atualizarContagem() {
-            if (tempoRestante <= 0) {
-                countdownElement.textContent = "0m 00s";
-                statusElement.textContent = "O tempo acabou!";
-                clearInterval(intervalo);
-                setTimeout(() => { window.location.reload(); }, 5000);
-                return;
+            // Se não houver tempo para contar, esconde o timer e interrompe o script
+            if (!tempoRestante || tempoRestante <= 0) {
+                countdownElement.style.display = 'none';
+                return; 
             }
-            const minutos = Math.floor(tempoRestante / 60);
-            const segundos = tempoRestante % 60;
-            countdownElement.textContent = `${minutos}m ${segundos.toString().padStart(2, '0')}s`;
-            tempoRestante--;
-        }
 
-        const intervalo = setInterval(atualizarContagem, 1000);
-        atualizarContagem();
-    </script>
-    {% elif mensagem_final %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('countdown-timer').textContent = "Fim";
-            document.getElementById('status-evento').innerHTML = "{{ mensagem_final|safe }}";
+            // Função que atualiza a contagem regressiva
+            const atualizarContagem = () => {
+                // Condição de parada: quando o tempo acabar
+                if (tempoRestante <= 0) {
+                    clearInterval(intervalo); // Para o loop
+                    countdownElement.textContent = "0m 00s";
+                    statusElement.textContent = "O tempo acabou!";
+                    
+                    // Recarrega a página após 5 segundos para obter o novo status do servidor
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 5000);
+                    return; // Sai da função
+                }
+
+                // Calcula minutos e segundos
+                const minutos = Math.floor(tempoRestante / 60);
+                const segundos = tempoRestante % 60;
+
+                // Atualiza o texto do elemento do timer, garantindo que os segundos tenham dois dígitos
+                countdownElement.textContent = `${minutos}m ${segundos.toString().padStart(2, '0')}s`;
+                
+                // Decrementa o tempo
+                tempoRestante--;
+            };
+
+            // Inicia o intervalo, chamando a função a cada segundo
+            const intervalo = setInterval(atualizarContagem, 1000);
+            
+            // Chama a função uma vez no início para não esperar 1 segundo pela primeira exibição
+            atualizarContagem();
         });
     </script>
-    {% endif %}
 </body>
 </html>

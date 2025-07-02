@@ -1,53 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+
+
     <title>Painel de Controle</title>
 </head>
+
 <body>
 
-{% block title %}Adicionar Conteúdo{% endblock %}
+    {% block title %}Adicionar Conteúdo{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="mb-3">Adicionar Conteúdo</h1>
-    <p class="text-muted">Atualmente, apenas a adição de "Notícias Rápidas" está implementada.</p>
+    {% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-3">Adicionar Conteúdo</h1>
+        <p class="text-muted">Atualmente, apenas a adição de "Notícias Rápidas" está implementada.</p>
 
-    <form action="{{ url_for('adicionar_conteudo') }}" method="POST">
-        <div class="mb-3">
-            <label for="conteudo_noticia" class="form-label">Conteúdo da Notícia Rápida:</label>
-            <textarea name="conteudo_noticia" id="conteudo_noticia" maxlength="250" rows="4" required class="form-control"></textarea>
-        </div>
+        <form action="{{ url_for('adicionar_conteudo') }}" method="POST">
+            <div class="mb-3">
+                <label for="conteudo_noticia" class="form-label">Conteúdo da Notícia Rápida:</label>
+                <textarea name="conteudo_noticia" id="conteudo_noticia" maxlength="250" rows="4" required
+                    class="form-control"></textarea>
+            </div>
 
-        <hr>
+            <hr>
 
-        <h5>Publicar nos Dispositivos:</h5>
-        <div class="mb-3">
-            {% if dispositivos %}
+            <h5>Publicar nos Dispositivos:</h5>
+            <div class="mb-3">
+                {% if dispositivos %}
                 {% for dispositivo in dispositivos %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="dispositivos" value="{{ dispositivo.id }}" id="dispositivo{{ dispositivo.id }}">
-                        <label class="form-check-label" for="dispositivo{{ dispositivo.id }}">
-                            {{ dispositivo.nome }} (IP: {{ dispositivo.ip }})
-                        </label>
-                    </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="dispositivos" value="{{ dispositivo.id }}"
+                        id="dispositivo{{ dispositivo.id }}">
+                    <label class="form-check-label" for="dispositivo{{ dispositivo.id }}">
+                        {{ dispositivo.nome }} (IP: {{ dispositivo.ip }})
+                    </label>
+                </div>
                 {% endfor %}
-            {% else %}
+                {% else %}
                 <p class="text-danger">Nenhum dispositivo cadastrado.</p>
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-success">Publicar Conteúdo</button>
-            <a href="{{ url_for('admin') }}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
-</div>
-{% endblock %}
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">Publicar Conteúdo</button>
+                <a href="{{ url_for('admin') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+    {% endblock %}
 
 
 </body>
+
 </html>
