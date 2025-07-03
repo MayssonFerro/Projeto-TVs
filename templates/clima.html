@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clima.css') }}" />
@@ -8,95 +8,67 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <title>Previsão do Tempo</title>
-  </head>
-  <body>
-    
-    
+</head>
+<body>
     {% if clima %}
-
-      
-      <div class="cidade">
-        
-        <span>{{ clima.cidade }}-MS</span>
-      </div>
-
-      <div class="parent">
-
-        
-        <div class="card-com-info">
-          <div class="div1">
-            <img src="/static/images/sun-dim.png" alt="">
-          </div>
-          <div class="info">
-            <span>{{ clima.temperatura }}°C</span> 
-          </div>
+        <div class="cidade">
+            <span>{{ clima.cidade }}-MS</span>
         </div>
 
-       
-        <div class="card-com-info">
-          <div class="div2">
-            <img src="/static/images/icon-noite-chuva-branco-300x300.png" alt="">
-            
-          </div>
-          <div class="info">
-           
-            <span>{{ clima.chance_chuva }}%</span> 
-          </div>
+        <div class="parent">
+            <div class="card-com-info">
+                <div class="div1">
+                    <img src="/static/images/sun-dim.png" alt="">
+                </div>
+                <div class="info">
+                    <span>{{ clima.temperatura }}°C</span>
+                </div>
+            </div>
+
+            <div class="card-com-info">
+                <div class="div2">
+                    <img src="/static/images/icon-noite-chuva-branco-300x300.png" alt="">
+                </div>
+                <div class="info">
+                    <span>{{ clima.chance_chuva }}%</span>
+                </div>
+            </div>
+
+            <div class="card-com-info">
+                <div class="div3">
+                    <img src="/static/images/wind.png" alt="">
+                </div>
+                <div class="info">
+                    <span>{{ clima.vento }} km/h</span>
+                </div>
+            </div>
         </div>
 
-       
-        <div class="card-com-info">
-          <div class="div3">
-            <img src="/static/images/wind.png" alt="">
-          </div>
-          <div class="info">
-            <span>{{ clima.vento }} km/h</span> 
-          </div>
-        </div>
-      
-      </div> 
-
-      
-      <footer>
-        <div class="noticia-rapida">
-            {% for n in noticia %}
-                <span class="noticia-text">{{ n.conteudo }}</span>
+        <footer>
+            <div class="noticia-rapida">
+                {% for n in noticia %}
+                    <span class="noticia-text">{{ n.conteudo }}</span>
                 {% endfor %}
-        </div>
-      </footer>
-
+            </div>
+        </footer>
     {% else %}
-        
         <div class="erro-container">
             <h1>Erro ao Carregar os Dados</h1>
             <p>{{ erro }}</p>
         </div>
     {% endif %}
 
-
-
-<div class="container painel">
-            <div class="relogio">
-                <h1 id="data"></h1>
-                <h1 id="hora"></h1>
-            </div>
-            <div class="descricao"></div>
-            <div class="link">
-                {% if evento and evento|length > 0 and evento[0].link %}
-                    <div id="qrcode"></div>
-                {% endif %}
-            </div>
-<div class="container painel">
-            <div class="relogio">
-                <h1 id="data"></h1>
-                <h1 id="hora"></h1>
-            </div>
-            <div class="descricao"></div>
-            <div class="link">
-                {% if evento and evento|length > 0 and evento[0].link %}
-                    <div id="qrcode"></div>
-                {% endif %}
-            </div>
+    <div class="container painel">
+        <div class="relogio">
+            <h1 id="data"></h1>
+            <h1 id="hora"></h1>
         </div>
-  </body>
+        <div class="descricao"></div>
+        <div class="link">
+            {% if evento and evento|length > 0 and evento[0].link %}
+                <div id="qrcode"></div>
+            {% endif %}
+        </div>
+    </div>
+</body>
 </html>

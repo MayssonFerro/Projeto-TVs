@@ -133,16 +133,16 @@ footer {
     top: 20px;
     right: 20px;
     z-index: 10;
-    height: 180px;
+    height: auto;
     width: 300px;
-    background: rgba(153, 148, 148, 0.199);
-    border-radius: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
     display: flex;
     flex-direction: column;
-    justify-content: center;* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
 }
 
 html {
@@ -272,16 +272,16 @@ footer {
     top: 20px;
     right: 20px;
     z-index: 10;
-    height: 180px;
+    height: auto;
     width: 300px;
-    background: rgba(153, 148, 148, 0.199);
-    border-radius: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8px 20px rgba(2, 51, 0, 0.103);
     padding: 1rem;
+    text-align: center;
 }
 
 #data {
@@ -292,7 +292,7 @@ footer {
 #hora {
     margin: 0;
     color: white;
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 6vw, 4.5rem);
 }
 
 @media (max-width: 950px) {
