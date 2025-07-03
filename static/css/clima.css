@@ -90,8 +90,8 @@ body {
     right: 20px;
     z-index: 10;
     height: auto;
-    width: 600px;
-    background: rgba(143, 143, 143, 0.329);
+    width: 420px;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -104,14 +104,12 @@ body {
 #data {
     color: white;
     margin: 0;
-    font-size: clamp(2rem, 2vw, 1.2rem);
 }
 
 #hora {
     margin: 0;
     color: white;
-    font-size: clamp(6rem, 6vw, 4.5rem);
-    font-weight: bold;
+    font-size: clamp(3rem, 6vw, 4.5rem);
 }
 
 /* QR Code - escondido por padrão */
