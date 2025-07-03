@@ -4,9 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clima.css') }}" />
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <!-- Definir variáveis globais ANTES de carregar o script principal -->
+    <script>
+        window.SHOW_AVISO = {{ show_aviso|tojson|default(false) }};
+        {% if evento and evento|length > 0 and evento[0].link %}
+            window.eventoLink = "{{ evento[0].link }}";
+        {% endif %}
+        {% if evento and evento|length > 0 and evento[0].imagem %}
+            window.eventoImagem = "{{ evento[0].imagem }}";
+        {% endif %}
+    </script>
+    
+    <!-- Carregar o script principal apenas uma vez -->
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Previsão do Tempo</title>
 </head>
 <body>
@@ -43,14 +55,6 @@
                 </div>
             </div>
         </div>
-
-        <footer>
-            <div class="noticia-rapida">
-                {% for n in noticia %}
-                    <span class="noticia-text">{{ n.conteudo }}</span>
-                {% endfor %}
-            </div>
-        </footer>
     {% else %}
         <div class="erro-container">
             <h1>Erro ao Carregar os Dados</h1>
@@ -64,14 +68,15 @@
             <h1 id="hora"></h1>
         </div>
         <div class="descricao"></div>
-        <div class="link">
-            {% if evento and evento|length > 0 and evento[0].link %}
-                <div id="qrcode"></div>
-            {% endif %}
-        </div>
+       
     </div>
-    <script>
-        const SHOW_AVISO = {{ show_aviso|tojson|default('false') }};
-    </script>
+
+    <footer>
+        <div class="noticia-rapida">
+            {% for n in noticia %}
+                <span class="noticia-text">{{ n.conteudo }}</span>
+            {% endfor %}
+        </div>
+    </footer>
 </body>
 </html>

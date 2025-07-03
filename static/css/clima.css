@@ -73,69 +73,25 @@ body {
     height: 80%;
 }
 
+.div3 img {
+    width: 70%;
+    height: 70%;
+}
+
 .info {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 500;
 }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 111px;
-    background: linear-gradient(90deg, rgba(157, 255, 0, 0.67) 0%, rgba(0, 0, 0, 0) 100%), #469C42;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-.noticia-rapida {
-    font-size: clamp(2rem, 4vh, 3.5rem);
-    background-color: #000000;
-    color: #ffffff;
-    font-weight: 500;
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    animation: scroll-left 30s linear infinite;
-}
-
-.noticia-rapida:hover {
-    animation-play-state: paused;
-}
-
-@keyframes scroll-left {
-    0% {
-        transform: translateX(100vw);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-.erro-container {
-    padding: 2rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    text-align: center;
-}
-
-.erro-container h1 {
-    color: #ffdddd;
-    margin-bottom: 1rem;
-    font-size: 2rem;
-}
-
+/* Relógio */
 .relogio {
     position: absolute;
     top: 20px;
     right: 20px;
     z-index: 10;
     height: auto;
-    width: 300px;
-    background: rgba(0, 0, 0, 0.3);
+    width: 600px;
+    background: rgba(143, 143, 143, 0.329);
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -145,78 +101,25 @@ footer {
     text-align: center;
 }
 
-html {
-    height: 100%;
-    font-size: clamp(14px, 1.2vw, 22px);
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Ubuntu', sans-serif;
+#data {
     color: white;
-    background: linear-gradient(180deg, rgba(3, 31, 13, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%) fixed, #2a5c3a;
-    background-color: #469C42;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-    padding-bottom: 130px;
+    margin: 0;
+    font-size: clamp(2rem, 2vw, 1.2rem);
 }
 
-.cidade {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+#hora {
+    margin: 0;
+    color: white;
+    font-size: clamp(6rem, 6vw, 4.5rem);
     font-weight: bold;
-    margin-bottom: 2rem;
 }
 
-.parent {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: clamp(2rem, 4vw, 5rem);
-    width: 100%;
+/* QR Code - escondido por padrão */
+.link {
+    display: none;
 }
 
-.card-com-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.div1, .div2, .div3 {
-    width: clamp(250px, 20vw, 320px);
-    height: 100%;
-    aspect-ratio: 1.12 / 1;
-    background-color: rgba(30, 30, 30, 0.85);
-    border-radius: 25px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s ease;
-}
-
-.div1 img {
-    width: 70%;
-    height: 70%;
-}
-
-.div2 img {
-    width: 80%;
-    height: 80%;
-}
-
-.info {
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    font-weight: 500;
-}
-
+/* Footer */
 footer {
     position: fixed;
     bottom: 0;
@@ -254,6 +157,7 @@ footer {
     }
 }
 
+/* Erro */
 .erro-container {
     padding: 2rem;
     background-color: rgba(255, 255, 255, 0.1);
@@ -267,267 +171,7 @@ footer {
     font-size: 2rem;
 }
 
-.relogio {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 10;
-    height: auto;
-    width: 300px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-    text-align: center;
-}
-
-#data {
-    color: white;
-    margin: 0;
-}
-
-#hora {
-    margin: 0;
-    color: white;
-    font-size: clamp(2rem, 6vw, 4.5rem);
-}
-
-@media (max-width: 950px) {
-    body {
-        justify-content: flex-start;
-        padding-top: 4rem;
-    }
-
-    .cidade {
-        font-size: clamp(2rem, 8vw, 2.8rem);
-    }
-
-    .parent {
-        flex-direction: column;
-        align-items: center;
-        gap: 2.5rem;
-    }
-
-    .div1, .div2, .div3 {
-        width: clamp(220px, 60vw, 280px);
-    }
-
-    .info {
-        font-size: clamp(1.2rem, 5vw, 1.8rem);
-    }
-
-    .relogio {
-        position: static;* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    height: 100%;
-    font-size: clamp(14px, 1.2vw, 22px);
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Ubuntu', sans-serif;
-    color: white;
-    background: linear-gradient(180deg, rgba(3, 31, 13, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%) fixed, #2a5c3a;
-    background-color: #469C42;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-    padding-bottom: 130px;
-}
-
-.cidade {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: bold;
-    margin-bottom: 2rem;
-}
-
-.parent {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: clamp(2rem, 4vw, 5rem);
-    width: 100%;
-}
-
-.card-com-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.div1, .div2, .div3 {
-    width: clamp(250px, 20vw, 320px);
-    height: 100%;
-    aspect-ratio: 1.12 / 1;
-    background-color: rgba(30, 30, 30, 0.85);
-    border-radius: 25px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s ease;
-}
-
-.div1 img {
-    width: 70%;
-    height: 70%;
-}
-
-.div2 img {
-    width: 80%;
-    height: 80%;
-}
-
-.info {
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    font-weight: 500;
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 111px;
-    background: linear-gradient(90deg, rgba(157, 255, 0, 0.67) 0%, rgba(0, 0, 0, 0) 100%), #469C42;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-.noticia-rapida {
-    font-size: clamp(2rem, 4vh, 3.5rem);
-    background-color: #000000;
-    color: #ffffff;
-    font-weight: 500;
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    animation: scroll-left 30s linear infinite;
-}
-
-.noticia-rapida:hover {
-    animation-play-state: paused;
-}
-
-@keyframes scroll-left {
-    0% {
-        transform: translateX(100vw);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-.erro-container {
-    padding: 2rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    text-align: center;
-}
-
-.erro-container h1 {
-    color: #ffdddd;
-    margin-bottom: 1rem;
-    font-size: 2rem;
-}
-
-.relogio {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 10;
-    height: 180px;
-    width: 300px;
-    background: rgba(153, 148, 148, 0.199);
-    border-radius: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 8px 20px rgba(2, 51, 0, 0.103);
-    padding: 1rem;
-}
-
-#data {
-    color: white;
-    margin: 0;
-}
-
-#hora {
-    margin: 0;
-    color: white;
-    font-size: 3.5rem;
-}
-
-@media (max-width: 950px) {
-    body {
-        justify-content: flex-start;
-        padding-top: 4rem;
-    }
-
-    .cidade {
-        font-size: clamp(2rem, 8vw, 2.8rem);
-    }
-
-    .parent {
-        flex-direction: column;
-        align-items: center;
-        gap: 2.5rem;
-    }
-
-    .div1, .div2, .div3 {
-        width: clamp(220px, 60vw, 280px);
-    }
-
-    .info {
-        font-size: clamp(1.2rem, 5vw, 1.8rem);
-    }
-
-    .relogio {
-        position: static;
-        width: 90%;
-        margin-top: 2rem;
-    }
-}
-
-        width: 90%;
-        margin-top: 2rem;
-    }
-}
-
-    align-items: center;
-    box-shadow: 0 8px 20px rgba(2, 51, 0, 0.103);
-    padding: 1rem;
-}
-
-#data {
-    color: white;
-    margin: 0;
-}
-
-#hora {
-    margin: 0;
-    color: white;
-    font-size: 3.5rem;
-}
-
+/* Responsivo */
 @media (max-width: 950px) {
     body {
         justify-content: flex-start;

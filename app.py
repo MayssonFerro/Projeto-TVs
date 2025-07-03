@@ -19,68 +19,186 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # --- SEÇÃO DE CONFIGURAÇÃO DE INTERVALOS ---
-DURACAO_INTERVALO = timedelta(minutes=15)
+DURACAO_INTERVALO = timedelta(minutes=20)
+AVISO_ANTECIPADO = timedelta(minutes=15)  # Tempo de antecedência para avisos
+AVISO_FIM = timedelta(minutes=5)          # Aviso antes do fim do intervalo
+
+DURACAO_INTERVALO = timedelta(minutes=20)
+AVISO_ANTECIPADO = timedelta(minutes=15)  # Tempo de antecedência para avisos
+AVISO_FIM = timedelta(minutes=5)          # Aviso antes do fim do intervalo
 
 HORARIOS_EVENTOS = {
-    "o primeiro intervalo": {'inicio': time(9, 15), 'duracao': DURACAO_INTERVALO},
-    "a saída dos estudantes": {'inicio': time(13, 0), 'duracao': timedelta(minutes=0)},
-    "o segundo intervalo": {'inicio': time(15, 15), 'duracao': DURACAO_INTERVALO},
-    "o horário de saída": {'inicio': time(18, 30), 'duracao': timedelta(minutes=0)}
+    # MANHÃ
+    "primeiro intervalo": {
+        'inicio': time(9, 15), 
+        'duracao': DURACAO_INTERVALO,
+        'tipo': 'intervalo',
+        'turno': 'manha'
+    },
+    
+    # TARDE
+    "intervalo da tarde": {
+        'inicio': time(15, 15), 
+        'duracao': DURACAO_INTERVALO,  # 15:15 às 15:35
+        'tipo': 'intervalo',
+        'turno': 'tarde'
+    },
+    
+    # NOITE
+    "intervalo da noite": {
+        'inicio': time(21, 5), 
+        'duracao': DURACAO_INTERVALO,  # 21:05 às 21:25
+        'tipo': 'intervalo',
+        'turno': 'noite'
+    },
+    
+    # SAÍDAS (opcional - para avisos de final de turno)
+    "saída manhã": {
+        'inicio': time(12, 35), 
+        'duracao': timedelta(minutes=0),
+        'tipo': 'saida',
+        'turno': 'manha'
+    },
+    "saída tarde": {
+        'inicio': time(18, 35), 
+        'duracao': timedelta(minutes=0),
+        'tipo': 'saida',
+        'turno': 'tarde'
+    },
+    "saída noite": {
+        'inicio': time(22, 50), 
+        'duracao': timedelta(minutes=0),
+        'tipo': 'saida',
+        'turno': 'noite'
+    }
 }
 
-# --- FUNÇÃO AUXILIAR PARA VERIFICAR O STATUS DO INTERVALO ---
+def get_turno_atual(hora_atual):
+    """Determina qual turno está ativo baseado no horário"""
+    if time(7, 0) <= hora_atual < time(12, 30):
+        return 'manha'
+    elif time(13, 0) <= hora_atual < time(18, 50):
+        return 'tarde'
+    elif time(18, 50) <= hora_atual <= time(23, 59) or time(0, 0) <= hora_atual < time(1, 0):
+        return 'noite'
+    else:
+        return None  # Fora do horário escolar
+
 def get_status_intervalo():
     """
     Verifica o horário atual e retorna o status do próximo evento.
-    Retorna um dicionário com informações para o template.
     """
-    # --- INÍCIO DAS LINHAS DE DEBUG (Pode remover depois) ---
-    print(f"\n=======================================================")
-    print(f"DEBUG: Hora atual do servidor: {datetime.now()}")
-    print(f"=======================================================")
-    # --- FIM DAS LINHAS DE DEBUG ---
-
+    print(f"\n=== DEBUG GET_STATUS_INTERVALO ===")
     agora_dt = datetime.now()
     hoje = agora_dt.date()
-
-    eventos_ordenados = sorted(HORARIOS_EVENTOS.items(), key=lambda item: item[1]['inicio'])
-
+    turno_atual = get_turno_atual(agora_dt.time())
+    
+    print(f"Hora atual: {agora_dt}")
+    print(f"Turno atual: {turno_atual}")
+    
+    # Filtrar eventos apenas do turno atual ou sem turno específico
+    eventos_do_turno = {
+        nome: detalhes for nome, detalhes in HORARIOS_EVENTOS.items()
+        if detalhes.get('turno') == turno_atual or detalhes.get('turno') is None
+    }
+    
+    # Ordena eventos por horário
+    eventos_ordenados = sorted(eventos_do_turno.items(), key=lambda item: item[1]['inicio'])
+    print(f"Eventos do turno ordenados: {[(nome, det['inicio']) for nome, det in eventos_ordenados]}")
+    
     for nome, detalhes in eventos_ordenados:
         inicio_dt = datetime.combine(hoje, detalhes['inicio'])
         fim_dt = inicio_dt + detalhes['duracao']
-
+        
         tempo_para_inicio = inicio_dt - agora_dt
         tempo_para_fim = fim_dt - agora_dt
-
-        # --- INÍCIO DAS LINHAS DE DEBUG (Pode remover depois) ---
-        print(f"--- Verificando evento: '{nome}' ---")
+        
+        print(f"\n--- Verificando: {nome} ({detalhes.get('turno', 'geral')}) ---")
+        print(f"Início: {inicio_dt.strftime('%H:%M')}")
+        print(f"Fim: {fim_dt.strftime('%H:%M')}")
         print(f"Tempo para início: {tempo_para_inicio}")
-        print(f"Condição de início atendida? {timedelta(seconds=0) < tempo_para_inicio <= timedelta(minutes=15)}")
-        # --- FIM DAS LINHAS DE DEBUG ---
-
-        # CONDIÇÃO 1: Faltam 15 minutos ou menos para COMEÇAR o evento
-        if timedelta(seconds=0) < tempo_para_inicio <= timedelta(minutes=15):
-            return {
+        print(f"Tempo para fim: {tempo_para_fim}")
+        
+        # CONDIÇÃO 1: Avisar 15 minutos antes do INÍCIO
+        if timedelta(seconds=0) <= tempo_para_inicio <= AVISO_ANTECIPADO:
+            minutos = int(tempo_para_inicio.total_seconds() // 60)
+            resultado = {
                 "show_aviso": True,
-                "mensagem_status": f"Tempo para {nome}",
-                "tempo_restante_segundos": tempo_para_inicio.total_seconds()
+                "mensagem_status": f"⏰ {nome.title()} em {minutos} minutos",
+                "tempo_restante_segundos": tempo_para_inicio.total_seconds(),
+                "tipo_evento": "aviso_inicio",
+                "turno": detalhes.get('turno', 'geral')
             }
-
-        # CONDIÇÃO 2: Faltam 5 minutos ou menos para TERMINAR o intervalo
-        if detalhes['duracao'].total_seconds() > 0 and timedelta(seconds=0) < tempo_para_fim <= timedelta(minutes=5):
-            return {
+            print(f"✅ RETORNANDO (aviso início): {resultado}")
+            return resultado
+        
+        # CONDIÇÃO 2: DURANTE o intervalo
+        if tempo_para_inicio <= timedelta(seconds=0) <= tempo_para_fim and detalhes['tipo'] == 'intervalo':
+            minutos = int(tempo_para_fim.total_seconds() // 60)
+            
+            # Se faltam 5 minutos ou menos para terminar
+            if tempo_para_fim <= AVISO_FIM:
+                resultado = {
+                    "show_aviso": True,
+                    "mensagem_status": f"⚠️ Intervalo termina em {minutos} minutos",
+                    "tempo_restante_segundos": tempo_para_fim.total_seconds(),
+                    "tipo_evento": "fim_intervalo",
+                    "turno": detalhes.get('turno', 'geral')
+                }
+                print(f"✅ RETORNANDO (fim intervalo): {resultado}")
+                return resultado
+            else:
+                resultado = {
+                    "show_aviso": True,
+                    "mensagem_status": f"📢 Intervalo em andamento ({minutos}min restantes)",
+                    "tempo_restante_segundos": tempo_para_fim.total_seconds(),
+                    "tipo_evento": "durante_intervalo",
+                    "turno": detalhes.get('turno', 'geral')
+                }
+                print(f"✅ RETORNANDO (durante intervalo): {resultado}")
+                return resultado
+        
+        # CONDIÇÃO 3: Avisar saída (5 min antes)
+        if detalhes['tipo'] == 'saida' and timedelta(seconds=0) <= tempo_para_inicio <= timedelta(minutes=5):
+            minutos = int(tempo_para_inicio.total_seconds() // 60)
+            resultado = {
                 "show_aviso": True,
-                "mensagem_status": f"Tempo para o fim de {nome}",
-                "tempo_restante_segundos": tempo_para_fim.total_seconds()
+                "mensagem_status": f"🚪 Saída do turno {detalhes.get('turno', '')} em {minutos} minutos",
+                "tempo_restante_segundos": tempo_para_inicio.total_seconds(),
+                "tipo_evento": "aviso_saida",
+                "turno": detalhes.get('turno', 'geral')
             }
-
-    # Se nenhuma das condições acima for atendida, retorna um dicionário padrão
-    return {
-        "show_aviso": True,
-        "mensagem_status": "Tenha um ótimo dia!",
-        "tempo_restante_segundos": None
+            print(f"✅ RETORNANDO (aviso saída): {resultado}")
+            return resultado
+    
+    # Se chegou aqui, não há avisos ativos
+    if agora_dt.weekday() >= 5:  # Final de semana
+        resultado = {
+            "show_aviso": False,
+            "mensagem_status": "🌟 Bom final de semana!",
+            "tempo_restante_segundos": None,
+            "tipo_evento": "fim_de_semana",
+            "turno": None
         }
-
+    elif turno_atual is None:  # Fora do horário escolar
+        resultado = {
+            "show_aviso": False,
+            "mensagem_status": "🌙 Escola fechada - Próximo turno: 7h (manhã)",
+            "tempo_restante_segundos": None,
+            "tipo_evento": "fora_horario",
+            "turno": None
+        }
+    else:  # Horário normal de aula
+        resultado = {
+            "show_aviso": False,
+            "mensagem_status": f"📚 Aulas em andamento - Turno da {turno_atual}",
+            "tempo_restante_segundos": None,
+            "tipo_evento": "aula_normal",
+            "turno": turno_atual
+        }
+    
+    print(f"✅ RETORNANDO (sem aviso): {resultado}")
+    return resultado
 
 @login_manager.user_loader
 def load_user(user_id):

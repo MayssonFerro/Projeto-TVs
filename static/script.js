@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(atualizarRelogio, 1000);
     }
 
-
     // ======================================================
     // SEÇÃO 2: LÓGICA DO QR CODE E IMAGEM DE FUNDO
     // ======================================================
@@ -51,23 +50,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // ======================================================
+    // SEÇÃO 3: LÓGICA DE ROTAÇÃO DE PÁGINAS (VERSÃO MELHORADA)
+    // ======================================================
 
-// ======================================================
-// SEÇÃO 3: LÓGICA DE ROTAÇÃO DE PÁGINAS (VERSÃO MELHORADA)
-// ======================================================
+    // Adiciona uma linha no console do navegador para sabermos que o script começou
+    console.log("--- Iniciando Script de Rotação de Página ---");
 
-// Adiciona uma linha no console do navegador para sabermos que o script começou
-console.log("--- Iniciando Script de Rotação de Página ---");
-
-    // 1. OBTER DADOS DO PYTHON
-    // O filtro 'tojson' é a forma mais segura de passar variáveis do Jinja2 para o JS
-    // Se este arquivo for servido por Flask/Jinja2, a linha abaixo será processada corretamente.
-    // Caso esteja rodando puro (sem backend), defina manualmente o valor desejado.
-    const deveMostrarAviso = typeof SHOW_AVISO !== "undefined" ? SHOW_AVISO : false;
-    // Exemplo: substitua SHOW_AVISO pelo valor desejado se não estiver usando Jinja2.
-    // const deveMostrarAviso = false;
-    // Se estiver usando Jinja2, descomente a linha abaixo e comente a linha acima:
-    // const deveMostrarAviso = {{ show_aviso|tojson|default('false') }};
+    // 1. OBTER DADOS DO PYTHON - Com fallback seguro
+    // Verifica se SHOW_AVISO foi definido no template, senão usa false como padrão
+    let deveMostrarAviso = false;
+    
+    if (typeof window.SHOW_AVISO !== "undefined") {
+        deveMostrarAviso = window.SHOW_AVISO;
+    } else if (typeof SHOW_AVISO !== "undefined") {
+        deveMostrarAviso = SHOW_AVISO;
+    }
+    
     // Exibe no console se a página de aviso deve ou não ser mostrada
     console.log("Condição para mostrar a página de aviso:", deveMostrarAviso);
 
@@ -83,7 +82,7 @@ console.log("--- Iniciando Script de Rotação de Página ---");
     console.log("Lista de páginas na rotação atual:", paginasAtuais);
 
     // 3. DEFINIR TEMPO DE EXIBIÇÃO
-    const tempoDeExibicao = 15000; // Aumentado para 15 segundos
+    const tempoDeExibicao = 15000; // 15 segundos
 
     // 4. DECIDIR QUAL SERÁ A PRÓXIMA PÁGINA
     const paginaAtualPath = window.location.pathname;
@@ -122,4 +121,3 @@ document.addEventListener('keydown', function (e) {
         window.location.href = "/login";
     }
 });
-
