@@ -16,6 +16,9 @@
             window.eventoImagem = "{{ evento[0].imagem }}";
         </script>
     {% endif %}
+    <script>
+        const SHOW_AVISO = {{ show_aviso|tojson|default('false') }};
+    </script>
     <title>Painel</title>
 </head>
 <body>

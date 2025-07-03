@@ -76,7 +76,7 @@ def get_status_intervalo():
 
     # Se nenhuma das condições acima for atendida, retorna um dicionário padrão
     return {
-        "show_aviso": False,
+        "show_aviso": True,
         "mensagem_status": "Tenha um ótimo dia!",
         "tempo_restante_segundos": None
         }
@@ -209,7 +209,12 @@ def show_painel():
     noticia = Noticia.query.all()
     evento = Evento.query.all()
     status_intervalo = get_status_intervalo()
-    return render_template("painel.html", noticia=noticia, evento=evento, **status_intervalo)
+    return render_template(
+        "painel.html",
+        noticia=noticia,
+        evento=evento,
+        **status_intervalo
+    )
 
 
 @app.route('/dispositivos')
@@ -258,29 +263,20 @@ for hora, minuto in horarios_agendados:
 scheduler.start()
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    dispositivos = Dispositivo.query.order_by(Dispositivo.nome).all()
-    noticias = Noticia.query.order_by(Noticia.data_inicio.desc()).all()
-    eventos = Evento.query.order_by(Evento.data_inicio.desc()).all()
-    mensagens_temporarias = Mensagem_Temporaria.query.order_by(Mensagem_Temporaria.data_inicio.desc()).all()
-    return render_template("gerenciador_deconteudo/admin.html", dispositivos=dispositivos, noticias=noticias, eventos=eventos, mensagens_temporarias=mensagens_temporarias)
-
-@app.route('/admin/conteudo/adicionar', methods=['GET', 'POST'])
-@login_required
-def adicionar_conteudo():
     if request.method == 'POST':
         dispositivos_ids = request.form.getlist('dispositivos')
         conteudo_noticia = request.form.get('conteudo_noticia')
 
         if not dispositivos_ids:
             flash("Você deve selecionar ao menos um dispositivo.", "danger")
-            return redirect(url_for('adicionar_conteudo'))
+            return redirect(url_for('admin'))
 
         if not conteudo_noticia:
             flash("O campo de conteúdo não pode estar vazio.", "danger")
-            return redirect(url_for('adicionar_conteudo'))
+            return redirect(url_for('admin'))
 
         for id_dispositivo in dispositivos_ids:
             nova_noticia = Noticia(
@@ -345,8 +341,14 @@ def clima():
             print(f"Erro ao ler ou processar o arquivo de cache: {e}")
             erro_msg = "Ocorreu um erro ao carregar os dados do clima."
             
-    return render_template('clima.html', clima=clima_data, erro=erro_msg, **status_intervalo, noticia=noticia, evento=evento)
-
+    return render_template(
+        'clima.html',
+        clima=clima_data,
+        erro=erro_msg,
+        noticia=noticia,
+        evento=evento,
+        **status_intervalo
+    )
 
 
 if __name__ == '__main__':
