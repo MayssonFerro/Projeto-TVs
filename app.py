@@ -1,11 +1,14 @@
 import json
 import os
 import requests
-from flask import Flask, render_template, request, redirect, flash, url_for
+import subprocess
+from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, time, timedelta
+from werkzeug.utils import secure_filename
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'uma_chave_muito_secreta_aqui'
@@ -23,9 +26,7 @@ DURACAO_INTERVALO = timedelta(minutes=20)
 AVISO_ANTECIPADO = timedelta(minutes=15)  # Tempo de antecedência para avisos
 AVISO_FIM = timedelta(minutes=5)          # Aviso antes do fim do intervalo
 
-DURACAO_INTERVALO = timedelta(minutes=20)
-AVISO_ANTECIPADO = timedelta(minutes=15)  # Tempo de antecedência para avisos
-AVISO_FIM = timedelta(minutes=5)          # Aviso antes do fim do intervalo
+      
 
 HORARIOS_EVENTOS = {
     # MANHÃ
@@ -219,8 +220,8 @@ def fetch_and_cache_weather():
     except requests.exceptions.RequestException as e:
         print(f"!!!!!!!!!! AGENDADOR: Erro ao chamar a API: {e} !!!!!!!!!!!")
     print("--------------------------------------------------")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dispositivos.db'
+ 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dispositivos_novo.db'
 db = SQLAlchemy(app)
 
 
@@ -229,8 +230,11 @@ class Dispositivo(db.Model):
     ip = db.Column(db.String(15), unique=True, nullable=False)
     nome = db.Column(db.String(50), nullable=False)
     local = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(20), default='ativo')  # ADICIONAR
+    observacoes = db.Column(db.Text)  # ADICIONAR
     ultima_atualizacao = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     ultima_sincronizacao = db.Column(db.DateTime, default=datetime.now)
+    ultima_conexao = db.Column(db.DateTime)  # ADICIONAR para testar_dispositivo
 
 
 class Evento(db.Model):
@@ -321,11 +325,39 @@ def logout():
     flash("Logout realizado com sucesso.", "info")
     return redirect(url_for('login'))
 
+@app.route('/testar_sistema')
+@login_required
+def testar_sistema():
+    try:
+        # Testar conexão com banco
+        usuarios = Usuario.query.count()
+        dispositivos = Dispositivo.query.count()
+        
+        # Testar função de status
+        status = get_status_intervalo()
+        
+        return {
+            'status': 'OK',
+            'usuarios': usuarios,
+            'dispositivos': dispositivos,
+            'show_aviso': status['show_aviso'],
+            'turno_atual': status.get('turno'),
+            'timestamp': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {'status': 'ERRO', 'erro': str(e)}
 
 @app.route("/")
 def show_painel():
-    noticia = Noticia.query.all()
-    evento = Evento.query.all()
+    noticia = Noticia.query.filter_by(status='ativa').all()
+    # Pega o evento ativo mais recente
+    evento = Evento.query.filter_by(status='ativo').order_by(Evento.data_inicio.desc()).all()
+    
+    # Debug: imprimir no console para verificar se há eventos
+    print(f"DEBUG - Notícias encontradas: {len(noticia)}")
+    print(f"DEBUG - Eventos encontrados: {len(evento)}")
+    for e in evento:
+        print(f"  - Evento: {e.titulo}, Link: {e.link}")
     status_intervalo = get_status_intervalo()
     return render_template(
         "painel.html",
@@ -342,26 +374,96 @@ def show_dispositivos():
     return render_template('dispositivos.html', dispositivos=dispositivos)
 
 
-@app.route('/adicionar_dispositivo', methods=["GET", 'POST'])
+@app.route('/adicionar_dispositivo', methods=['GET', 'POST'])
 @login_required
 def adicionar_dispositivo():
-    if request.method == "POST":
-        ip = request.form["ip"]
-        if Dispositivo.query.filter_by(ip=ip).first():
-            flash("Já existe um dispositivo com esse IP!", "warning")
-            return render_template("adicionar_dispositivo.html")
+    if request.method == 'POST':
+        nome = request.form['nome']
+        local = request.form['local']
+        ip = request.form['ip']
+        status = request.form['status']
+        observacoes = request.form.get('observacoes', '')
+        
+        # Verificar se IP já existe
+        dispositivo_existente = Dispositivo.query.filter_by(ip=ip).first()
+        if dispositivo_existente:
+            flash('Erro: Já existe um dispositivo com este IP!', 'error')
+            return render_template('adicionar_dispositivo.html')
+        
+        # Criar novo dispositivo
         novo_dispositivo = Dispositivo(
-            nome=request.form["nome"],
-            local=request.form["local"],
+            nome=nome,
+            local=local,
             ip=ip,
-            ultima_atualizacao=datetime.now(),
-            ultima_sincronizacao=datetime.now()
+            status=status,
+            observacoes=observacoes
         )
-        db.session.add(novo_dispositivo)
-        db.session.commit()
-        flash("Dispositivo adicionado com sucesso!", "success")
-        return redirect(url_for('show_dispositivos'))
-    return render_template("adicionar_dispositivo.html")
+        
+        try:
+            db.session.add(novo_dispositivo)
+            db.session.commit()
+            flash(f'Dispositivo {nome} adicionado com sucesso!', 'success')
+            return redirect(url_for('listar_dispositivos'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao adicionar dispositivo: {str(e)}', 'error')
+    
+    return render_template('adicionar_dispositivo.html')
+
+@app.route('/listar_dispositivos')
+@login_required
+def listar_dispositivos():
+    dispositivos = Dispositivo.query.all()
+    return render_template('listar_dispositivos.html', dispositivos=dispositivos)
+
+@app.route('/testar_dispositivo/<ip>')
+@login_required
+def testar_dispositivo(ip):
+    try:
+        import subprocess
+        result = subprocess.run(['ping', '-c', '1', '-W', '3', ip], 
+                              capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            # Atualizar última conexão
+            dispositivo = Dispositivo.query.filter_by(ip=ip).first()
+            if dispositivo:
+                dispositivo.ultima_conexao = datetime.utcnow()
+                db.session.commit()
+            
+            return jsonify({'sucesso': True, 'status': 'Online'})  # CORRIGIR
+        else:
+            return jsonify({'sucesso': False, 'erro': 'Dispositivo não responde ao ping'})  # CORRIGIR
+    
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})  # CORRIGIR
+    
+@app.route('/enviar_conteudo/<int:dispositivo_id>')
+@login_required
+def enviar_conteudo(dispositivo_id):
+    dispositivo = Dispositivo.query.get_or_404(dispositivo_id)
+    
+    # Aqui você pode enviar comandos específicos para o Raspberry Pi
+    # Por exemplo, alterar qual página deve ser exibida
+    try:
+        # Exemplo: enviar comando HTTP para o Raspberry Pi
+        url = f"http://{dispositivo.ip}:5000/atualizar_conteudo"
+        data = {
+            'pagina': request.args.get('pagina', '/'),
+            'comando': request.args.get('comando', 'reload')
+        }
+        
+        response = requests.post(url, json=data, timeout=5)
+        
+        if response.status_code == 200:
+            flash(f'Conteúdo enviado para {dispositivo.nome}!', 'success')
+        else:
+            flash(f'Erro ao comunicar com {dispositivo.nome}', 'error')
+    
+    except Exception as e:
+        flash(f'Erro de conexão com {dispositivo.nome}: {str(e)}', 'error')
+    
+    return redirect(url_for('listar_dispositivos'))
 
 @app.route("/aviso-intervalo")
 def aviso_intervalo():
@@ -385,50 +487,155 @@ scheduler.start()
 @login_required
 def admin():
     if request.method == 'POST':
+        print("=== DEBUG FORMULÁRIO ===")
         dispositivos_ids = request.form.getlist('dispositivos')
         conteudo_noticia = request.form.get('conteudo_noticia')
+        link_qrcode = request.form.get('link_qrcode')
+
+        print(f"Dispositivos selecionados: {dispositivos_ids}")
+        print(f"Conteúdo notícia: '{conteudo_noticia}'")
+        print(f"Link QR Code: '{link_qrcode}'")
+        print(f"Arquivos recebidos: {list(request.files.keys())}")
 
         if not dispositivos_ids:
             flash("Você deve selecionar ao menos um dispositivo.", "danger")
             return redirect(url_for('admin'))
 
-        if not conteudo_noticia:
-            flash("O campo de conteúdo não pode estar vazio.", "danger")
+        # Processamento de imagem (se houver)
+        imagem_filename = None
+        if 'imagem' in request.files:
+            file = request.files['imagem']
+            print(f"Arquivo de imagem: {file}")
+            print(f"Nome do arquivo: {file.filename}")
+            if file and file.filename != '':
+                print("Processando upload da imagem...")
+                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                print(f"Diretório de upload: {upload_folder}")
+                
+                filename = secure_filename(file.filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                file_path = os.path.join(upload_folder, unique_filename)
+                file.save(file_path)
+                imagem_filename = f"uploads/{unique_filename}"
+                print(f"Imagem salva como: {imagem_filename}")
+            else:
+                print("Nenhuma imagem foi enviada ou arquivo vazio")
+        else:
+            print("Campo 'imagem' não encontrado no formulário")
+
+        print(f"Imagem final: {imagem_filename}")
+
+        # Verificar se pelo menos uma coisa foi preenchida
+        if not conteudo_noticia and not imagem_filename and not link_qrcode:
+            print("ERRO: Nenhum conteúdo foi preenchido!")
+            flash("Você deve adicionar pelo menos um conteúdo: texto, imagem ou link.", "danger")
             return redirect(url_for('admin'))
 
         for id_dispositivo in dispositivos_ids:
-            nova_noticia = Noticia(
-                conteudo=conteudo_noticia,
-                status="ativa",
-                dispositivo_id=id_dispositivo
-            )
-            db.session.add(nova_noticia)
-
-        db.session.commit()
-        flash("Notícia rápida adicionada com sucesso!", "success")
+            print(f"Processando dispositivo {id_dispositivo}...")
+            
+            # Criar notícia APENAS se houver texto
+            if conteudo_noticia:
+                print("Criando notícia...")
+                nova_noticia = Noticia(
+                    conteudo=conteudo_noticia,
+                    status="ativa",
+                    dispositivo_id=id_dispositivo
+                )
+                db.session.add(nova_noticia)
+            
+            # Criar evento se houver imagem OU link
+            if link_qrcode or imagem_filename:
+                print("Criando evento...")
+                evento_qr = Evento(
+                    dispositivo_id=id_dispositivo,
+                    titulo="Conteúdo - " + (conteudo_noticia[:30] + "..." if conteudo_noticia and len(conteudo_noticia) > 30 else conteudo_noticia if conteudo_noticia else "Imagem de fundo"),
+                    descricao="Conteúdo relacionado à publicação",
+                    link=link_qrcode if link_qrcode else "",
+                    imagem=imagem_filename if imagem_filename else "",
+                    status="ativo"
+                )
+                db.session.add(evento_qr)
+                print(f"Evento criado: titulo='{evento_qr.titulo}', imagem='{evento_qr.imagem}', link='{evento_qr.link}'")
+        
+        try:
+            db.session.commit()
+            print("Dados salvos no banco com sucesso!")
+            flash("Conteúdo adicionado com sucesso!", "success")
+        except Exception as e:
+            print(f"ERRO ao salvar no banco: {e}")
+            db.session.rollback()
+            flash(f"Erro ao salvar: {str(e)}", "danger")
+            
         return redirect(url_for('admin'))
 
+    # GET request - mostrar a página
     dispositivos = Dispositivo.query.order_by(Dispositivo.nome).all()
-    return render_template("gerenciador_deconteudo/adicionar_conteudo.html", dispositivos=dispositivos)
+    noticias = Noticia.query.filter_by(status='ativa').all()
+    eventos = Evento.query.filter_by(status='ativo').all()
+    
+    return render_template(
+        "gerenciador_deconteudo/adicionar_conteudo.html", 
+        dispositivos=dispositivos,
+        noticias=noticias,
+        eventos=eventos
+    )
 
 
-@app.route('/admin/noticia/excluir/<int:id>', methods=['POST'])
+@app.route('/excluir_noticia/<int:id>', methods=['POST'])
 @login_required
 def excluir_noticia(id):
-    noticia_para_excluir = Noticia.query.get_or_404(id)
-    db.session.delete(noticia_para_excluir)
+    noticia = Noticia.query.get_or_404(id)
+    
+    # Remover eventos relacionados (que começam com "QR Code -" OU "Conteúdo -")
+    eventos_relacionados = Evento.query.filter(
+        (Evento.titulo.like('QR Code -%') | Evento.titulo.like('Conteúdo -%')),
+        Evento.dispositivo_id == noticia.dispositivo_id
+    ).all()
+    
+    for evento in eventos_relacionados:
+        # Remover arquivo de imagem se existir
+        if evento.imagem:
+            arquivo_path = os.path.join(app.root_path, 'static', evento.imagem)
+            if os.path.exists(arquivo_path):
+                try:
+                    os.remove(arquivo_path)
+                    print(f"Arquivo removido: {arquivo_path}")
+                except Exception as e:
+                    print(f"Erro ao remover arquivo: {e}")
+        
+        db.session.delete(evento)
+    
+    db.session.delete(noticia)
     db.session.commit()
-    flash("Notícia removida com sucesso.", "success")
+    flash("Publicação excluída com sucesso!", "success")
     return redirect(url_for('admin'))
 
-
-@app.route('/admin/mensagem/excluir/<int:id>', methods=['POST'])
+@app.route('/excluir_mensagem/<int:id>', methods=['POST'])
 @login_required
 def excluir_mensagem(id):
-    mensagem_para_excluir = Mensagem_Temporaria.query.get_or_404(id)
-    db.session.delete(mensagem_para_excluir)
+    mensagem = Mensagem_Temporaria.query.get_or_404(id)
+    
+    # Remover eventos QR relacionados (que começam com "QR Code -")
+    eventos_qr = Evento.query.filter(
+        Evento.titulo.like('QR Code -%'),
+        Evento.data_inicio == mensagem.data_inicio,
+        Evento.dispositivo_id == mensagem.dispositivo_id
+    ).all()
+    
+    for evento_qr in eventos_qr:
+        db.session.delete(evento_qr)
+    
+    # Remover arquivo de imagem se existir
+    if mensagem.link:
+        arquivo_path = os.path.join(app.root_path, 'static', mensagem.link)
+        if os.path.exists(arquivo_path):
+            os.remove(arquivo_path)
+    
+    db.session.delete(mensagem)
     db.session.commit()
-    flash("Mensagem programada removida com sucesso.", "success")
+    flash("Mensagem e QR Code relacionado excluídos com sucesso!", "success")
     return redirect(url_for('admin'))
 
 @app.route('/clima')
@@ -436,6 +643,8 @@ def clima():
     status_intervalo = get_status_intervalo()
     clima_data = None
     erro_msg = None
+    noticia = Noticia.query.all()
+    evento = Evento.query.all()
     noticia = Noticia.query.all()
     evento = Evento.query.all()
 

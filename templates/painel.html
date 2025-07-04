@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     {% if evento and evento|length > 0 and evento[0].link %}
         <script>
             window.eventoLink = "{{ evento[0].link }}";
@@ -13,9 +14,10 @@
     {% endif %}
     {% if evento and evento|length > 0 and evento[0].imagem %}
         <script>
-            window.eventoImagem = "{{ evento[0].imagem }}";
+            window.eventoImagem = "{{ url_for('static', filename=evento[0].imagem) }}";
         </script>
     {% endif %}
+    
     <script>
         const SHOW_AVISO = {{ show_aviso|tojson|default('false') }};
     </script>
@@ -23,12 +25,19 @@
 </head>
 <body>
     <main>
-        <div class="container painel">
+        <div class="container painel" id="painel-principal">
             <div class="relogio">
                 <h1 id="data"></h1>
                 <h1 id="hora"></h1>
             </div>
-            <div class="descricao"></div>
+            <div class="descricao">
+                {% if evento and evento|length > 0 %}
+                    {% if evento[0].titulo != "Conteúdo - Imagem de fundo" %}
+                        <h2>{{ evento[0].titulo }}</h2>
+                        <p>{{ evento[0].descricao }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
             <div class="link">
                 {% if evento and evento|length > 0 and evento[0].link %}
                     <div id="qrcode"></div>
@@ -41,7 +50,7 @@
         <div class="noticia-rapida">
             {% for n in noticia %}
                 <span class="noticia-text">{{ n.conteudo }}</span>
-                {% endfor %}
+            {% endfor %}
         </div>
     </footer>
 </body>

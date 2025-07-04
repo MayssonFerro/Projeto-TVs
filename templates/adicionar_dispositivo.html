@@ -5,43 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
-
     <title>Adicionar Dispositivo</title>
 </head>
 <body>
     <div class="container">
         <div class="title">
-            <h1>Cadastrar Dispositivo</h1>
+            <h1>📺 Cadastrar Dispositivo</h1>
+            <p>Registre uma nova TV/Raspberry Pi no sistema</p>
         </div>
-       <div class="content">
+       
+        <div class="content">
             <form action="/adicionar_dispositivo" method="post">
-            
                 <div class="form-group">
                     <label for="nome">Nome do Dispositivo:</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: TV Sala de Aula 01" required>
 
                     <label for="local">Local do Dispositivo:</label>
-                    <input type="text" id="local" name="local" required>
+                    <input type="text" id="local" name="local" placeholder="Ex: Sala 101, Laboratório, Auditório" required>
 
-                    <label for="ip">IP:</label>
-                    <input type="text" id="ip" name="ip" required>
+                    <label for="ip">Endereço IP:</label>
+                    <input type="text" id="ip" name="ip" placeholder="Ex: 192.168.1.100" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" required>
+                    <small>Formato: 192.168.1.100</small>
+
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" required>
+                        <option value="ativo">🟢 Ativo</option>
+                        <option value="inativo">🔴 Inativo</option>
+                        <option value="manutencao">🟡 Manutenção</option>
+                    </select>
+
+                    <label for="observacoes">Observações (opcional):</label>
+                    <textarea id="observacoes" name="observacoes" placeholder="Ex: Raspberry Pi 4, Resolução 1920x1080"></textarea>
                 </div>
 
-                <button type="submit" class="btn">+ Dispositivo</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">📱 Adicionar Dispositivo</button>
+                    <button type="button" class="btn btn-test" onclick="testarConexao()">🔍 Testar Conexão</button>
+                </div>
             </form>
         </div>
+
         <div class="footer">
-            <a href="/" class="btn">Voltar</a>
+            <a href="/admin" class="btn btn-secondary">← Voltar ao Painel</a>
+            <a href="/listar_dispositivos" class="btn btn-info">📋 Ver Dispositivos</a>
         </div>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <ul class="flash-messages">
+            <div class="flash-messages">
                 {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
                 {% endfor %}
-            </ul>
+            </div>
         {% endif %}
-    {% endwith %}
+        {% endwith %}
     </div>
+
+    <script>
+        function testarConexao() {
+            const ip = document.getElementById('ip').value;
+            if (!ip) {
+                alert('Digite um IP primeiro!');
+                return;
+            }
+            
+            // Aqui você pode fazer uma requisição AJAX para testar a conexão
+            fetch(`/testar_dispositivo/${ip}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        alert('✅ Dispositivo respondeu! Status: ' + data.status);
+                    } else {
+                        alert('❌ Dispositivo não responde: ' + data.erro);
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Erro ao testar conexão: ' + error);
+                });
+        }
+
+        // Validação do IP em tempo real
+        document.getElementById('ip').addEventListener('input', function(e) {
+            const ip = e.target.value;
+            const pattern = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+            
+            if (ip && !pattern.test(ip)) {
+                e.target.style.borderColor = 'red';
+            } else {
+                e.target.style.borderColor = '';
+            }
+        });
+    </script>
 </body>
 </html>

@@ -142,8 +142,40 @@ input {
     box-sizing: border-box;
     min-height: 100vh;
     width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease-in-out;
 }
 
+/* Overlay para mensagens de texto sobre a imagem */
+.mensagem-overlay {
+    position: absolute;
+    bottom: 150px; /* Acima do footer */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    max-width: 80%;
+    text-align: center;
+}
+
+.mensagem-texto {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.mensagem-texto p {
+    font-size: 1.8em;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+/* Melhorar contraste do relógio sobre a imagem */
 .relogio {
     position: absolute;
     top: 20px;
@@ -151,7 +183,7 @@ input {
     z-index: 10;
     height: auto;
     width: 420px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.7); /* Mais opaco para melhor contraste */
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -159,6 +191,7 @@ input {
     align-items: center;
     padding: 1rem;
     text-align: center;
+    backdrop-filter: blur(10px);
 }
 
 #data {
@@ -258,4 +291,62 @@ footer {
     form {
         padding: 0;
     }
+}
+
+/* Modal para mensagens programadas */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.mensagem-programada {
+    margin-bottom: 20px;
+}
+
+.imagem-mensagem {
+    max-width: 100%;
+    max-height: 400px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.texto-mensagem {
+    font-size: 1.5em;
+    color: #333;
+    margin: 15px 0;
+    line-height: 1.4;
+}
+
+.btn-fechar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 15px;
+}
+
+.btn-fechar:hover {
+    background-color: #0056b3;
 }

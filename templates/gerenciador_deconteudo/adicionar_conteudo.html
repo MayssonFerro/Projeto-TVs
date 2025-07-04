@@ -4,77 +4,276 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Conteúdo</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/adicionarconteudo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 { color: #333; margin-bottom: 15px; }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover { background-color: #0056b3; }
+        
+        .btn-excluir {
+            background-color: #dc3545;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-excluir:hover { background-color: #c82333; }
+        
+        .item-conteudo {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .flash-messages {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .flash-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-messages.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .preview-imagem {
+            max-width: 200px;
+            max-height: 150px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+
+        .exemplo {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Adicionar Novo Conteúdo</h1>
-
-    <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
-        <!-- Tipo -->
-        <label for="tipo_conteudo">Tipo de Conteúdo:</label>
-        <select name="tipo_conteudo" id="tipo_conteudo" required>
-            <option value="noticia_rapida">Notícia Rápida (Barra inferior)</option>
-            <option value="mensagem_programada">Mensagem Programada (Tela cheia)</option>
-        </select>
-
-        <hr>
-
-        <!-- Bloco: Notícia Rápida -->
-        <div id="form-noticia">
-            <label for="conteudo_noticia">Conteúdo (máx 150 caracteres):</label>
-            <textarea name="conteudo_noticia" id="conteudo_noticia" maxlength="150" rows="3" required></textarea>
-        </div>
-
-        <!-- Bloco: Mensagem Programada -->
-        <div id="form-mensagem" style="display: none;">
-            <label for="mensagem">Mensagem:</label>
-            <textarea name="mensagem" id="mensagem" rows="4"></textarea>
-
-            <label for="data_inicio">Início:</label>
-            <input type="datetime-local" name="data_inicio" id="data_inicio">
-
-            <label for="data_fim">Fim:</label>
-            <input type="datetime-local" name="data_fim" id="data_fim">
-
-            <!-- Novo campo de imagem -->
-            <label for="imagem">Enviar Imagem:</label>
-            <input type="file" name="imagem" id="imagem" accept="image/*">
-        </div>
-
-        <hr>
-
-        <!-- Dispositivos -->
-        <h3>Publicar nos Dispositivos:</h3>
-        <div class="checkbox-group">
-            {% for dispositivo in dispositivos %}
-                <label>
-                    <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}">
-                    {{ dispositivo.nome }} (IP: {{ dispositivo.ip }})
-                </label>
-            {% else %}
-                <p>Nenhum dispositivo cadastrado. <a href="{{ url_for('gerenciar_dispositivos') }}">Cadastre um primeiro</a>.</p>
+    <!-- Mensagens Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-messages {{ category }}">{{ message }}</div>
             {% endfor %}
-        </div>
+        {% endif %}
+    {% endwith %}
 
-        <!-- Botões -->
-        <div class="button-group">
-            <button type="submit">Publicar Conteúdo</button>
-            <a href="{{ url_for('admin') }}" class="cancel-link">Cancelar</a>
-        </div>
-    </form>
+    <h1>📺 Gerenciar Conteúdo das TVs</h1>
 
-    <!-- Script de alternância entre os formulários -->
+    <!-- Exemplo de como funciona -->
+    <div class="exemplo">
+        <h3>💡 Como funciona:</h3>
+        <ul style="margin-left: 20px;">
+            <li><strong>Texto:</strong> Aparece na barra inferior (notícia rápida) passando da direita para esquerda</li>
+            <li><strong>Imagem:</strong> Aparece como papel de parede da tela principal</li>
+            <li><strong>QR Code:</strong> Aparece no cantinho direito quando você adiciona um link</li>
+            <li><strong>Combinação:</strong> Você pode usar texto + imagem + QR code juntos!</li>
+        </ul>
+    </div>
+
+    <!-- Formulário para adicionar novo conteúdo -->
+    <div class="container">
+        <h2>➕ Adicionar Nova Publicação</h2>
+        <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
+            <label for="tipo_conteudo">Tipo de Conteúdo:</label>
+            <select name="tipo_conteudo" id="tipo_conteudo" onchange="atualizarCamposConteudo()">
+                <option value="rapido">Notícia rápida (texto)</option>
+                <option value="imagem">Conteúdo com imagem</option>
+            </select>
+
+            <div id="campo_texto">
+                <label for="conteudo_noticia">📝 Texto da Notícia Rápida:</label>
+                <textarea name="conteudo_noticia" id="conteudo_noticia" maxlength="150" rows="3"
+                    placeholder="Ex: Reunião de pais hoje às 19h no auditório. Compareçam!"></textarea>
+                <small style="color: #666;">Este texto aparecerá na barra inferior</small>
+            </div>
+
+            <div id="campo_imagem" style="display: none;">
+                <label for="imagem">🖼️ Imagem de Fundo:</label>
+                <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImagem(this)">
+                <div id="preview-container"></div>
+                <small style="color: #666;"><strong>A imagem será exibida como papel de parede da tela principal</strong></small>
+            </div>
+
+            <label for="link_qrcode">🔗 Link para QR Code (opcional):</label>
+            <input type="url" name="link_qrcode" id="link_qrcode" placeholder="https://exemplo.com">
+            <small style="color: #666;">Se preenchido, será gerado um QR Code no canto direito da tela</small>
+
+            <!-- Dispositivos -->
+            <h3>📍 Publicar nas TVs:</h3>
+            <div class="checkbox-group">
+                {% for dispositivo in dispositivos %}
+                    <label>
+                        <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}" checked>
+                        📺 {{ dispositivo.nome }} - {{ dispositivo.local }} ({{ dispositivo.ip }})
+                    </label>
+                {% else %}
+                    <p>⚠️ Nenhuma TV cadastrada. <a href="{{ url_for('adicionar_dispositivo') }}">Cadastre uma primeiro</a>.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Botões -->
+            <div style="margin-top: 20px;">
+                <button type="submit">🚀 Publicar Conteúdo</button>
+                <a href="{{ url_for('show_painel') }}" style="margin-left: 10px; color: #6c757d; text-decoration: none;">← Voltar ao Painel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Seção de conteúdos existentes -->
+    <div class="container">
+        <h2>📋 Publicações Ativas</h2>
+        
+        {% if noticias %}
+            {% for noticia in noticias %}
+                <div class="item-conteudo">
+                    <p><strong>📝 Texto:</strong> {{ noticia.conteudo }}</p>
+                    <p><strong>📅 Publicado em:</strong> {{ noticia.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
+                    
+                    <!-- Verificar se existe QR code ou imagem associada -->
+                    {% for evento in eventos %}
+                        {% if (evento.titulo.startswith('QR Code -') or evento.titulo.startswith('Conteúdo -')) and evento.dispositivo_id == noticia.dispositivo_id %}
+                            {% if evento.link %}
+                                <p><strong>🔗 QR Code:</strong> 
+                                    <a href="{{ evento.link }}" target="_blank" style="color: #007bff; word-break: break-all;">
+                                        {{ evento.link }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {% if evento.imagem %}
+                                <p><strong>🖼️ Imagem:</strong> 
+                                    <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem da publicação">
+                                </p>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <form method="POST" action="{{ url_for('excluir_noticia', id=noticia.id) }}" style="display: inline;">
+                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir esta publicação?')">🗑️ Excluir</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>📭 Nenhuma publicação ativa no momento.</p>
+        {% endif %}
+    </div>
+
     <script>
-        const tipoConteudo = document.getElementById('tipo_conteudo');
-        const formNoticia = document.getElementById('form-noticia');
-        const formMensagem = document.getElementById('form-mensagem');
+        function previewImagem(input) {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = '';
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-imagem';
+                    img.alt = 'Preview da imagem';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-        tipoConteudo.addEventListener('change', function () {
-            const isNoticia = this.value === 'noticia_rapida';
-            formNoticia.style.display = isNoticia ? 'block' : 'none';
-            formMensagem.style.display = isNoticia ? 'none' : 'block';
+
+        function atualizarCamposConteudo() {
+            const tipo = document.getElementById('tipo_conteudo').value;
+            document.getElementById('campo_texto').style.display = (tipo === 'rapido') ? 'block' : 'none';
+            document.getElementById('campo_imagem').style.display = (tipo === 'imagem') ? 'block' : 'none';
+        }
+        // Chama ao carregar a página para garantir o estado inicial correto
+        document.addEventListener('DOMContentLoaded', atualizarCamposConteudo);
+
+        // Contador de caracteres
+        document.getElementById('conteudo_noticia').addEventListener('input', function(e) {
+            const maxLength = 150;
+            const currentLength = e.target.value.length;
+            const remaining = maxLength - currentLength;
+            
+            // Remove contador anterior se existir
+            const existingCounter = e.target.parentNode.querySelector('.char-counter');
+            if (existingCounter) {
+                existingCounter.remove();
+            }
+            
+            // Adiciona novo contador
+            const counter = document.createElement('small');
+            counter.className = 'char-counter';
+            counter.style.color = remaining < 20 ? '#dc3545' : '#666';
+            counter.textContent = `${currentLength}/${maxLength} caracteres (${remaining} restantes)`;
+            e.target.parentNode.appendChild(counter);
         });
     </script>
-
 </body>
 </html>

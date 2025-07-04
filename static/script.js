@@ -36,29 +36,73 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Gera o QR Code (com a verificação para não duplicar)
     const qrcodeContainer = document.getElementById("qrcode");
-    if (window.eventoLink && qrcodeContainer && qrcodeContainer.innerHTML.trim() === '') {
-        new QRCode(qrcodeContainer, window.eventoLink);
+    console.log("DEBUG - Container QR Code:", qrcodeContainer);
+    console.log("DEBUG - Link do evento:", window.eventoLink);
+    console.log("DEBUG - Imagem do evento:", window.eventoImagem);
+
+    if (qrcodeContainer && window.eventoLink && window.eventoLink.trim() !== "") {
+        console.log('Container QR Code encontrado!');
+        console.log('Link encontrado:', window.eventoLink);
+        console.log('Container já tem conteúdo:', qrcodeContainer.innerHTML.trim() !== '');
+        
+        // Só gera o QR Code se o container estiver vazio
+        if (qrcodeContainer.innerHTML.trim() === '') {
+            console.log('Gerando QR Code...');
+            try {
+                new QRCode(qrcodeContainer, {
+                    text: window.eventoLink,
+                    width: 150,
+                    height: 150,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                console.log('QR Code gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar QR Code:', error);
+            }
+        } else {
+            console.log('Container já possui QR Code, pulando geração...');
+        }
+    } else {
+        console.log('QR Code não será gerado:');
+        console.log('  - Container existe:', !!qrcodeContainer);
+        console.log('  - Link existe:', !!window.eventoLink);
+        console.log('  - Link não vazio:', window.eventoLink && window.eventoLink.trim() !== "");
     }
 
-    // Define a imagem de fundo do painel, se existir
-    if (window.eventoImagem) {
-        const painel = document.querySelector('.painel');
-        if (painel) {
+    // Aplicar imagem de fundo do painel
+    const painel = document.querySelector('.painel');
+    if (painel) {
+        if (window.eventoImagem) {
+            console.log('Aplicando imagem de evento como papel de parede:', window.eventoImagem);
             painel.style.backgroundImage = `url('${window.eventoImagem}')`;
-            painel.style.backgroundSize = "cover";
-            painel.style.backgroundPosition = "center";
+            painel.style.backgroundSize = 'cover';
+            painel.style.backgroundPosition = 'center';
+            painel.style.backgroundRepeat = 'no-repeat';
+        } else {
+            console.log('Aplicando fundo padrão (gradiente)');
+            painel.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
     }
 
     // ======================================================
-    // SEÇÃO 3: LÓGICA DE ROTAÇÃO DE PÁGINAS (VERSÃO MELHORADA)
+    // SEÇÃO 3: ROTAÇÃO DE PÁGINAS (se necessário)
     // ======================================================
-
-    // Adiciona uma linha no console do navegador para sabermos que o script começou
+    
+    // Obter a URL atual
+    const paginaAtualPath = window.location.pathname;
     console.log("--- Iniciando Script de Rotação de Página ---");
+    console.log("Página atual:", paginaAtualPath);
+
+    // Verificar se deve desabilitar rotação para páginas administrativas
+    const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos'];
+    if (paginasAdministrativas.some(pagina => paginaAtualPath.startsWith(pagina))) {
+        console.log("Página administrativa detectada. Rotação de página desabilitada.");
+        return; // Sai da função, não faz rotação
+    }
 
     // 1. OBTER DADOS DO PYTHON - Com fallback seguro
-    // Verifica se SHOW_AVISO foi definido no template, senão usa false como padrão
     let deveMostrarAviso = false;
     
     if (typeof window.SHOW_AVISO !== "undefined") {
@@ -67,44 +111,32 @@ document.addEventListener("DOMContentLoaded", function() {
         deveMostrarAviso = SHOW_AVISO;
     }
     
-    // Exibe no console se a página de aviso deve ou não ser mostrada
     console.log("Condição para mostrar a página de aviso:", deveMostrarAviso);
 
     // 2. MONTAR A LISTA DE PÁGINAS VÁLIDAS PARA ESTE MOMENTO
     const paginasBase = ['/', '/clima'];
-    let paginasAtuais = [...paginasBase]; // Cria uma cópia da lista base
+    let paginasAtuais = [...paginasBase];
 
     if (deveMostrarAviso) {
-        // Se a condição for verdadeira, adiciona a página de aviso na lista de rotação
         paginasAtuais.push('/aviso-intervalo');
     }
-    // Mostra no console qual a lista final de páginas para esta rotação
     console.log("Lista de páginas na rotação atual:", paginasAtuais);
 
     // 3. DEFINIR TEMPO DE EXIBIÇÃO
     const tempoDeExibicao = 15000; // 15 segundos
 
     // 4. DECIDIR QUAL SERÁ A PRÓXIMA PÁGINA
-    const paginaAtualPath = window.location.pathname;
-    console.log("Página atual é:", paginaAtualPath);
-
     const indexDaPaginaAtual = paginasAtuais.indexOf(paginaAtualPath);
-    console.log("Índice da página atual na lista:", indexDaPaginaAtual, "(Se for -1, a página não está na lista de rotação)");
+    console.log("Índice da página atual na lista:", indexDaPaginaAtual);
 
     let proximaPagina;
 
     if (indexDaPaginaAtual !== -1) {
-        // CASO 1: A página atual ESTÁ na lista de rotação válida.
-        // Calcula a próxima página do ciclo normalmente.
         const indexDaProximaPagina = (indexDaPaginaAtual + 1) % paginasAtuais.length;
         proximaPagina = paginasAtuais[indexDaProximaPagina];
         console.log("Página está no ciclo. Próxima página será:", proximaPagina);
-
     } else {
-        // CASO 2: A página atual NÃO ESTÁ na lista de rotação válida.
-        // (Ex: estamos em /aviso-intervalo, mas já passou do tempo de exibi-la).
-        // Para evitar erros, sempre volte para a primeira página do ciclo base.
-        proximaPagina = paginasBase[0]; // Volta para a página "/"
+        proximaPagina = paginasBase[0];
         console.log("Página atual está FORA do ciclo. Voltando para a página inicial:", proximaPagina);
     }
 
