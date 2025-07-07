@@ -4,17 +4,17 @@
     "cnt": 40,
     "list": [
         {
-            "dt": 1751641200,
+            "dt": 1751911200,
             "main": {
-                "temp": 23.11,
-                "feels_like": 22.65,
-                "temp_min": 23.11,
-                "temp_max": 23.11,
-                "pressure": 1024,
-                "sea_level": 1024,
-                "grnd_level": 985,
-                "humidity": 45,
-                "temp_kf": 0
+                "temp": 25.29,
+                "feels_like": 24.71,
+                "temp_min": 25.29,
+                "temp_max": 26.81,
+                "pressure": 1022,
+                "sea_level": 1022,
+                "grnd_level": 981,
+                "humidity": 32,
+                "temp_kf": -1.52
             },
             "weather": [
                 {
@@ -28,172 +28,136 @@
                 "all": 0
             },
             "wind": {
-                "speed": 3.73,
-                "deg": 108,
-                "gust": 4.52
+                "speed": 2.18,
+                "deg": 84,
+                "gust": 1.95
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-04 15:00:00"
+            "dt_txt": "2025-07-07 18:00:00"
         },
         {
-            "dt": 1751652000,
+            "dt": 1751922000,
             "main": {
-                "temp": 24.21,
-                "feels_like": 23.76,
-                "temp_min": 24.21,
-                "temp_max": 26.41,
-                "pressure": 1023,
-                "sea_level": 1023,
-                "grnd_level": 982,
-                "humidity": 41,
-                "temp_kf": -2.2
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 3.2,
-                "deg": 112,
-                "gust": 3.45
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-04 18:00:00"
-        },
-        {
-            "dt": 1751662800,
-            "main": {
-                "temp": 21.73,
-                "feels_like": 21.19,
-                "temp_min": 21.04,
-                "temp_max": 21.73,
+                "temp": 22.68,
+                "feels_like": 21.97,
+                "temp_min": 21.75,
+                "temp_max": 22.68,
                 "pressure": 1021,
                 "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 47,
-                "temp_kf": 0.69
+                "grnd_level": 981,
+                "humidity": 37,
+                "temp_kf": 0.93
             },
             "weather": [
                 {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
+                    "id": 801,
+                    "main": "Clouds",
+                    "description": "algumas nuvens",
+                    "icon": "02n"
                 }
             ],
             "clouds": {
-                "all": 0
+                "all": 17
             },
             "wind": {
-                "speed": 2.14,
-                "deg": 141,
-                "gust": 2.3
+                "speed": 1.46,
+                "deg": 113,
+                "gust": 1.47
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-04 21:00:00"
+            "dt_txt": "2025-07-07 21:00:00"
         },
         {
-            "dt": 1751673600,
+            "dt": 1751932800,
             "main": {
-                "temp": 17.09,
-                "feels_like": 16.53,
-                "temp_min": 17.09,
-                "temp_max": 17.09,
+                "temp": 17.65,
+                "feels_like": 16.91,
+                "temp_min": 17.65,
+                "temp_max": 17.65,
                 "pressure": 1022,
                 "sea_level": 1022,
                 "grnd_level": 983,
-                "humidity": 64,
+                "humidity": 55,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
+                    "id": 802,
+                    "main": "Clouds",
+                    "description": "nuvens dispersas",
+                    "icon": "03n"
                 }
             ],
             "clouds": {
-                "all": 2
+                "all": 43
             },
             "wind": {
-                "speed": 3.25,
-                "deg": 161,
-                "gust": 8.94
+                "speed": 2.62,
+                "deg": 159,
+                "gust": 2.98
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-05 00:00:00"
+            "dt_txt": "2025-07-08 00:00:00"
         },
         {
-            "dt": 1751684400,
+            "dt": 1751943600,
             "main": {
-                "temp": 15.18,
-                "feels_like": 14.63,
-                "temp_min": 15.18,
-                "temp_max": 15.18,
+                "temp": 15.88,
+                "feels_like": 15.12,
+                "temp_min": 15.88,
+                "temp_max": 15.88,
                 "pressure": 1022,
                 "sea_level": 1022,
                 "grnd_level": 983,
-                "humidity": 72,
+                "humidity": 61,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
+                    "id": 802,
+                    "main": "Clouds",
+                    "description": "nuvens dispersas",
+                    "icon": "03n"
                 }
             ],
             "clouds": {
-                "all": 3
+                "all": 35
             },
             "wind": {
-                "speed": 2.37,
-                "deg": 149,
-                "gust": 3.16
+                "speed": 2.63,
+                "deg": 154,
+                "gust": 3.72
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-05 03:00:00"
+            "dt_txt": "2025-07-08 03:00:00"
         },
         {
-            "dt": 1751695200,
+            "dt": 1751954400,
             "main": {
-                "temp": 13.76,
-                "feels_like": 13.18,
-                "temp_min": 13.76,
-                "temp_max": 13.76,
-                "pressure": 1022,
-                "sea_level": 1022,
+                "temp": 14.6,
+                "feels_like": 13.71,
+                "temp_min": 14.6,
+                "temp_max": 14.6,
+                "pressure": 1021,
+                "sea_level": 1021,
                 "grnd_level": 983,
-                "humidity": 76,
+                "humidity": 61,
                 "temp_kf": 0
             },
             "weather": [
@@ -205,119 +169,407 @@
                 }
             ],
             "clouds": {
-                "all": 20
+                "all": 18
             },
             "wind": {
-                "speed": 2.17,
-                "deg": 142,
-                "gust": 2.39
+                "speed": 2.5,
+                "deg": 150,
+                "gust": 2.93
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-05 06:00:00"
+            "dt_txt": "2025-07-08 06:00:00"
         },
         {
-            "dt": 1751706000,
+            "dt": 1751965200,
             "main": {
-                "temp": 12.37,
-                "feels_like": 11.78,
-                "temp_min": 12.37,
-                "temp_max": 12.37,
+                "temp": 13.26,
+                "feels_like": 12.29,
+                "temp_min": 13.26,
+                "temp_max": 13.26,
+                "pressure": 1022,
+                "sea_level": 1022,
+                "grnd_level": 983,
+                "humidity": 63,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.15,
+                "deg": 144,
+                "gust": 2.07
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-08 09:00:00"
+        },
+        {
+            "dt": 1751976000,
+            "main": {
+                "temp": 18.71,
+                "feels_like": 17.76,
+                "temp_min": 18.71,
+                "temp_max": 18.71,
                 "pressure": 1023,
                 "sea_level": 1023,
                 "grnd_level": 984,
-                "humidity": 81,
+                "humidity": 43,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 803,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04n"
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
                 }
             ],
             "clouds": {
-                "all": 80
+                "all": 0
             },
             "wind": {
-                "speed": 2.76,
-                "deg": 139,
-                "gust": 5.99
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-05 09:00:00"
-        },
-        {
-            "dt": 1751716800,
-            "main": {
-                "temp": 17.35,
-                "feels_like": 16.71,
-                "temp_min": 17.35,
-                "temp_max": 17.35,
-                "pressure": 1024,
-                "sea_level": 1024,
-                "grnd_level": 985,
-                "humidity": 60,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 803,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04d"
-                }
-            ],
-            "clouds": {
-                "all": 52
-            },
-            "wind": {
-                "speed": 3.77,
-                "deg": 104,
-                "gust": 6.55
+                "speed": 2.34,
+                "deg": 95,
+                "gust": 3.51
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-05 12:00:00"
+            "dt_txt": "2025-07-08 12:00:00"
         },
         {
-            "dt": 1751727600,
+            "dt": 1751986800,
             "main": {
-                "temp": 25.74,
-                "feels_like": 25.28,
-                "temp_min": 25.74,
-                "temp_max": 25.74,
+                "temp": 26.19,
+                "feels_like": 26.19,
+                "temp_min": 26.19,
+                "temp_max": 26.19,
                 "pressure": 1022,
                 "sea_level": 1022,
-                "grnd_level": 984,
+                "grnd_level": 983,
+                "humidity": 29,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 1.48,
+                "deg": 96,
+                "gust": 1.36
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-08 15:00:00"
+        },
+        {
+            "dt": 1751997600,
+            "main": {
+                "temp": 28.04,
+                "feels_like": 26.92,
+                "temp_min": 28.04,
+                "temp_max": 28.04,
+                "pressure": 1018,
+                "sea_level": 1018,
+                "grnd_level": 980,
+                "humidity": 25,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 1.61,
+                "deg": 207,
+                "gust": 1.63
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-08 18:00:00"
+        },
+        {
+            "dt": 1752008400,
+            "main": {
+                "temp": 22.4,
+                "feels_like": 21.61,
+                "temp_min": 22.4,
+                "temp_max": 22.4,
+                "pressure": 1018,
+                "sea_level": 1018,
+                "grnd_level": 980,
                 "humidity": 35,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 803,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04d"
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
                 }
             ],
             "clouds": {
-                "all": 72
+                "all": 0
             },
             "wind": {
-                "speed": 3.33,
-                "deg": 93,
+                "speed": 2.87,
+                "deg": 198,
+                "gust": 2.8
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-08 21:00:00"
+        },
+        {
+            "dt": 1752019200,
+            "main": {
+                "temp": 18.06,
+                "feels_like": 17.17,
+                "temp_min": 18.06,
+                "temp_max": 18.06,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
+                "humidity": 48,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.29,
+                "deg": 147,
+                "gust": 7.84
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-09 00:00:00"
+        },
+        {
+            "dt": 1752030000,
+            "main": {
+                "temp": 16.57,
+                "feels_like": 15.67,
+                "temp_min": 16.57,
+                "temp_max": 16.57,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
+                "humidity": 53,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.96,
+                "deg": 156,
+                "gust": 5.36
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-09 03:00:00"
+        },
+        {
+            "dt": 1752040800,
+            "main": {
+                "temp": 15.09,
+                "feels_like": 14.12,
+                "temp_min": 15.09,
+                "temp_max": 15.09,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 981,
+                "humidity": 56,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.79,
+                "deg": 143,
+                "gust": 4.25
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-09 06:00:00"
+        },
+        {
+            "dt": 1752051600,
+            "main": {
+                "temp": 13.82,
+                "feels_like": 12.75,
+                "temp_min": 13.82,
+                "temp_max": 13.82,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
+                "humidity": 57,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.36,
+                "deg": 130,
+                "gust": 2.75
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-09 09:00:00"
+        },
+        {
+            "dt": 1752062400,
+            "main": {
+                "temp": 18.93,
+                "feels_like": 17.92,
+                "temp_min": 18.93,
+                "temp_max": 18.93,
+                "pressure": 1022,
+                "sea_level": 1022,
+                "grnd_level": 983,
+                "humidity": 40,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.19,
+                "deg": 105,
+                "gust": 5.72
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-09 12:00:00"
+        },
+        {
+            "dt": 1752073200,
+            "main": {
+                "temp": 26.74,
+                "feels_like": 26.12,
+                "temp_min": 26.74,
+                "temp_max": 26.74,
+                "pressure": 1021,
+                "sea_level": 1021,
+                "grnd_level": 983,
+                "humidity": 26,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.62,
+                "deg": 88,
                 "gust": 4.03
             },
             "visibility": 10000,
@@ -325,123 +577,195 @@
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-05 15:00:00"
+            "dt_txt": "2025-07-09 15:00:00"
         },
         {
-            "dt": 1751738400,
+            "dt": 1752084000,
             "main": {
-                "temp": 27.86,
-                "feels_like": 26.99,
-                "temp_min": 27.86,
-                "temp_max": 27.86,
-                "pressure": 1019,
-                "sea_level": 1019,
-                "grnd_level": 981,
-                "humidity": 30,
+                "temp": 28.66,
+                "feels_like": 27.3,
+                "temp_min": 28.66,
+                "temp_max": 28.66,
+                "pressure": 1018,
+                "sea_level": 1018,
+                "grnd_level": 980,
+                "humidity": 23,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 804,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04d"
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
                 }
             ],
             "clouds": {
-                "all": 85
+                "all": 0
             },
             "wind": {
-                "speed": 1.57,
-                "deg": 106,
-                "gust": 1.4
+                "speed": 2.64,
+                "deg": 96,
+                "gust": 1.95
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-05 18:00:00"
+            "dt_txt": "2025-07-09 18:00:00"
         },
         {
-            "dt": 1751749200,
+            "dt": 1752094800,
             "main": {
-                "temp": 22.45,
-                "feels_like": 21.82,
-                "temp_min": 22.45,
-                "temp_max": 22.45,
-                "pressure": 1019,
-                "sea_level": 1019,
-                "grnd_level": 981,
-                "humidity": 41,
+                "temp": 23.08,
+                "feels_like": 22.28,
+                "temp_min": 23.08,
+                "temp_max": 23.08,
+                "pressure": 1018,
+                "sea_level": 1018,
+                "grnd_level": 980,
+                "humidity": 32,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 804,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04n"
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
                 }
             ],
             "clouds": {
-                "all": 97
+                "all": 0
             },
             "wind": {
-                "speed": 2.08,
-                "deg": 179,
-                "gust": 2.13
+                "speed": 2.16,
+                "deg": 127,
+                "gust": 2.29
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-05 21:00:00"
+            "dt_txt": "2025-07-09 21:00:00"
         },
         {
-            "dt": 1751760000,
+            "dt": 1752105600,
             "main": {
-                "temp": 17.91,
-                "feels_like": 17.32,
-                "temp_min": 17.91,
-                "temp_max": 17.91,
-                "pressure": 1021,
-                "sea_level": 1021,
+                "temp": 18.93,
+                "feels_like": 18.03,
+                "temp_min": 18.93,
+                "temp_max": 18.93,
+                "pressure": 1020,
+                "sea_level": 1020,
                 "grnd_level": 982,
-                "humidity": 60,
+                "humidity": 44,
                 "temp_kf": 0
             },
             "weather": [
                 {
-                    "id": 803,
-                    "main": "Clouds",
-                    "description": "nublado",
-                    "icon": "04n"
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
                 }
             ],
             "clouds": {
-                "all": 69
+                "all": 0
             },
             "wind": {
-                "speed": 2.78,
-                "deg": 164,
-                "gust": 3.66
+                "speed": 2.88,
+                "deg": 149,
+                "gust": 3.47
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-06 00:00:00"
+            "dt_txt": "2025-07-10 00:00:00"
         },
         {
-            "dt": 1751770800,
+            "dt": 1752116400,
             "main": {
-                "temp": 15.96,
-                "feels_like": 15.41,
-                "temp_min": 15.96,
-                "temp_max": 15.96,
+                "temp": 17.22,
+                "feels_like": 16.28,
+                "temp_min": 17.22,
+                "temp_max": 17.22,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
+                "humidity": 49,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.17,
+                "deg": 119,
+                "gust": 7.2
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-10 03:00:00"
+        },
+        {
+            "dt": 1752127200,
+            "main": {
+                "temp": 15.59,
+                "feels_like": 14.64,
+                "temp_min": 15.59,
+                "temp_max": 15.59,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 981,
+                "humidity": 55,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.21,
+                "deg": 119,
+                "gust": 10.07
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-10 06:00:00"
+        },
+        {
+            "dt": 1752138000,
+            "main": {
+                "temp": 13.62,
+                "feels_like": 12.84,
+                "temp_min": 13.62,
+                "temp_max": 13.62,
                 "pressure": 1021,
                 "sea_level": 1021,
                 "grnd_level": 982,
@@ -457,282 +781,30 @@
                 }
             ],
             "clouds": {
-                "all": 4
-            },
-            "wind": {
-                "speed": 2.44,
-                "deg": 148,
-                "gust": 2.36
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-06 03:00:00"
-        },
-        {
-            "dt": 1751781600,
-            "main": {
-                "temp": 14.4,
-                "feels_like": 13.8,
-                "temp_min": 14.4,
-                "temp_max": 14.4,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 981,
-                "humidity": 73,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 5
-            },
-            "wind": {
-                "speed": 2.5,
-                "deg": 142,
-                "gust": 3.25
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-06 06:00:00"
-        },
-        {
-            "dt": 1751792400,
-            "main": {
-                "temp": 13.58,
-                "feels_like": 12.93,
-                "temp_min": 13.58,
-                "temp_max": 13.58,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 982,
-                "humidity": 74,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 6
-            },
-            "wind": {
-                "speed": 2.23,
-                "deg": 128,
-                "gust": 2
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-06 09:00:00"
-        },
-        {
-            "dt": 1751803200,
-            "main": {
-                "temp": 19.16,
-                "feels_like": 18.49,
-                "temp_min": 19.16,
-                "temp_max": 19.16,
-                "pressure": 1022,
-                "sea_level": 1022,
-                "grnd_level": 983,
-                "humidity": 52,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 6
-            },
-            "wind": {
-                "speed": 3.38,
-                "deg": 101,
-                "gust": 5.64
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-06 12:00:00"
-        },
-        {
-            "dt": 1751814000,
-            "main": {
-                "temp": 27.2,
-                "feels_like": 26.59,
-                "temp_min": 27.2,
-                "temp_max": 27.2,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 31,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 3
-            },
-            "wind": {
-                "speed": 3.31,
-                "deg": 89,
-                "gust": 3.71
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-06 15:00:00"
-        },
-        {
-            "dt": 1751824800,
-            "main": {
-                "temp": 29.49,
-                "feels_like": 28.06,
-                "temp_min": 29.49,
-                "temp_max": 29.49,
-                "pressure": 1017,
-                "sea_level": 1017,
-                "grnd_level": 979,
-                "humidity": 26,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 1
-            },
-            "wind": {
-                "speed": 2.24,
-                "deg": 79,
-                "gust": 1.91
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-06 18:00:00"
-        },
-        {
-            "dt": 1751835600,
-            "main": {
-                "temp": 23.61,
-                "feels_like": 22.94,
-                "temp_min": 23.61,
-                "temp_max": 23.61,
-                "pressure": 1017,
-                "sea_level": 1017,
-                "grnd_level": 979,
-                "humidity": 35,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
                 "all": 0
             },
             "wind": {
-                "speed": 1.73,
-                "deg": 122,
-                "gust": 1.81
+                "speed": 2.3,
+                "deg": 131,
+                "gust": 4.12
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-06 21:00:00"
+            "dt_txt": "2025-07-10 09:00:00"
         },
         {
-            "dt": 1751846400,
+            "dt": 1752148800,
             "main": {
-                "temp": 18.89,
-                "feels_like": 18.22,
-                "temp_min": 18.89,
-                "temp_max": 18.89,
-                "pressure": 1019,
-                "sea_level": 1019,
-                "grnd_level": 981,
-                "humidity": 53,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.89,
-                "deg": 133,
-                "gust": 4.78
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-07 00:00:00"
-        },
-        {
-            "dt": 1751857200,
-            "main": {
-                "temp": 17.11,
-                "feels_like": 16.39,
-                "temp_min": 17.11,
-                "temp_max": 17.11,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 981,
+                "temp": 18.24,
+                "feels_like": 17.63,
+                "temp_min": 18.24,
+                "temp_max": 18.24,
+                "pressure": 1023,
+                "sea_level": 1023,
+                "grnd_level": 984,
                 "humidity": 58,
                 "temp_kf": 0
             },
@@ -741,114 +813,6 @@
                     "id": 800,
                     "main": "Clear",
                     "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.34,
-                "deg": 123,
-                "gust": 3.16
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-07 03:00:00"
-        },
-        {
-            "dt": 1751868000,
-            "main": {
-                "temp": 15.48,
-                "feels_like": 14.7,
-                "temp_min": 15.48,
-                "temp_max": 15.48,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 981,
-                "humidity": 62,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.74,
-                "deg": 112,
-                "gust": 6.88
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-07 06:00:00"
-        },
-        {
-            "dt": 1751878800,
-            "main": {
-                "temp": 14.1,
-                "feels_like": 13.32,
-                "temp_min": 14.1,
-                "temp_max": 14.1,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 982,
-                "humidity": 67,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 1
-            },
-            "wind": {
-                "speed": 2.86,
-                "deg": 121,
-                "gust": 8.15
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-07 09:00:00"
-        },
-        {
-            "dt": 1751889600,
-            "main": {
-                "temp": 18.69,
-                "feels_like": 18,
-                "temp_min": 18.69,
-                "temp_max": 18.69,
-                "pressure": 1022,
-                "sea_level": 1022,
-                "grnd_level": 984,
-                "humidity": 53,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
                     "icon": "01d"
                 }
             ],
@@ -856,24 +820,24 @@
                 "all": 0
             },
             "wind": {
-                "speed": 4.47,
-                "deg": 96,
-                "gust": 7.79
+                "speed": 3.91,
+                "deg": 87,
+                "gust": 7
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-07 12:00:00"
+            "dt_txt": "2025-07-10 12:00:00"
         },
         {
-            "dt": 1751900400,
+            "dt": 1752159600,
             "main": {
-                "temp": 27.48,
-                "feels_like": 26.69,
-                "temp_min": 27.48,
-                "temp_max": 27.48,
+                "temp": 27.1,
+                "feels_like": 26.44,
+                "temp_min": 27.1,
+                "temp_max": 27.1,
                 "pressure": 1021,
                 "sea_level": 1021,
                 "grnd_level": 983,
@@ -892,312 +856,24 @@
                 "all": 0
             },
             "wind": {
-                "speed": 4.4,
-                "deg": 89,
-                "gust": 5.2
+                "speed": 4.15,
+                "deg": 79,
+                "gust": 5.35
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-07 15:00:00"
+            "dt_txt": "2025-07-10 15:00:00"
         },
         {
-            "dt": 1751911200,
+            "dt": 1752170400,
             "main": {
-                "temp": 30.44,
-                "feels_like": 28.68,
-                "temp_min": 30.44,
-                "temp_max": 30.44,
-                "pressure": 1018,
-                "sea_level": 1018,
-                "grnd_level": 980,
-                "humidity": 22,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.59,
-                "deg": 99,
-                "gust": 2.3
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-07 18:00:00"
-        },
-        {
-            "dt": 1751922000,
-            "main": {
-                "temp": 24.56,
-                "feels_like": 23.88,
-                "temp_min": 24.56,
-                "temp_max": 24.56,
-                "pressure": 1018,
-                "sea_level": 1018,
-                "grnd_level": 980,
-                "humidity": 31,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.42,
-                "deg": 152,
-                "gust": 2.46
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-07 21:00:00"
-        },
-        {
-            "dt": 1751932800,
-            "main": {
-                "temp": 19.7,
-                "feels_like": 19.03,
-                "temp_min": 19.7,
-                "temp_max": 19.7,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 50,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 3.22,
-                "deg": 154,
-                "gust": 8.34
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-08 00:00:00"
-        },
-        {
-            "dt": 1751943600,
-            "main": {
-                "temp": 17.66,
-                "feels_like": 17,
-                "temp_min": 17.66,
-                "temp_max": 17.66,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 58,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 0
-            },
-            "wind": {
-                "speed": 2.64,
-                "deg": 140,
-                "gust": 3.55
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-08 03:00:00"
-        },
-        {
-            "dt": 1751954400,
-            "main": {
-                "temp": 16.34,
-                "feels_like": 15.65,
-                "temp_min": 16.34,
-                "temp_max": 16.34,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 62,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 1
-            },
-            "wind": {
-                "speed": 2.89,
-                "deg": 121,
-                "gust": 5.5
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-08 06:00:00"
-        },
-        {
-            "dt": 1751965200,
-            "main": {
-                "temp": 15.11,
-                "feels_like": 14.43,
-                "temp_min": 15.11,
-                "temp_max": 15.11,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 982,
-                "humidity": 67,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 801,
-                    "main": "Clouds",
-                    "description": "algumas nuvens",
-                    "icon": "02n"
-                }
-            ],
-            "clouds": {
-                "all": 14
-            },
-            "wind": {
-                "speed": 1.75,
-                "deg": 148,
-                "gust": 1.78
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-08 09:00:00"
-        },
-        {
-            "dt": 1751976000,
-            "main": {
-                "temp": 20.32,
-                "feels_like": 19.66,
-                "temp_min": 20.32,
-                "temp_max": 20.32,
-                "pressure": 1022,
-                "sea_level": 1022,
-                "grnd_level": 984,
-                "humidity": 48,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 801,
-                    "main": "Clouds",
-                    "description": "algumas nuvens",
-                    "icon": "02d"
-                }
-            ],
-            "clouds": {
-                "all": 21
-            },
-            "wind": {
-                "speed": 3.72,
-                "deg": 119,
-                "gust": 6.21
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-08 12:00:00"
-        },
-        {
-            "dt": 1751986800,
-            "main": {
-                "temp": 28.68,
-                "feels_like": 27.51,
-                "temp_min": 28.68,
-                "temp_max": 28.68,
-                "pressure": 1021,
-                "sea_level": 1021,
-                "grnd_level": 983,
-                "humidity": 28,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01d"
-                }
-            ],
-            "clouds": {
-                "all": 4
-            },
-            "wind": {
-                "speed": 3.34,
-                "deg": 105,
-                "gust": 3.81
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "d"
-            },
-            "dt_txt": "2025-07-08 15:00:00"
-        },
-        {
-            "dt": 1751997600,
-            "main": {
-                "temp": 30.99,
-                "feels_like": 29.11,
-                "temp_min": 30.99,
-                "temp_max": 30.99,
+                "temp": 30.82,
+                "feels_like": 28.96,
+                "temp_min": 30.82,
+                "temp_max": 30.82,
                 "pressure": 1018,
                 "sea_level": 1018,
                 "grnd_level": 980,
@@ -1213,31 +889,67 @@
                 }
             ],
             "clouds": {
-                "all": 2
+                "all": 0
             },
             "wind": {
-                "speed": 1.95,
-                "deg": 111,
-                "gust": 1.69
+                "speed": 2.73,
+                "deg": 40,
+                "gust": 2.81
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-08 18:00:00"
+            "dt_txt": "2025-07-10 18:00:00"
         },
         {
-            "dt": 1752008400,
+            "dt": 1752181200,
             "main": {
-                "temp": 24.77,
-                "feels_like": 24.11,
-                "temp_min": 24.77,
-                "temp_max": 24.77,
+                "temp": 24.6,
+                "feels_like": 23.9,
+                "temp_min": 24.6,
+                "temp_max": 24.6,
                 "pressure": 1018,
                 "sea_level": 1018,
                 "grnd_level": 980,
-                "humidity": 31,
+                "humidity": 30,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 1.23,
+                "deg": 74,
+                "gust": 1.33
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-10 21:00:00"
+        },
+        {
+            "dt": 1752192000,
+            "main": {
+                "temp": 20.4,
+                "feels_like": 19.49,
+                "temp_min": 20.4,
+                "temp_max": 20.4,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
+                "humidity": 38,
                 "temp_kf": 0
             },
             "weather": [
@@ -1249,30 +961,30 @@
                 }
             ],
             "clouds": {
-                "all": 1
+                "all": 0
             },
             "wind": {
-                "speed": 1.48,
-                "deg": 164,
-                "gust": 1.65
+                "speed": 2.61,
+                "deg": 125,
+                "gust": 2.65
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-08 21:00:00"
+            "dt_txt": "2025-07-11 00:00:00"
         },
         {
-            "dt": 1752019200,
+            "dt": 1752202800,
             "main": {
-                "temp": 20.36,
-                "feels_like": 19.55,
-                "temp_min": 20.36,
-                "temp_max": 20.36,
-                "pressure": 1019,
-                "sea_level": 1019,
-                "grnd_level": 981,
+                "temp": 18.85,
+                "feels_like": 17.89,
+                "temp_min": 18.85,
+                "temp_max": 18.85,
+                "pressure": 1020,
+                "sea_level": 1020,
+                "grnd_level": 982,
                 "humidity": 42,
                 "temp_kf": 0
             },
@@ -1285,67 +997,31 @@
                 }
             ],
             "clouds": {
-                "all": 2
+                "all": 0
             },
             "wind": {
-                "speed": 2.27,
-                "deg": 142,
-                "gust": 2.28
+                "speed": 2.13,
+                "deg": 101,
+                "gust": 2.5
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-09 00:00:00"
+            "dt_txt": "2025-07-11 03:00:00"
         },
         {
-            "dt": 1752030000,
+            "dt": 1752213600,
             "main": {
-                "temp": 18.44,
-                "feels_like": 17.65,
-                "temp_min": 18.44,
-                "temp_max": 18.44,
+                "temp": 16.95,
+                "feels_like": 15.98,
+                "temp_min": 16.95,
+                "temp_max": 16.95,
                 "pressure": 1020,
                 "sea_level": 1020,
                 "grnd_level": 981,
-                "humidity": 50,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 801,
-                    "main": "Clouds",
-                    "description": "algumas nuvens",
-                    "icon": "02n"
-                }
-            ],
-            "clouds": {
-                "all": 21
-            },
-            "wind": {
-                "speed": 2.36,
-                "deg": 149,
-                "gust": 2.27
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-09 03:00:00"
-        },
-        {
-            "dt": 1752040800,
-            "main": {
-                "temp": 16.71,
-                "feels_like": 15.92,
-                "temp_min": 16.71,
-                "temp_max": 16.71,
-                "pressure": 1019,
-                "sea_level": 1019,
-                "grnd_level": 980,
-                "humidity": 57,
+                "humidity": 49,
                 "temp_kf": 0
             },
             "weather": [
@@ -1357,67 +1033,67 @@
                 }
             ],
             "clouds": {
-                "all": 10
+                "all": 0
             },
             "wind": {
-                "speed": 2.39,
-                "deg": 138,
-                "gust": 3.01
+                "speed": 2.69,
+                "deg": 92,
+                "gust": 6
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "n"
             },
-            "dt_txt": "2025-07-09 06:00:00"
+            "dt_txt": "2025-07-11 06:00:00"
         },
         {
-            "dt": 1752051600,
+            "dt": 1752224400,
             "main": {
-                "temp": 15.58,
-                "feels_like": 14.76,
-                "temp_min": 15.58,
-                "temp_max": 15.58,
-                "pressure": 1020,
-                "sea_level": 1020,
-                "grnd_level": 981,
-                "humidity": 60,
-                "temp_kf": 0
-            },
-            "weather": [
-                {
-                    "id": 800,
-                    "main": "Clear",
-                    "description": "céu limpo",
-                    "icon": "01n"
-                }
-            ],
-            "clouds": {
-                "all": 2
-            },
-            "wind": {
-                "speed": 1.45,
-                "deg": 96,
-                "gust": 1.31
-            },
-            "visibility": 10000,
-            "pop": 0,
-            "sys": {
-                "pod": "n"
-            },
-            "dt_txt": "2025-07-09 09:00:00"
-        },
-        {
-            "dt": 1752062400,
-            "main": {
-                "temp": 20.73,
-                "feels_like": 20.03,
-                "temp_min": 20.73,
-                "temp_max": 20.73,
+                "temp": 15.86,
+                "feels_like": 14.96,
+                "temp_min": 15.86,
+                "temp_max": 15.86,
                 "pressure": 1021,
                 "sea_level": 1021,
                 "grnd_level": 982,
-                "humidity": 45,
+                "humidity": 56,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.84,
+                "deg": 85,
+                "gust": 7.71
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-11 09:00:00"
+        },
+        {
+            "dt": 1752235200,
+            "main": {
+                "temp": 21.69,
+                "feels_like": 20.85,
+                "temp_min": 21.69,
+                "temp_max": 21.69,
+                "pressure": 1023,
+                "sea_level": 1023,
+                "grnd_level": 984,
+                "humidity": 36,
                 "temp_kf": 0
             },
             "weather": [
@@ -1429,19 +1105,343 @@
                 }
             ],
             "clouds": {
-                "all": 2
+                "all": 0
             },
             "wind": {
-                "speed": 3.19,
-                "deg": 109,
-                "gust": 5.05
+                "speed": 4.26,
+                "deg": 61,
+                "gust": 7.74
             },
             "visibility": 10000,
             "pop": 0,
             "sys": {
                 "pod": "d"
             },
-            "dt_txt": "2025-07-09 12:00:00"
+            "dt_txt": "2025-07-11 12:00:00"
+        },
+        {
+            "dt": 1752246000,
+            "main": {
+                "temp": 29.77,
+                "feels_like": 28.12,
+                "temp_min": 29.77,
+                "temp_max": 29.77,
+                "pressure": 1022,
+                "sea_level": 1022,
+                "grnd_level": 983,
+                "humidity": 22,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 5.2,
+                "deg": 41,
+                "gust": 6.43
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-11 15:00:00"
+        },
+        {
+            "dt": 1752256800,
+            "main": {
+                "temp": 31.71,
+                "feels_like": 29.63,
+                "temp_min": 31.71,
+                "temp_max": 31.71,
+                "pressure": 1019,
+                "sea_level": 1019,
+                "grnd_level": 981,
+                "humidity": 18,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.85,
+                "deg": 61,
+                "gust": 2.31
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-11 18:00:00"
+        },
+        {
+            "dt": 1752267600,
+            "main": {
+                "temp": 25.2,
+                "feels_like": 24.45,
+                "temp_min": 25.2,
+                "temp_max": 25.2,
+                "pressure": 1019,
+                "sea_level": 1019,
+                "grnd_level": 981,
+                "humidity": 26,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 1.46,
+                "deg": 108,
+                "gust": 1.46
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-11 21:00:00"
+        },
+        {
+            "dt": 1752278400,
+            "main": {
+                "temp": 21.4,
+                "feels_like": 20.43,
+                "temp_min": 21.4,
+                "temp_max": 21.4,
+                "pressure": 1021,
+                "sea_level": 1021,
+                "grnd_level": 983,
+                "humidity": 32,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.52,
+                "deg": 139,
+                "gust": 3.06
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-12 00:00:00"
+        },
+        {
+            "dt": 1752289200,
+            "main": {
+                "temp": 19.19,
+                "feels_like": 18.21,
+                "temp_min": 19.19,
+                "temp_max": 19.19,
+                "pressure": 1021,
+                "sea_level": 1021,
+                "grnd_level": 983,
+                "humidity": 40,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.21,
+                "deg": 116,
+                "gust": 3.02
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-12 03:00:00"
+        },
+        {
+            "dt": 1752300000,
+            "main": {
+                "temp": 17.54,
+                "feels_like": 16.47,
+                "temp_min": 17.54,
+                "temp_max": 17.54,
+                "pressure": 1021,
+                "sea_level": 1021,
+                "grnd_level": 982,
+                "humidity": 43,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 2.22,
+                "deg": 135,
+                "gust": 2.87
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-12 06:00:00"
+        },
+        {
+            "dt": 1752310800,
+            "main": {
+                "temp": 15.94,
+                "feels_like": 14.9,
+                "temp_min": 15.94,
+                "temp_max": 15.94,
+                "pressure": 1022,
+                "sea_level": 1022,
+                "grnd_level": 983,
+                "humidity": 50,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01n"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 1.67,
+                "deg": 81,
+                "gust": 0.91
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "n"
+            },
+            "dt_txt": "2025-07-12 09:00:00"
+        },
+        {
+            "dt": 1752321600,
+            "main": {
+                "temp": 21.48,
+                "feels_like": 20.75,
+                "temp_min": 21.48,
+                "temp_max": 21.48,
+                "pressure": 1023,
+                "sea_level": 1023,
+                "grnd_level": 984,
+                "humidity": 41,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.43,
+                "deg": 84,
+                "gust": 6.21
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-12 12:00:00"
+        },
+        {
+            "dt": 1752332400,
+            "main": {
+                "temp": 29.95,
+                "feels_like": 28.31,
+                "temp_min": 29.95,
+                "temp_max": 29.95,
+                "pressure": 1021,
+                "sea_level": 1021,
+                "grnd_level": 983,
+                "humidity": 23,
+                "temp_kf": 0
+            },
+            "weather": [
+                {
+                    "id": 800,
+                    "main": "Clear",
+                    "description": "céu limpo",
+                    "icon": "01d"
+                }
+            ],
+            "clouds": {
+                "all": 0
+            },
+            "wind": {
+                "speed": 3.87,
+                "deg": 80,
+                "gust": 4.45
+            },
+            "visibility": 10000,
+            "pop": 0,
+            "sys": {
+                "pod": "d"
+            },
+            "dt_txt": "2025-07-12 15:00:00"
         }
     ],
     "city": {
@@ -1454,7 +1454,7 @@
         "country": "BR",
         "population": 78712,
         "timezone": -14400,
-        "sunrise": 1751623430,
-        "sunset": 1751662688
+        "sunrise": 1751882627,
+        "sunset": 1751921949
     }
 }

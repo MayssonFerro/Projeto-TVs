@@ -147,8 +147,9 @@
         <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
             <label for="tipo_conteudo">Tipo de Conteúdo:</label>
             <select name="tipo_conteudo" id="tipo_conteudo" onchange="atualizarCamposConteudo()">
-                <option value="rapido">Notícia rápida (texto)</option>
-                <option value="imagem">Conteúdo com imagem</option>
+                <option value="rapido">Texto rápido</option>
+                <option value="imagem">Imagem</option>
+                <option value="video">Vídeo</option>
             </select>
 
             <div id="campo_texto">
@@ -163,6 +164,12 @@
                 <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImagem(this)">
                 <div id="preview-container"></div>
                 <small style="color: #666;"><strong>A imagem será exibida como papel de parede da tela principal</strong></small>
+            </div>
+
+            <div id="campo_video" style="display: none;">
+                <label for="video">🎬 Vídeo de Fundo:</label>
+                <input type="file" name="video" id="video" accept="video/mp4,video/webm,video/ogg">
+                <small style="color: #666;"><strong>O vídeo será exibido como papel de parede da tela principal (formato recomendado: MP4)</strong></small>
             </div>
 
             <label for="link_qrcode">🔗 Link para QR Code (opcional):</label>
@@ -251,6 +258,7 @@
             const tipo = document.getElementById('tipo_conteudo').value;
             document.getElementById('campo_texto').style.display = (tipo === 'rapido') ? 'block' : 'none';
             document.getElementById('campo_imagem').style.display = (tipo === 'imagem') ? 'block' : 'none';
+            document.getElementById('campo_video').style.display = (tipo === 'video') ? 'block' : 'none';
         }
         // Chama ao carregar a página para garantir o estado inicial correto
         document.addEventListener('DOMContentLoaded', atualizarCamposConteudo);

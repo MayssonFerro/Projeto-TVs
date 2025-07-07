@@ -244,6 +244,7 @@ class Evento(db.Model):
     descricao = db.Column(db.String(250), nullable=False)
     link = db.Column(db.String(250))
     imagem = db.Column(db.String(250))
+    video = db.Column(db.String(250))  # <-- Adicione esta linha
     status = db.Column(db.String(20), nullable=False)
     data_inicio = db.Column(db.DateTime, default=datetime.now)
     data_fim = db.Column(db.DateTime)
@@ -526,6 +527,24 @@ def admin():
 
         print(f"Imagem final: {imagem_filename}")
 
+        # Processamento de vídeo (se houver)
+        video_filename = None
+        if 'video' in request.files:
+            video_file = request.files['video']
+            if video_file and video_file.filename != '':
+                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                filename = secure_filename(video_file.filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                file_path = os.path.join(upload_folder, unique_filename)
+                video_file.save(file_path)
+                video_filename = f"uploads/{unique_filename}"
+                print(f"Vídeo salvo como: {video_filename}")
+            else:
+                print("Nenhum vídeo foi enviado ou arquivo vazio")
+        else:
+            print("Campo 'video' não encontrado no formulário")
+
         # Verificar se pelo menos uma coisa foi preenchida
         if not conteudo_noticia and not imagem_filename and not link_qrcode:
             print("ERRO: Nenhum conteúdo foi preenchido!")
@@ -546,7 +565,7 @@ def admin():
                 db.session.add(nova_noticia)
             
             # Criar evento se houver imagem OU link
-            if link_qrcode or imagem_filename:
+            if link_qrcode or imagem_filename or video_filename:
                 print("Criando evento...")
                 evento_qr = Evento(
                     dispositivo_id=id_dispositivo,
@@ -554,6 +573,7 @@ def admin():
                     descricao="Conteúdo relacionado à publicação",
                     link=link_qrcode if link_qrcode else "",
                     imagem=imagem_filename if imagem_filename else "",
+                    video=video_filename if video_filename else "",  # Adicionando o vídeo
                     status="ativo"
                 )
                 db.session.add(evento_qr)

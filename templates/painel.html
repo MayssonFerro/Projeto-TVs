@@ -26,6 +26,11 @@
 <body>
     <main>
         <div class="container painel" id="painel-principal">
+            {% if evento and evento[0].video %}
+                <video id="bg-video" autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename=evento[0].video) }}" type="video/mp4">
+                </video>
+            {% endif %}
             <div class="relogio">
                 <h1 id="data"></h1>
                 <h1 id="hora"></h1>

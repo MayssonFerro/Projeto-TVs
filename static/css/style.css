@@ -15,6 +15,7 @@ body {
     justify-content: center;
     padding: 2rem;
     box-sizing: border-box;
+    position: relative;
 }
 
 .lista {
@@ -178,8 +179,9 @@ input {
 /* Melhorar contraste do relógio sobre a imagem */
 .relogio {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 2rem;
+    right: 2rem;   /* <-- Troque left por right */
+    left: auto;    /* <-- Garante que não há conflito */
     z-index: 10;
     height: auto;
     width: 420px;
@@ -259,9 +261,14 @@ footer {
 /* ============================= */
 @media (max-width: 768px) {
     .relogio {
-        position: static;
-        width: 90%;
-        margin: 1rem auto;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        left: auto;
+        width: 90vw;
+        max-width: 320px;
+        margin: 0;
+        padding: 0.5rem;
     }
 
     #qrcode {
@@ -349,4 +356,18 @@ footer {
 
 .btn-fechar:hover {
     background-color: #0056b3;
+}
+
+#bg-video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+}
+.painel > *:not(#bg-video):not(.relogio) {
+    position: relative;
+    z-index: 1;
 }

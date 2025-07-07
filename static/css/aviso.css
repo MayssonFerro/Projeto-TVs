@@ -1,121 +1,297 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
+:root {
+  --primary-bg: #1c1c1c;
+  --accent-red: #e01010f1;
+  --accent-red-dark: #a80d0dcc;
+  --footer-green: #469C42;
+  --footer-gradient: linear-gradient(90deg, rgba(157, 255, 0, 0.67) 0%, rgba(0, 0, 0, 0) 100%);
+  --white: #fff;
+  --box-radius: 25px;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --relogio-radius: 40px;
+  --relogio-bg: rgba(255, 255, 255, 0.08);
+  --relogio-blur: blur(6px);
+  --footer-height: 111px;
+  --noticia-bg: #000;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Ubuntu', sans-serif;
-  background-color: #1c1c1c;
-  color: white;
+/* Melhorias visuais para o quadro vermelho */
+.box {
+  background: linear-gradient(135deg, #e01010 0%, #ff4747 100%);
+  border-radius: 35px;
+  padding: 4rem 2.5rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 800px;
+  min-height: 380px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  flex-direction: column;
-  overflow-x: hidden;
+  box-shadow: 0 12px 36px rgba(224,16,16,0.25), 0 2px 8px rgba(0,0,0,0.18);
+  transition: box-shadow 0.2s;
+  border: 2.5px solid #fff3;
 }
 
-/* Container central */
+.box h1 {
+  font-size: 2.8em;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1.5px;
+  text-shadow: 1px 2px 12px #00000033;
+}
+
+.tempo {
+  font-size: 5em;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-shadow: 2px 2px 12px #00000055;
+}
+
+/* Relógio maior e mais destacado */
+.relogio {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 10;
+  width: 400px;
+  height: 170px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  border: 2px solid rgba(255,255,255,0.18);
+}
+
+#data {
+  color: var(--white);
+  font-size: 1.3rem;
+  margin-bottom: 0.4em;
+  letter-spacing: 0.7px;
+  font-weight: 600;
+}
+
+#hora {
+  color: var(--white);
+  font-size: 3.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 10px #00000033;
+}
+
+/* Responsividade ajustada para relógio maior */
+@media (max-width: 900px) {
+  .box {
+    padding: 2rem 1rem;
+    min-height: 250px;
+    max-width: 98vw;
+  }
+  .relogio {
+    width: 260px;
+    height: 110px;
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.95em;
+  }
+  .tempo {
+    font-size: 2.8em;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.2rem;
+  }
+  .box h1 {
+    font-size: 1.2em;
+  }
+  .relogio {
+    width: 170px;
+    height: 70px;
+    font-size: 0.8em;
+  }
+  #hora {
+    font-size: 1.3rem;
+  }
+}
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+  background-color: var(--primary-bg);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  background-color: #1c1c1c;
+}
+
 .container {
   text-align: center;
   width: 100%;
   max-width: 1123px;
+  padding: 2rem 1rem;
+  background-color: #1c1c1c;
 }
 
-/* Caixa vermelha de contagem */
 .box {
-  background: linear-gradient(to bottom, #a80d0dcc, #e01010f1);
-  border-radius: 25px;
-  padding: 60px 20px;
-  margin-bottom: 40px;
+  background: linear-gradient(to bottom, var(--accent-red-dark), var(--accent-red));
+  border-radius: var(--box-radius);
+  padding: 3.5rem 2rem;
+  margin-bottom: 2.5rem;
   width: 100%;
-  height: 475px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.box h1 {
-  font-size: 3em;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.tempo {
-  font-size: 5.5em;
-  font-weight: 900;
-  display: flex;
-  justify-content: center;
-}
-
-/* Relógio no topo esquerdo */
-.relogio {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-  width: 400px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 40px;
-  backdrop-filter: blur(6px);
+  max-width: 700px;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: var(--box-shadow);
+  transition: box-shadow 0.2s;
+}
+
+.box h1 {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: 1px;
+}
+
+.tempo {
+  font-size: 4.5em;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 8px #00000055;
+}
+
+.relogio {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 10;
+  width: 320px;
+  height: 140px;
+  background: var(--relogio-bg);
+  border-radius: var(--relogio-radius);
+  backdrop-filter: var(--relogio-blur);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 1.5px solid rgba(255,255,255,0.12);
 }
 
 #data {
-  color: white;
-  font-size: 1.2rem;
+  color: var(--white);
+  font-size: 1.1rem;
+  margin-bottom: 0.2em;
+  letter-spacing: 0.5px;
 }
 
 #hora {
-  color: white;
-  font-size: 72px;
+  color: var(--white);
+  font-size: 2.8rem;
   font-weight: bold;
+  letter-spacing: 1.5px;
+  text-shadow: 1px 1px 6px #00000033;
 }
 
-/* Rodapé fixo com faixa animada */
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%;
-  height: 111px;
-  background: linear-gradient(90deg, rgba(157, 255, 0, 0.67) 0%, rgba(0, 0, 0, 0) 100%), #469C42;
+  width: 100vw;
+  height: var(--footer-height);
+  background: var(--footer-gradient), var(--footer-green);
   display: flex;
   align-items: center;
   overflow: hidden;
   z-index: 1000;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
 }
 
-/* Texto rolante da notícia */
 .noticia-rapida {
   font-size: clamp(2rem, 4vh, 3.5rem);
   font-weight: 500;
-  background-color: black;
-  color: white;
-  padding: 0.5rem 1.5rem;
+  background-color: var(--noticia-bg);
+  color: var(--white);
+  padding: 0.5rem 2.5rem;
   white-space: nowrap;
   display: inline-block;
-  animation: scroll-left 60s linear infinite;
+  animation: scroll-left 40s linear infinite;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  margin-left: 100vw;
 }
 
 .noticia-rapida:hover {
   animation-play-state: paused;
+  cursor: pointer;
 }
 
-/* Animação de rolagem horizontal */
 @keyframes scroll-left {
   0% {
-    transform: translateX(100vw);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-120vw);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .box {
+    padding: 2rem 1rem;
+    min-height: 250px;
+    max-width: 95vw;
+  }
+  .relogio {
+    width: 220px;
+    height: 90px;
+    top: 1rem;
+    left: 1rem;
+  }
+  .tempo {
+    font-size: 2.5em;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.2rem;
+  }
+  .box h1 {
+    font-size: 1.5em;
+  }
+  .relogio {
+    width: 150px;
+    height: 60px;
+    font-size: 0.8em;
+  }
+  #hora {
+    font-size: 1.2rem;
+  }
+  .noticia-rapida {
+    font-size: 1.2rem;
+    padding: 0.3rem 1rem;
+  }
+  footer {
+    height: 60px;
   }
 }
