@@ -6,47 +6,38 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
-    {% if evento and evento|length > 0 and evento[0].link %}
-        <script>
-            window.eventoLink = "{{ evento[0].link }}";
-        </script>
-    {% endif %}
-    {% if evento and evento|length > 0 and evento[0].imagem %}
-        <script>
-            window.eventoImagem = "{{ url_for('static', filename=evento[0].imagem) }}";
-        </script>
-    {% endif %}
-    
     <script>
         const SHOW_AVISO = {{ show_aviso|tojson|default('false') }};
+        window.eventosPainel = [
+            {% for ev in evento %}
+                {
+                    imagem: "{{ url_for('static', filename=ev.imagem) if ev.imagem else '' }}",
+                    video: "{{ url_for('static', filename=ev.video) if ev.video else '' }}",
+                    link: "{{ ev.link or '' }}",
+                    titulo: "{{ ev.titulo|e }}",
+                    descricao: "{{ ev.descricao|e }}"
+                }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
     </script>
     <title>Painel</title>
 </head>
 <body>
+    <!-- <pre id="debug-eventos"></pre>
+    <script>
+    document.getElementById('debug-eventos').textContent =
+    JSON.stringify(window.eventosPainel, null, 2) + "\nidx: " + localStorage.getItem('idxEventoPainel');
+    </script> -->
     <main>
         <div class="container painel" id="painel-principal">
-            {% if evento and evento[0].video %}
-                <video id="bg-video" autoplay loop muted playsinline>
-                    <source src="{{ url_for('static', filename=evento[0].video) }}" type="video/mp4">
-                </video>
-            {% endif %}
+            <div id="midia-container"></div>
             <div class="relogio">
                 <h1 id="data"></h1>
                 <h1 id="hora"></h1>
             </div>
-            <div class="descricao">
-                {% if evento and evento|length > 0 %}
-                    {% if evento[0].titulo != "Conteúdo - Imagem de fundo" %}
-                        <h2>{{ evento[0].titulo }}</h2>
-                        <p>{{ evento[0].descricao }}</p>
-                    {% endif %}
-                {% endif %}
-            </div>
+            <div class="descricao" id="descricao-container"></div>
             <div class="link">
-                {% if evento and evento|length > 0 and evento[0].link %}
-                    <div id="qrcode"></div>
-                {% endif %}
+                <div id="qrcode"></div>
             </div>
         </div>
     </main>

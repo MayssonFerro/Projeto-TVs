@@ -2,4 +2,6 @@
 
 python -m venv venv
 
-pip install requests flask flask_sqlalchemy flask_login apscheduler
+venv\scripts\activate
+
+pip install -r requirements.txt

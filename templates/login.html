@@ -10,14 +10,14 @@
     <title>Login - CMS Quiosques</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1 class="login-title">Login</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
             <p style="color:red">{{ message }}</p>
         {% endfor %}
     {% endwith %}
 
-    <form method="post">
+    <form class="login-form" method="post">
         <label>Email:</label><br>
         <input type="email" name="email" required><br>
 

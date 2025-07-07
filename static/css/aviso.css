@@ -22,6 +22,10 @@
   box-sizing: border-box;
 }
 
+html {
+    font-size: clamp(14px, 1.2vw, 22px);
+}
+
 /* Melhorias visuais para o quadro vermelho */
 .box {
   background: linear-gradient(135deg, #e01010 0%, #ff4747 100%);
@@ -55,75 +59,46 @@
   text-shadow: 2px 2px 12px #00000055;
 }
 
-/* Relógio maior e mais destacado */
 .relogio {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  z-index: 10;
-  width: 400px;
-  height: 170px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 50px;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-  border: 2px solid rgba(255,255,255,0.18);
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    height: auto;
+    width: 420px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
 }
 
 #data {
-  color: var(--white);
-  font-size: 1.3rem;
-  margin-bottom: 0.4em;
-  letter-spacing: 0.7px;
-  font-weight: 600;
+    color: white;
+    margin: 0;
 }
 
 #hora {
-  color: var(--white);
-  font-size: 3.5rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 10px #00000033;
+    margin: 0;
+    color: white;
+    font-size: clamp(3rem, 6vw, 4.5rem);
 }
 
-/* Responsividade ajustada para relógio maior */
-@media (max-width: 900px) {
-  .box {
-    padding: 2rem 1rem;
-    min-height: 250px;
-    max-width: 98vw;
-  }
-  .relogio {
-    width: 260px;
-    height: 110px;
-    top: 1rem;
-    left: 1rem;
-    font-size: 0.95em;
-  }
-  .tempo {
-    font-size: 2.8em;
-  }
-}
 
-@media (max-width: 600px) {
-  .container {
-    padding: 1rem 0.2rem;
-  }
-  .box h1 {
-    font-size: 1.2em;
-  }
-  .relogio {
-    width: 170px;
-    height: 70px;
-    font-size: 0.8em;
-  }
-  #hora {
-    font-size: 1.3rem;
-  }
+@media (max-width: 950px) {
+    body {
+        justify-content: flex-start;
+        padding-top: 4rem;
+    }
+
+    .relogio {
+        position: static;
+        width: 90%;
+        margin-top: 2rem;
+    }
 }
 
 body {
@@ -177,39 +152,6 @@ body {
   justify-content: center;
   letter-spacing: 2px;
   text-shadow: 2px 2px 8px #00000055;
-}
-
-.relogio {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  z-index: 10;
-  width: 320px;
-  height: 140px;
-  background: var(--relogio-bg);
-  border-radius: var(--relogio-radius);
-  backdrop-filter: var(--relogio-blur);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  border: 1.5px solid rgba(255,255,255,0.12);
-}
-
-#data {
-  color: var(--white);
-  font-size: 1.1rem;
-  margin-bottom: 0.2em;
-  letter-spacing: 0.5px;
-}
-
-#hora {
-  color: var(--white);
-  font-size: 2.8rem;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  text-shadow: 1px 1px 6px #00000033;
 }
 
 footer {

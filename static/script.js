@@ -31,66 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
-    // SEÇÃO 2: LÓGICA DO QR CODE E IMAGEM DE FUNDO
+    // SEÇÃO 2: ROTAÇÃO DE PÁGINAS (se necessário)
     // ======================================================
-
-    // Gera o QR Code (com a verificação para não duplicar)
-    const qrcodeContainer = document.getElementById("qrcode");
-    console.log("DEBUG - Container QR Code:", qrcodeContainer);
-    console.log("DEBUG - Link do evento:", window.eventoLink);
-    console.log("DEBUG - Imagem do evento:", window.eventoImagem);
-
-    if (qrcodeContainer && window.eventoLink && window.eventoLink.trim() !== "") {
-        console.log('Container QR Code encontrado!');
-        console.log('Link encontrado:', window.eventoLink);
-        console.log('Container já tem conteúdo:', qrcodeContainer.innerHTML.trim() !== '');
-        
-        // Só gera o QR Code se o container estiver vazio
-        if (qrcodeContainer.innerHTML.trim() === '') {
-            console.log('Gerando QR Code...');
-            try {
-                new QRCode(qrcodeContainer, {
-                    text: window.eventoLink,
-                    width: 150,
-                    height: 150,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-                console.log('QR Code gerado com sucesso!');
-            } catch (error) {
-                console.error('Erro ao gerar QR Code:', error);
-            }
-        } else {
-            console.log('Container já possui QR Code, pulando geração...');
-        }
-    } else {
-        console.log('QR Code não será gerado:');
-        console.log('  - Container existe:', !!qrcodeContainer);
-        console.log('  - Link existe:', !!window.eventoLink);
-        console.log('  - Link não vazio:', window.eventoLink && window.eventoLink.trim() !== "");
-    }
-
-    // Aplicar imagem de fundo do painel
-    const painel = document.querySelector('.painel');
-    if (painel) {
-        if (window.eventoImagem) {
-            console.log('Aplicando imagem de evento como papel de parede:', window.eventoImagem);
-            painel.style.backgroundImage = `url('${window.eventoImagem}')`;
-            painel.style.backgroundSize = 'cover';
-            painel.style.backgroundPosition = 'center';
-            painel.style.backgroundRepeat = 'no-repeat';
-        } else {
-            console.log('Aplicando fundo padrão (gradiente)');
-            painel.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        }
-    }
-
-    // ======================================================
-    // SEÇÃO 3: ROTAÇÃO DE PÁGINAS (se necessário)
-    // ======================================================
-    
-    // Obter a URL atual
     const paginaAtualPath = window.location.pathname;
     console.log("--- Iniciando Script de Rotação de Página ---");
     console.log("Página atual:", paginaAtualPath);
@@ -146,6 +88,68 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         window.location.href = proximaPagina;
     }, tempoDeExibicao);
+
+    // =========================
+    // ROTAÇÃO DE EVENTOS PAINEL
+    // =========================
+    if (window.eventosPainel && window.eventosPainel.length > 0) {
+        // Só mostra UM evento por vez, e avança a cada vez que a página '/' é exibida
+        let idx = Number(localStorage.getItem('idxEventoPainel') || 0);
+        if (isNaN(idx) || idx >= window.eventosPainel.length) idx = 0;
+
+        const midiaContainer = document.getElementById('midia-container');
+        const descricaoContainer = document.getElementById('descricao-container');
+        const qrcodeDiv = document.getElementById('qrcode');
+        qrcodeDiv.innerHTML = '';
+
+        function mostrarEvento(i) {
+            const ev = window.eventosPainel[i];
+            midiaContainer.innerHTML = '';
+            descricaoContainer.innerHTML = '';
+            qrcodeDiv.innerHTML = '';
+
+            if (ev.video) {
+                midiaContainer.style.background = '';
+                midiaContainer.style.backgroundImage = '';
+                midiaContainer.innerHTML = `<video id="bg-video" autoplay loop muted playsinline style="width:100%;height:auto;">
+                    <source src="${ev.video}" type="video/mp4">
+                </video>`;
+            } else if (ev.imagem) {
+                midiaContainer.innerHTML = '';
+                midiaContainer.style.backgroundImage = `url('${ev.imagem}')`;
+                midiaContainer.style.backgroundSize = 'cover';
+                midiaContainer.style.backgroundPosition = 'center';
+                midiaContainer.style.backgroundRepeat = 'no-repeat';
+            } else {
+                midiaContainer.innerHTML = '';
+                midiaContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                midiaContainer.style.backgroundImage = '';
+            }
+
+            if (ev.titulo !== "Conteúdo - Imagem de fundo") {
+                descricaoContainer.innerHTML = `<h2>${ev.titulo || ''}</h2><p>${ev.descricao || ''}</p>`;
+            } else {
+                descricaoContainer.innerHTML = '';
+            }
+
+            if (ev.link) {
+                qrcodeDiv.style.display = 'block';
+                new QRCode(qrcodeDiv, {
+                    text: ev.link,
+                    width: 128,
+                    height: 128
+                });
+            } else {
+                qrcodeDiv.style.display = 'none';
+            }
+        }
+
+        mostrarEvento(idx);
+
+        // Atualiza o índice para o próximo ciclo
+        idx = (idx + 1) % window.eventosPainel.length;
+        localStorage.setItem('idxEventoPainel', idx);
+    }
 });
 
 document.addEventListener('keydown', function (e) {

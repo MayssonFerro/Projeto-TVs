@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
+html {
+    font-size: clamp(14px, 1.2vw, 22px);
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -146,6 +150,21 @@ input {
     background-position: center;
     background-repeat: no-repeat;
     transition: background-image 0.5s ease-in-out;
+    padding: 0;
+}
+
+#midia-container {
+    width: 100vw;
+    height: 100vh;
+    min-width: 100vw;
+    background: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    z-index: 0;
 }
 
 /* Overlay para mensagens de texto sobre a imagem */
@@ -176,16 +195,15 @@ input {
     font-weight: 500;
 }
 
-/* Melhorar contraste do relógio sobre a imagem */
+
 .relogio {
     position: absolute;
-    top: 2rem;
-    right: 2rem;   /* <-- Troque left por right */
-    left: auto;    /* <-- Garante que não há conflito */
+    top: 20px;
+    left: 20px;
     z-index: 10;
     height: auto;
     width: 420px;
-    background: rgba(0, 0, 0, 0.7); /* Mais opaco para melhor contraste */
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -193,7 +211,6 @@ input {
     align-items: center;
     padding: 1rem;
     text-align: center;
-    backdrop-filter: blur(10px);
 }
 
 #data {
@@ -204,7 +221,7 @@ input {
 #hora {
     margin: 0;
     color: white;
-    font-size: clamp(4.9rem, 6vw, 4.5rem);
+    font-size: clamp(3rem, 6vw, 4.5rem);
 }
 
 #qrcode {
@@ -234,69 +251,44 @@ footer {
 }
 
 .noticia-rapida {
-    font-size: clamp(1.5rem, 4vh, 3.5rem);
-    background-color: #000000;
-    color: #ffffff;
-    font-weight: 500;
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    animation: scroll-left 60s linear infinite;
+  font-size: clamp(2rem, 4vh, 3.5rem);
+  font-weight: 500;
+  background-color: #000;
+  color: #fff;
+  padding: 0.5rem 2.5rem;
+  white-space: nowrap;
+  display: inline-block;
+  animation: scroll-left 40s linear infinite;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  margin-left: 100vw;
 }
 
 .noticia-rapida:hover {
-    animation-play-state: paused;
+  animation-play-state: paused;
+  cursor: pointer;
 }
 
 @keyframes scroll-left {
-    0% {
-        transform: translateX(100vw);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-120vw);
+  }
 }
 
-/* ============================= */
-/* RESPONSIVIDADE GERAL */
-/* ============================= */
-@media (max-width: 768px) {
+@media (max-width: 950px) {
+    body {
+        justify-content: flex-start;
+        padding-top: 4rem;
+    }
+
+
     .relogio {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        left: auto;
-        width: 90vw;
-        max-width: 320px;
-        margin: 0;
-        padding: 0.5rem;
-    }
-
-    #qrcode {
         position: static;
-        margin: 1rem auto;
-    }
-
-    .container {
-        padding: 1.5rem;
-    }
-
-    .title {
-        height: auto;
-        padding: 1rem;
-        text-align: center;
-    }
-
-    input {
-        font-size: 1rem;
-    }
-
-    .new-device {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-    }
-
-    form {
-        padding: 0;
+        width: 90%;
+        margin-top: 2rem;
     }
 }
 
@@ -370,4 +362,21 @@ footer {
 .painel > *:not(#bg-video):not(.relogio) {
     position: relative;
     z-index: 1;
+}
+
+.login-title {
+    text-align: center;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

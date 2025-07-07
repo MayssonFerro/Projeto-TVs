@@ -5,118 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Conteúdo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        h1, h2, h3 { color: #333; margin-bottom: 15px; }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        button:hover { background-color: #0056b3; }
-        
-        .btn-excluir {
-            background-color: #dc3545;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn-excluir:hover { background-color: #c82333; }
-        
-        .item-conteudo {
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            font-weight: normal;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-            margin-bottom: 0;
-        }
-        
-        .flash-messages {
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        
-        .flash-messages.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .flash-messages.danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .preview-imagem {
-            max-width: 200px;
-            max-height: 150px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
-
-        .exemplo {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border-left: 4px solid #007bff;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
 </head>
 <body>
     <!-- Mensagens Flash -->
@@ -182,19 +71,19 @@
                 {% for dispositivo in dispositivos %}
                     <label>
                         <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}" checked>
-                        📺 {{ dispositivo.nome }} - {{ dispositivo.local }} ({{ dispositivo.ip }})
+                        {{ dispositivo.nome }} - {{ dispositivo.local }} ({{ dispositivo.ip }})
                     </label>
                 {% else %}
-                    <p>⚠️ Nenhuma TV cadastrada. <a href="{{ url_for('adicionar_dispositivo') }}">Cadastre uma primeiro</a>.</p>
+                    <p>Nenhuma TV cadastrada. <a href="{{ url_for('adicionar_dispositivo') }}">Cadastre uma primeiro</a>.</p>
                 {% endfor %}
             </div>
 
-            <!-- Botões -->
-            <div style="margin-top: 20px;">
-                <button type="submit">🚀 Publicar Conteúdo</button>
-                <a href="{{ url_for('show_painel') }}" style="margin-left: 10px; color: #6c757d; text-decoration: none;">← Voltar ao Painel</a>
-            </div>
+                <button type="submit">Publicar Conteúdo</button>
         </form>
+        <div class="botoes">
+            <a href="{{ url_for('show_painel') }}" class="btn-voltar">← Voltar ao Painel</a>
+            <a href="{{ url_for('listar_dispositivos') }}" class="btn-dispositivos">Gerenciar TVs</a>
+        </div>
     </div>
 
     <!-- Seção de conteúdos existentes -->
@@ -212,7 +101,7 @@
                         {% if (evento.titulo.startswith('QR Code -') or evento.titulo.startswith('Conteúdo -')) and evento.dispositivo_id == noticia.dispositivo_id %}
                             {% if evento.link %}
                                 <p><strong>🔗 QR Code:</strong> 
-                                    <a href="{{ evento.link }}" target="_blank" style="color: #007bff; word-break: break-all;">
+                                    <a href="{{ evento.link }}" target="_blank" class="qrcode-link">
                                         {{ evento.link }}
                                     </a>
                                 </p>

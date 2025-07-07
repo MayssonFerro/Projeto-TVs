@@ -9,6 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, time, timedelta
 from werkzeug.utils import secure_filename
 import uuid
+from sqlalchemy import or_, and_
 
 app = Flask(__name__)
 app.secret_key = 'uma_chave_muito_secreta_aqui'
@@ -125,12 +126,12 @@ def get_status_intervalo():
             minutos = int(tempo_para_inicio.total_seconds() // 60)
             resultado = {
                 "show_aviso": True,
-                "mensagem_status": f"⏰ {nome.title()} em {minutos} minutos",
+                "mensagem_status": f"{nome.title()} em {minutos} minutos",
                 "tempo_restante_segundos": tempo_para_inicio.total_seconds(),
                 "tipo_evento": "aviso_inicio",
                 "turno": detalhes.get('turno', 'geral')
             }
-            print(f"✅ RETORNANDO (aviso início): {resultado}")
+            print(f"RETORNANDO (aviso início): {resultado}")
             return resultado
         
         # CONDIÇÃO 2: DURANTE o intervalo
@@ -141,22 +142,22 @@ def get_status_intervalo():
             if tempo_para_fim <= AVISO_FIM:
                 resultado = {
                     "show_aviso": True,
-                    "mensagem_status": f"⚠️ Intervalo termina em {minutos} minutos",
+                    "mensagem_status": f"O intervalo termina em {minutos} minutos",
                     "tempo_restante_segundos": tempo_para_fim.total_seconds(),
                     "tipo_evento": "fim_intervalo",
                     "turno": detalhes.get('turno', 'geral')
                 }
-                print(f"✅ RETORNANDO (fim intervalo): {resultado}")
+                print(f"RETORNANDO (fim intervalo): {resultado}")
                 return resultado
             else:
                 resultado = {
                     "show_aviso": True,
-                    "mensagem_status": f"📢 Intervalo em andamento ({minutos}min restantes)",
+                    "mensagem_status": f"Intervalo em andamento. ({minutos}min restantes)",
                     "tempo_restante_segundos": tempo_para_fim.total_seconds(),
                     "tipo_evento": "durante_intervalo",
                     "turno": detalhes.get('turno', 'geral')
                 }
-                print(f"✅ RETORNANDO (durante intervalo): {resultado}")
+                print(f"RETORNANDO (durante intervalo): {resultado}")
                 return resultado
         
         # CONDIÇÃO 3: Avisar saída (5 min antes)
@@ -164,19 +165,19 @@ def get_status_intervalo():
             minutos = int(tempo_para_inicio.total_seconds() // 60)
             resultado = {
                 "show_aviso": True,
-                "mensagem_status": f"🚪 Saída do turno {detalhes.get('turno', '')} em {minutos} minutos",
+                "mensagem_status": f"Saída do turno {detalhes.get('turno', '')} em {minutos} minutos",
                 "tempo_restante_segundos": tempo_para_inicio.total_seconds(),
                 "tipo_evento": "aviso_saida",
                 "turno": detalhes.get('turno', 'geral')
             }
-            print(f"✅ RETORNANDO (aviso saída): {resultado}")
+            print(f"RETORNANDO (aviso saída): {resultado}")
             return resultado
     
     # Se chegou aqui, não há avisos ativos
     if agora_dt.weekday() >= 5:  # Final de semana
         resultado = {
             "show_aviso": False,
-            "mensagem_status": "🌟 Bom final de semana!",
+            "mensagem_status": "Bom final de semana!",
             "tempo_restante_segundos": None,
             "tipo_evento": "fim_de_semana",
             "turno": None
@@ -184,7 +185,7 @@ def get_status_intervalo():
     elif turno_atual is None:  # Fora do horário escolar
         resultado = {
             "show_aviso": False,
-            "mensagem_status": "🌙 Escola fechada - Próximo turno: 7h (manhã)",
+            "mensagem_status": "Escola fechada - Próximo turno: 7h (manhã)",
             "tempo_restante_segundos": None,
             "tipo_evento": "fora_horario",
             "turno": None
@@ -192,13 +193,13 @@ def get_status_intervalo():
     else:  # Horário normal de aula
         resultado = {
             "show_aviso": False,
-            "mensagem_status": f"📚 Aulas em andamento - Turno da {turno_atual}",
+            "mensagem_status": f"Aulas em andamento - Turno da {turno_atual}",
             "tempo_restante_segundos": None,
             "tipo_evento": "aula_normal",
             "turno": turno_atual
         }
     
-    print(f"✅ RETORNANDO (sem aviso): {resultado}")
+    print(f"RETORNANDO (sem aviso): {resultado}")
     return resultado
 
 @login_manager.user_loader
@@ -351,14 +352,18 @@ def testar_sistema():
 @app.route("/")
 def show_painel():
     noticia = Noticia.query.filter_by(status='ativa').all()
-    # Pega o evento ativo mais recente
-    evento = Evento.query.filter_by(status='ativo').order_by(Evento.data_inicio.desc()).all()
+    # Filtra eventos ativos com imagem ou vídeo não nulos e não vazios
+    evento = Evento.query.filter(
+        Evento.status == 'ativo',
+        or_(
+            and_(Evento.imagem != None, Evento.imagem != ""),
+            and_(Evento.video != None, Evento.video != "")
+        )
+    ).order_by(Evento.data_inicio.desc()).all()
     
-    # Debug: imprimir no console para verificar se há eventos
-    print(f"DEBUG - Notícias encontradas: {len(noticia)}")
     print(f"DEBUG - Eventos encontrados: {len(evento)}")
     for e in evento:
-        print(f"  - Evento: {e.titulo}, Link: {e.link}")
+        print(f"  - Evento: {e.titulo}, Imagem: {e.imagem}, Vídeo: {e.video}, Link: {e.link}")
     status_intervalo = get_status_intervalo()
     return render_template(
         "painel.html",
@@ -409,13 +414,13 @@ def adicionar_dispositivo():
             db.session.rollback()
             flash(f'Erro ao adicionar dispositivo: {str(e)}', 'error')
     
-    return render_template('adicionar_dispositivo.html')
+    return render_template('gerenciador_deconteudo/adicionar_dispositivo.html')
 
 @app.route('/listar_dispositivos')
 @login_required
 def listar_dispositivos():
     dispositivos = Dispositivo.query.all()
-    return render_template('listar_dispositivos.html', dispositivos=dispositivos)
+    return render_template('gerenciador_deconteudo/dispositivos.html', dispositivos=dispositivos)
 
 @app.route('/testar_dispositivo/<ip>')
 @login_required
