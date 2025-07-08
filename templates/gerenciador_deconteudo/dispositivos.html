@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dispositivos.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Gerenciar Dispositivos - Sistema de TVs</title>
 </head>
@@ -23,13 +24,17 @@
         <div class="dispositivos-grid">    
                 {% for dispositivo in dispositivos %}
                 <div class="dispositivo-card {{ dispositivo.status }}">
-                    <div class="dispositivo-header">
+                    <div class="dispositivo-header status-badge status-{{ dispositivo.status }}">
                         <h3>{{ dispositivo.nome }}</h3>
-                        <span class="status-badge status-{{ dispositivo.status }}">
-                            {{ dispositivo.status|title }}
-                        </span>
+
+                        <a href="{{ url_for('editar_dispositivo', dispositivo_id=dispositivo.id) }}" 
+                           class="edit-button">
+                            <i class='bx bxs-edit'></i>
+                        </a>
+
+                         <!-- <span>{{ dispositivo.status|title }}</span> -->
                     </div>
-                    
+
                     <div class="dispositivo-info">
                         <div class="info-row">
                             <strong>Local:</strong> {{ dispositivo.local }}
@@ -55,32 +60,29 @@
                     </div>
                     
                     <div class="dispositivo-actions">
-                        <a href="{{ url_for('editar_dispositivo', dispositivo_id=dispositivo.id) }}" 
-                           class="btn btn-secondary btn-small">
-                            ✏️ Editar
-                        </a>
                         {% if dispositivo.status == 'ativo' %}
                         <a href="{{ url_for('enviar_conteudo', dispositivo_id=dispositivo.id) }}" 
                            class="btn btn-primary btn-small">
-                            📤 Enviar Conteúdo
+                            Recarregar
                         </a>
                         {% else %}
                         <button type="button" 
                                 class="btn btn-disabled btn-small" 
                                 disabled 
                                 title="Dispositivo está {{ dispositivo.status }}. Ative-o primeiro.">
-                            📤 Enviar Conteúdo
+                            Recarregar
                         </button>
                         {% endif %}
                         <button type="button" 
                                 class="btn btn-test btn-small" 
                                 onclick="testarDispositivo('{{ dispositivo.ip }}', this)">
-                            🔍 Testar
+                            Conexão
                         </button>
                     </div>
                 </div>
                 {% endfor %}
-                        {% if dispositivos %}
+
+                {% if dispositivos %}
                 <!-- Alertas de problemas -->
                 {% set dispositivos_inativos = dispositivos | selectattr('status', 'ne', 'ativo') | list %}
                 {% if dispositivos_inativos %}
