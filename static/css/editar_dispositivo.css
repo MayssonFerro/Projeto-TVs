@@ -1,48 +1,60 @@
-/* ============================================
-   ESTILOS PARA: editar_dispositivo.html
-   Página de edição de dispositivos
-   ============================================ */
+/* Sobrescrever container global para esta página */
+.container {
+    padding: 0.5rem !important;
+    max-width: 100% !important;
+    color: #333;
+}
 
 /* Header da página */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
 }
 
 .header h1 {
-    margin: 0;
     color: #333;
+    margin: 1rem;
 }
 
 /* Container do formulário */
 .form-container {
-    max-width: 700px;
-    margin: 0 auto;
+    max-width: 500px;
+    width: 100%;
     background: white;
-    padding: 2rem;
+    padding: 0.2rem;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#editar-dispositivo-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Grupos de formulário */
+
 .form-group {
-    margin-bottom: 1.5rem;
+    width: 100%;
+    gap: 10px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
     font-weight: 500;
     color: #333;
 }
 
 .form-group input,
 .form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.75rem;
+.form-group textarea {  
+    width: auto;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
@@ -62,10 +74,18 @@
     min-height: 120px;
 }
 
-/* Contadores de caracteres */
-.contador-container {
-    margin-top: 0.25rem;
+.ip-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    input {
+        width: 100%;
+    }
 }
+
+/* Contadores de caracteres */
 
 .contador {
     font-size: 0.8rem;
@@ -74,6 +94,8 @@
 
 /* Teste de conexão */
 .btn-test {
+    display: flex;
+    align-items: center;
     background: #28a745;
     color: white;
     padding: 0.5rem 1rem;
@@ -94,6 +116,9 @@
     padding: 0.5rem;
     border-radius: 4px;
     font-size: 0.9rem;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .teste-resultado.sucesso {
@@ -113,7 +138,6 @@
     display: flex;
     gap: 1rem;
     justify-content: flex-start;
-    margin-top: 2rem;
 }
 
 .btn-danger {
@@ -124,6 +148,20 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.green {
+    background: #28a745;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.green:hover {
+    background: #218838;
 }
 
 .btn-danger:hover {
@@ -142,6 +180,23 @@
 
 .btn-secondary:hover {
     background: #5a6268;
+}
+
+.floating {
+    position: fixed;
+    top: 1rem;
+    left: 2rem;
+    z-index: 1000;
+    background: #469C42;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
+}
+
+.floating:hover {
+    background: #218838;
 }
 
 /* Informações do dispositivo */
@@ -215,4 +270,27 @@
     gap: 1rem;
     justify-content: center;
     margin-top: 1.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem !important;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-container {
+        padding: 1.5rem;
+        margin: 0 0.5rem;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
 }

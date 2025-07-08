@@ -1,4 +1,12 @@
 /* Layout principal */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
 .header {
     display: flex;
     justify-content: center;
@@ -85,20 +93,6 @@
 .dispositivo-card:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
-
-/* Status dos dispositivos
-.dispositivo-card.inativo {
-    opacity: 0.7;
-    border-left: 4px solid #dc3545;
-}
-
-.dispositivo-card.manutencao {
-    border-left: 4px solid #ffc107;
-}
-
-.dispositivo-card.ativo {
-    border-left: 4px solid #28a745;
-} */
 
 /* Header do card */
 .dispositivo-header {
@@ -203,6 +197,10 @@
     opacity: 0.6;
 }
 
+.gray:hover {
+    background: #b4afaf !important;
+}
+
 .floating {
     position: fixed;
     z-index: 1000;
@@ -212,6 +210,10 @@
     border-radius: 50px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease;
+}
+
+.floating:hover {
+    background: #218838;
 }
 
 .left.floating {

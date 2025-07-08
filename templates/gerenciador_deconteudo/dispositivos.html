@@ -14,10 +14,10 @@
         <div class="header">
             <h1>Dispositivos Cadastrados</h1>
             <a href="{{ url_for('admin') }}" class="btn left floating">
-                ← Voltar ao Painel
+                Voltar ao Painel
             </a>
             <a href="{{ url_for('adicionar_dispositivo') }}" class="btn right floating">
-                + Novo Dispositivo
+                Adicionar Dispositivo
             </a>
         </div>
 
@@ -62,12 +62,12 @@
                     <div class="dispositivo-actions">
                         {% if dispositivo.status == 'ativo' %}
                         <a href="{{ url_for('enviar_conteudo', dispositivo_id=dispositivo.id) }}" 
-                           class="btn btn-primary btn-small">
+                           class="btn btn-primary btn-small gray">
                             Recarregar
                         </a>
                         {% else %}
                         <button type="button" 
-                                class="btn btn-disabled btn-small" 
+                                class="btn btn-disabled btn-small gray" 
                                 disabled 
                                 title="Dispositivo está {{ dispositivo.status }}. Ative-o primeiro.">
                             Recarregar

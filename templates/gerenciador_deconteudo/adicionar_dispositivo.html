@@ -5,52 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/adicionar_dispositivo.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Adicionar Dispositivo</title>
 </head>
 <body>
     <div class="container">
-        <div class="title">
-            <h1>📺 Cadastrar Dispositivo</h1>
-            <p>Registre uma nova TV/Raspberry Pi no sistema</p>
+        <a href="/admin" class="btn btn-secondary floating left">Gerenciar Conteúdo</a>
+        <a href="/listar_dispositivos" class="btn btn-info floating right">Ver Dispositivos</a>
+        <div class="header">
+            <h1>Cadastrar Dispositivo</h1>
         </div>
-       
         <div class="content">
             <form action="/adicionar_dispositivo" method="post">
                 <div class="form-group">
                     <label for="nome">Nome do Dispositivo:</label>
-                    <input type="text" id="nome" name="nome" placeholder="Ex: TV Sala de Aula 01" required>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: TV Sala de Aula 01" required maxlength="50">
+                    <span id="contador-nome" class="contador">0/50</span>
+                </div>
 
+                <div class="form-group">
                     <label for="local">Local do Dispositivo:</label>
-                    <input type="text" id="local" name="local" placeholder="Ex: Sala 101, Laboratório, Auditório" required>
+                    <input type="text" id="local" name="local" placeholder="Ex: Sala 101, Laboratório, Auditório" required maxlength="50">
+                    <span id="contador-local" class="contador">0/50</span>
+                </div>
 
+                <div class="form-group">
                     <label for="ip">Endereço IP:</label>
-                    <input type="text" id="ip" name="ip" placeholder="Ex: 192.168.1.100" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" required>
-                    <small>Formato: 192.168.1.100</small>
+                    <div class="ip-group">
+                        <input type="text" id="ip" name="ip" placeholder="Ex: 192.168.1.100" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" required>
+                        <button type="button" id="testar-conexao" class="btn btn-test" title="Testar conexão com o dispositivo"><i class='bx bx-search'></i></button>
+                    </div>
+                    <div id="resultado-teste" class="teste-resultado"></div>
+                </div>
 
+                <div class="form-group">
                     <label for="status">Status:</label>
                     <select id="status" name="status" required>
-                        <option value="ativo">🟢 Ativo</option>
-                        <option value="inativo">🔴 Inativo</option>
-                        <option value="manutencao">🟡 Manutenção</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                        <option value="manutencao">Manutenção</option>
                     </select>
+                </div>
 
+                <div class="form-group">
                     <label for="observacoes">Observações (opcional):</label>
-                    <textarea id="observacoes" name="observacoes" placeholder="Ex: Raspberry Pi 4, Resolução 1920x1080"></textarea>
+                    <textarea id="observacoes" name="observacoes" placeholder="Ex: Raspberry Pi 4, Resolução 1920x1080" maxlength="500"></textarea>
+                    <span id="contador-observacoes" class="contador">0/500</span>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">📱 Adicionar Dispositivo</button>
-                    <button type="button" class="btn btn-test" onclick="testarConexao()">🔍 Testar Conexão</button>
+                    <button type="submit" class="btn btn-primary green">
+                        Salvar
+                    </button>
                 </div>
             </form>
         </div>
-
-        <div class="footer">
-            <a href="/admin" class="btn btn-secondary">← Voltar ao Painel</a>
-            <a href="/listar_dispositivos" class="btn btn-info">📋 Ver Dispositivos</a>
-        </div>
-
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="flash-messages">

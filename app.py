@@ -757,6 +757,20 @@ def admin():
     )
 
 
+@app.route('/publicacoes_ativas')
+@login_required
+def publicacoes_ativas():
+    # Buscar todas as notícias e eventos ativos
+    noticias = Noticia.query.filter_by(status='ativo').all()
+    eventos = Evento.query.filter_by(status='ativo').all()
+    
+    return render_template(
+        "gerenciador_deconteudo/publicacoes_ativas.html", 
+        noticias=noticias,
+        eventos=eventos
+    )
+
+
 @app.route('/excluir_noticia/<int:id>', methods=['POST'])
 @login_required
 def excluir_noticia(id):
@@ -764,7 +778,7 @@ def excluir_noticia(id):
     db.session.delete(noticia)
     db.session.commit()
     flash("Notícia excluída com sucesso!", "success")
-    return redirect(url_for('admin'))
+    return redirect(url_for('publicacoes_ativas'))
 
 @app.route('/excluir_evento/<int:id>', methods=['POST'])
 @login_required
@@ -794,7 +808,7 @@ def excluir_evento(id):
     db.session.delete(evento)
     db.session.commit()
     flash("Evento excluído com sucesso!", "success")
-    return redirect(url_for('admin'))
+    return redirect(url_for('publicacoes_ativas'))
 
 @app.route('/excluir_mensagem/<int:id>', methods=['POST'])
 @login_required

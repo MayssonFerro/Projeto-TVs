@@ -18,17 +18,28 @@
         {% endif %}
     {% endwith %}
 
-    <h1>📺 Gerenciar Conteúdo das TVs</h1>
+    <div class="header">
+        <h1>Gerenciar Conteúdo das TVs</h1>
+    </div>
+    <div class="exemplo-toggle-container">
+        <button type="button" id="toggle-exemplo" class="btn btn-info floating">
+            💡 Como funciona?
+        </button>
 
-    <!-- Exemplo de como funciona -->
-    <div class="exemplo">
-        <h3>💡 Como funciona:</h3>
-        <ul style="margin-left: 20px;">
-            <li><strong>Texto:</strong> Aparece na barra inferior (notícia rápida) passando da direita para esquerda</li>
-            <li><strong>Imagem:</strong> Aparece como papel de parede da tela principal</li>
-            <li><strong>QR Code:</strong> Aparece no cantinho direito quando você adiciona um link</li>
-            <li><strong>Combinação:</strong> Você pode usar texto + imagem + QR code juntos!</li>
-        </ul>
+        <div class="exemplo-card" id="exemplo-card" style="display: none;">
+            <div class="exemplo-header">
+                <h3>💡 Como funciona:</h3>
+                <button type="button" class="exemplo-close" id="exemplo-close">✕</button>
+            </div>
+            <div class="exemplo-content">
+                <ul>
+                    <li><strong>Texto:</strong> Aparece na barra inferior (notícia rápida) passando da direita para esquerda</li>
+                    <li><strong>Imagem:</strong> Aparece como papel de parede da tela principal</li>
+                    <li><strong>QR Code:</strong> Aparece no cantinho direito quando você adiciona um link</li>
+                    <li><strong>Combinação:</strong> Você pode usar texto + imagem + QR code juntos!</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Formulário para adicionar novo conteúdo -->
@@ -124,75 +135,8 @@
         <div class="botoes">
             <a href="{{ url_for('show_painel') }}" class="btn-voltar">← Voltar ao Painel</a>
             <a href="{{ url_for('listar_dispositivos') }}" class="btn-dispositivos">Gerenciar TVs</a>
+            <a href="{{ url_for('publicacoes_ativas') }}" class="btn btn-primary"> Ver Publicações Ativas</a>
         </div>
-    </div>
-
-    <!-- Seção de conteúdos existentes -->
-    <div class="container">
-        <h2>📋 Publicações Ativas</h2>
-        
-        <!-- NOTÍCIAS RÁPIDAS -->
-        {% if noticias %}
-            <h3>📝 Notícias Rápidas (Barra Inferior)</h3>
-            {% for noticia in noticias %}
-                <div class="item-conteudo">
-                    <p><strong>📝 Texto:</strong> {{ noticia.conteudo }}</p>
-                    <p><strong>📱 TV:</strong> {{ noticia.dispositivo.nome }} - {{ noticia.dispositivo.local }}</p>
-                    <p><strong>📅 Publicado em:</strong> {{ noticia.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% if noticia.data_fim %}
-                        <p><strong>⏰ Expira em:</strong> {{ noticia.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% endif %}
-                    
-                    <form method="POST" action="{{ url_for('excluir_noticia', id=noticia.id) }}" style="display: inline;">
-                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir esta notícia?')">🗑️ Excluir Notícia</button>
-                    </form>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- EVENTOS (IMAGEM/VÍDEO) -->
-        {% if eventos %}
-            <h3>🎬 Eventos (Imagem/Vídeo + Descrição)</h3>
-            {% for evento in eventos %}
-                <div class="item-conteudo">
-                    <p><strong>📋 Título:</strong> {{ evento.titulo }}</p>
-                    {% if evento.descricao %}
-                        <p><strong>📄 Descrição:</strong> {{ evento.descricao }}</p>
-                    {% endif %}
-                    <p><strong>📱 TV:</strong> {{ evento.dispositivo.nome }} - {{ evento.dispositivo.local }}</p>
-                    <p><strong>📅 Publicado em:</strong> {{ evento.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% if evento.data_fim %}
-                        <p><strong>⏰ Expira em:</strong> {{ evento.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% endif %}
-                    
-                    {% if evento.link %}
-                        <p><strong>🔗 QR Code:</strong> 
-                            <a href="{{ evento.link }}" target="_blank" class="qrcode-link">
-                                {{ evento.link }}
-                            </a>
-                        </p>
-                    {% endif %}
-                    
-                    {% if evento.imagem %}
-                        <p><strong>🖼️ Imagem:</strong> 
-                            <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem do evento">
-                        </p>
-                    {% endif %}
-                    
-                    {% if evento.video %}
-                        <p><strong>🎬 Vídeo:</strong> {{ evento.video }}</p>
-                    {% endif %}
-                    
-                    <form method="POST" action="{{ url_for('excluir_evento', id=evento.id) }}" style="display: inline;">
-                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir este evento?')">🗑️ Excluir Evento</button>
-                    </form>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% if not noticias and not eventos %}
-            <p>📭 Nenhuma publicação ativa no momento.</p>
-        {% endif %}
     </div>
 </body>
 </html>

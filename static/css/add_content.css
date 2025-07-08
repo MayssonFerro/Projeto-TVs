@@ -1,149 +1,305 @@
 body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        h1, h2, h3 { color: #333; margin-bottom: 15px; }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        .botoes {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            width: 100%;
-        }
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
 
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        button:hover { background-color: #0056b3; }
-        
-        .btn-excluir {
-            background-color: #dc3545;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn-excluir:hover { background-color: #c82333; }
-        
-        .item-conteudo {
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            font-weight: normal;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-            margin-bottom: 0;
-        }
-        
-        .flash-messages {
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        
-        .flash-messages.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .flash-messages.danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .preview-imagem {
-            max-width: 200px;
-            max-height: 150px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
+.header h1 {
+    color: #333;
+    margin: 1rem;
+}
 
-        .exemplo {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border-left: 4px solid #007bff;
-        }
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
 
-        .btn-dispositivos {
-            margin-left: 10px;
-            color: #007bff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: 1px solid #007bff;
-            background: #fff;
-            transition: background 0.2s, color 0.2s;
-        }
-        .btn-dispositivos:hover {
-            background: #007bff;
-            color: #fff;
-        }
+h1, h2, h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
 
-        .btn-voltar {
-            margin-left: 10px;
-            color: #6c757d;
-            text-decoration: none;
-        }
-        .btn-voltar:hover {
-            text-decoration: underline;
-        }
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
 
-        .qrcode-link {
-            color: #007bff;
-            word-break: break-all;
-        }
-        .qrcode-link:hover {
-            text-decoration: underline;
-        }
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.botoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    width: 100%;
+    gap: 10px;
+}
+
+.botoes .btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.botoes .btn-primary:hover {
+    background: #0056b3;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+}
+
+.item-conteudo {
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.flash-messages {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.flash-messages.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.flash-messages.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.preview-imagem {
+    max-width: 200px;
+    max-height: 150px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+.btn-dispositivos {
+    margin-left: 10px;
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #007bff;
+    background: #fff;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-dispositivos:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-voltar {
+    margin-left: 10px;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.btn-voltar:hover {
+    text-decoration: underline;
+}
+
+.qrcode-link {
+    color: #007bff;
+    word-break: break-all;
+}
+
+.qrcode-link:hover {
+    text-decoration: underline;
+}
+
+/* Form inline para botões de excluir */
+.form-inline {
+    display: inline;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.empty-state p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Header e exemplo flutuante */
+.exemplo-toggle-container {
+    position: relative;
+}
+
+.exemplo-card {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 350px;
+    max-width: 90vw;
+    z-index: 1000;
+    display: none;
+}
+
+.exemplo-card.show {
+    display: block !important;
+}
+
+.exemplo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.exemplo-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.exemplo-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.exemplo-close:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.exemplo-content {
+    padding: 20px;
+}
+
+.exemplo-content ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.exemplo-content li {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.exemplo-content strong {
+    color: #007bff;
+}
+
+/* Responsividade para o card */
+@media (max-width: 768px) {
+    .exemplo-card {
+        width: 300px;
+        right: -50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .exemplo-card {
+        width: 280px;
+        right: -80px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_dispositivo.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Editar Dispositivo - Sistema de TVs</title>
 </head>
 <body>
     <div class="container">
+        <a href="{{ url_for('listar_dispositivos') }}" class="btn btn-secondary floating">
+            Lista de dispositivos
+        </a>
         <div class="header">
             <h1>Editar Dispositivo</h1>
-            <a href="{{ url_for('listar_dispositivos') }}" class="btn btn-secondary">
-                ← Voltar para Lista
-            </a>
         </div>
 
         <div class="form-container">
@@ -22,23 +23,21 @@
                 <div class="form-group">
                     <label for="nome">Nome do Dispositivo:</label>
                     <input type="text" id="nome" name="nome" value="{{ dispositivo.nome }}" required maxlength="50">
-                    <div class="contador-container">
-                        <span id="contador-nome" class="contador">0/50</span>
-                    </div>
+                    <span id="contador-nome" class="contador">0/50</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="local">Local:</label>
+                    <label for="local">Local do Dispositivo:</label>
                     <input type="text" id="local" name="local" value="{{ dispositivo.local }}" required maxlength="50">
-                    <div class="contador-container">
-                        <span id="contador-local" class="contador">0/50</span>
-                    </div>
+                    <span id="contador-local" class="contador">0/50</span>
                 </div>
 
                 <div class="form-group">
                     <label for="ip">Endereço IP:</label>
-                    <input type="text" id="ip" name="ip" value="{{ dispositivo.ip }}" required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" title="Digite um IP válido (ex: 192.168.1.100)">
-                    <button type="button" id="testar-conexao" class="btn btn-test">Testar Conexão</button>
+                    <div class="ip-group">
+                        <input type="text" id="ip" name="ip" value="{{ dispositivo.ip }}" required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" title="Digite um IP válido (ex: 192.168.1.100)">
+                        <button type="button" id="testar-conexao" class="btn btn-test"><i class='bx bx-search'></i></button>
+                    </div>
                     <div id="resultado-teste" class="teste-resultado"></div>
                 </div>
 
@@ -52,19 +51,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="observacoes">Observações:</label>
+                    <label for="observacoes">Observações (opcional) :</label>
                     <textarea id="observacoes" name="observacoes" maxlength="500" rows="4" placeholder="Observações adicionais sobre o dispositivo...">{{ dispositivo.observacoes or '' }}</textarea>
-                    <div class="contador-container">
-                        <span id="contador-observacoes" class="contador">0/500</span>
-                    </div>
+                    <span id="contador-observacoes" class="contador">0/500</span>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        💾 Salvar Alterações
-                    </button>
                     <button type="button" id="excluir-dispositivo" class="btn btn-danger">
-                        🗑️ Excluir Dispositivo
+                        Excluir
+                    </button>
+                    <button type="submit" class="btn btn-primary green">
+                        Salvar
                     </button>
                 </div>
             </form>

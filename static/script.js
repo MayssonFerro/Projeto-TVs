@@ -128,6 +128,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // Inicializar edição de dispositivo se estiver na página correta
         configurarEdicaoDispositivo();
         
+        // Inicializar adição de dispositivo se estiver na página correta
+        configurarAdicaoDispositivo();
+        
         // Executar dicas de conexão se estiver na página de dispositivos
         if (paginaAtualPath.includes('/listar_dispositivos')) {
             setTimeout(mostrarDicasConexao, 500);
@@ -318,6 +321,31 @@ function adicionarContadorCaracteres(elementId, maxLength) {
   }
 }
 
+// Função para validar IP
+function validarIP(ip) {
+    const regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return regex.test(ip);
+}
+
+// Função para testar conexão com parâmetro IP
+async function testarConexaoComIP(ip) {
+    try {
+        const response = await fetch(`/testar_dispositivo/${ip}`);
+        const data = await response.json();
+        
+        if (data.sucesso) {
+            mostrarResultadoTeste('✅ Dispositivo respondeu! Status: ' + data.status, true);
+        } else {
+            mostrarResultadoTeste('❌ Erro: ' + data.erro, false);
+        }
+        
+        return data;
+    } catch (error) {
+        mostrarResultadoTeste('❌ Erro ao testar conexão: ' + error.message, false);
+        throw error;
+    }
+}
+
 function testarConexao() {
   const ip = document.getElementById('ip').value;
   if (!ip) {
@@ -338,6 +366,43 @@ function testarConexao() {
     .catch(error => {
       alert('❌ Erro ao testar conexão: ' + error);
     });
+}
+
+// Função para adição de dispositivo
+function configurarAdicaoDispositivo() {
+    const form = document.querySelector('form[action="/adicionar_dispositivo"]');
+    const testarBtn = document.getElementById('testar-conexao');
+
+    if (!form) return;
+
+    // Configurar contadores de caracteres
+    configurarContador('nome', 50);
+    configurarContador('local', 50);
+    configurarContador('observacoes', 500);
+
+    // Testar conexão
+    if (testarBtn) {
+        testarBtn.addEventListener('click', function() {
+            const ip = document.getElementById('ip').value;
+            if (!ip) {
+                mostrarResultadoTeste('Por favor, digite um IP primeiro.', false);
+                return;
+            }
+
+            if (!validarIP(ip)) {
+                mostrarResultadoTeste('Por favor, digite um IP válido.', false);
+                return;
+            }
+
+            testarBtn.disabled = true;
+            testarBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+            
+            testarConexaoComIP(ip).finally(() => {
+                testarBtn.disabled = false;
+                testarBtn.innerHTML = '<i class="bx bx-search"></i>';
+            });
+        });
+    }
 }
 
 // Função para edição de dispositivo
@@ -371,11 +436,11 @@ function testarConexao() {
                 }
 
                 testarBtn.disabled = true;
-                testarBtn.textContent = 'Testando...';
+                testarBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
                 
-                testarConexao(ip).finally(() => {
+                testarConexaoComIP(ip).finally(() => {
                     testarBtn.disabled = false;
-                    testarBtn.textContent = 'Testar Conexão';
+                    testarBtn.innerHTML = '<i class="bx bx-search"></i>';
                 });
             });
         }
@@ -468,6 +533,7 @@ function testarConexao() {
         if (resultado) {
             resultado.textContent = mensagem;
             resultado.className = 'teste-resultado ' + (sucesso ? 'sucesso' : 'erro');
+            resultado.style.display = 'flex';
         }
     }
 
@@ -552,3 +618,69 @@ function testarConexao() {
             }
         });
     }
+
+    // Inicializar funcionalidades quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar qual página estamos e inicializar as funções apropriadas
+        if (document.getElementById('editar-dispositivo-form')) {
+            configurarEdicaoDispositivo();
+        }
+        
+        if (document.querySelector('form[action="/adicionar_dispositivo"]')) {
+            configurarAdicaoDispositivo();
+        }
+        
+        // Configurar toggle do exemplo na página de adicionar conteúdo
+        if (document.getElementById('toggle-exemplo')) {
+            configurarToggleExemplo();
+        }
+    });
+
+// Função para configurar o toggle do exemplo
+function configurarToggleExemplo() {
+    const toggleBtn = document.getElementById('toggle-exemplo');
+    const exemploCard = document.getElementById('exemplo-card');
+    const closeBtn = document.getElementById('exemplo-close');
+    
+    console.log('Configurando toggle exemplo:', {toggleBtn, exemploCard, closeBtn}); // Debug
+    
+    if (toggleBtn && exemploCard) {
+        // Abrir card ao clicar no botão
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Botão clicado, mostrando card'); // Debug
+            // Esconder botão e mostrar card
+            toggleBtn.style.display = 'none';
+            exemploCard.classList.add('show');
+        });
+        
+        // Fechar card ao clicar no X
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Botão X clicado, fechando card'); // Debug
+                // Esconder card e mostrar botão
+                exemploCard.classList.remove('show');
+                toggleBtn.style.display = 'inline-block';
+            });
+        }
+        
+        // Fechar card ao clicar fora dele
+        document.addEventListener('click', function(e) {
+            if (!exemploCard.contains(e.target) && !toggleBtn.contains(e.target)) {
+                if (exemploCard.classList.contains('show')) {
+                    console.log('Clique fora, fechando card'); // Debug
+                    exemploCard.classList.remove('show');
+                    toggleBtn.style.display = 'inline-block';
+                }
+            }
+        });
+        
+        // Impedir que cliques dentro do card o fechem
+        exemploCard.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    } else {
+        console.error('Elementos não encontrados:', {toggleBtn, exemploCard}); // Debug
+    }
+}
