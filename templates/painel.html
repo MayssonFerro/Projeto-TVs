@@ -23,11 +23,6 @@
     <title>Painel</title>
 </head>
 <body>
-    <!-- <pre id="debug-eventos"></pre>
-    <script>
-    document.getElementById('debug-eventos').textContent =
-    JSON.stringify(window.eventosPainel, null, 2) + "\nidx: " + localStorage.getItem('idxEventoPainel');
-    </script> -->
     <main>
         <div class="container painel" id="painel-principal">
             <div id="midia-container"></div>
@@ -37,7 +32,7 @@
             </div>
             <div class="descricao" id="descricao-container"></div>
             <div class="link">
-                <div id="qrcode"></div>
+                <div id="qrcode" style="display: none;"></div>
             </div>
         </div>
     </main>

@@ -126,7 +126,7 @@ def get_status_intervalo():
             minutos = int(tempo_para_inicio.total_seconds() // 60)
             resultado = {
                 "show_aviso": True,
-                "mensagem_status": f"{nome.title()} em {minutos} minutos",
+                "mensagem_status": f"{nome.title()}",
                 "tempo_restante_segundos": tempo_para_inicio.total_seconds(),
                 "tipo_evento": "aviso_inicio",
                 "turno": detalhes.get('turno', 'geral')
@@ -142,7 +142,7 @@ def get_status_intervalo():
             if tempo_para_fim <= AVISO_FIM:
                 resultado = {
                     "show_aviso": True,
-                    "mensagem_status": f"O intervalo termina em {minutos} minutos",
+                    "mensagem_status": f"O intervalo termina em",
                     "tempo_restante_segundos": tempo_para_fim.total_seconds(),
                     "tipo_evento": "fim_intervalo",
                     "turno": detalhes.get('turno', 'geral')
@@ -152,7 +152,7 @@ def get_status_intervalo():
             else:
                 resultado = {
                     "show_aviso": True,
-                    "mensagem_status": f"Intervalo em andamento. ({minutos}min restantes)",
+                    "mensagem_status": f"Intervalo em andamento",
                     "tempo_restante_segundos": tempo_para_fim.total_seconds(),
                     "tipo_evento": "durante_intervalo",
                     "turno": detalhes.get('turno', 'geral')
@@ -193,7 +193,7 @@ def get_status_intervalo():
     else:  # Horário normal de aula
         resultado = {
             "show_aviso": False,
-            "mensagem_status": f"Aulas em andamento - Turno da {turno_atual}",
+            "mensagem_status": f"Aula em andamento - Turno da {turno_atual}",
             "tempo_restante_segundos": None,
             "tipo_evento": "aula_normal",
             "turno": turno_atual

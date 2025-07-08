@@ -31,6 +31,57 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
+    // SEÇÃO 1: LÓGICA DA NOTÍCIA RÁPIDA (MÉTODO ROBUSTO)
+    // ======================================================
+    const noticiaRapida = document.querySelector('.noticia-rapida');
+
+    if (noticiaRapida) {
+        // 1. Parâmetros da Animação
+        const velocidadePixelsPorSegundo = 150; // Ajuste a velocidade conforme necessário
+        let posicaoAtual = parseFloat(localStorage.getItem('posicaoAtualNoticiaRapida')) || 0;
+        let ultimoTimestamp = null;
+
+        // 2. Função de Animação (o coração da lógica)
+        function animar(timestamp) {
+            if (!ultimoTimestamp) {
+                ultimoTimestamp = timestamp;
+            }
+
+            // Calcula quanto tempo passou desde o último frame
+            const deltaTempoSegundos = (timestamp - ultimoTimestamp) / 1000;
+            ultimoTimestamp = timestamp;
+
+            // Move a posição para a esquerda
+            posicaoAtual -= velocidadePixelsPorSegundo * deltaTempoSegundos;
+
+            // Pega a largura total (elemento + tela) para saber quando reiniciar
+            const larguraTotal = noticiaRapida.offsetWidth + window.innerWidth;
+
+            // Se o elemento saiu completamente da tela, reinicia a posição
+            if (posicaoAtual < -larguraTotal) {
+                posicaoAtual = 0; // Reinicia do lado direito da tela
+            }
+
+            // Aplica a nova posição
+            noticiaRapida.style.transform = `translateX(${posicaoAtual}px)`;
+
+            // Continua o loop de animação
+            requestAnimationFrame(animar);
+        }
+
+        // 3. Inicia a animação
+        // Aplica a posição inicial antes de começar o loop
+        noticiaRapida.style.transform = `translateX(${posicaoAtual}px)`;
+        requestAnimationFrame(animar);
+
+        // 4. Salva a posição EXATAMENTE antes de a página ser descarregada
+        window.addEventListener('beforeunload', () => {
+            // O valor de 'posicaoAtual' já está sempre atualizado pelo loop de animação
+            localStorage.setItem('posicaoAtualNoticiaRapida', posicaoAtual);
+        });
+    }
+
+    // ======================================================
     // SEÇÃO 2: ROTAÇÃO DE PÁGINAS (se necessário)
     // ======================================================
     const paginaAtualPath = window.location.pathname;
@@ -153,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') {
         window.location.href = "/login";
     }
 });

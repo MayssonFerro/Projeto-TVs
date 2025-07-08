@@ -140,25 +140,11 @@ footer {
   padding: 0.5rem 2.5rem;
   white-space: nowrap;
   display: inline-block;
-  animation: scroll-left 40s linear infinite;
   border-radius: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   margin-left: 100vw;
 }
 
-.noticia-rapida:hover {
-  animation-play-state: paused;
-  cursor: pointer;
-}
-
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-120vw);
-  }
-}
 /* Erro */
 .erro-container {
     padding: 2rem;
