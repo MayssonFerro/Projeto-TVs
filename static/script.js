@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
-    // SEÇÃO 1: LÓGICA DA NOTÍCIA RÁPIDA (MÉTODO ROBUSTO)
+    // SEÇÃO 2: LÓGICA DA NOTÍCIA RÁPIDA (MÉTODO ROBUSTO)
     // ======================================================
     const noticiaRapida = document.querySelector('.noticia-rapida');
 
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
-    // SEÇÃO 2: ROTAÇÃO DE PÁGINAS (se necessário)
+    // SEÇÃO 3: ROTAÇÃO DE PÁGINAS (se necessário)
     // ======================================================
     const paginaAtualPath = window.location.pathname;
     console.log("--- Iniciando Script de Rotação de Página ---");
@@ -92,6 +92,35 @@ document.addEventListener("DOMContentLoaded", function() {
     const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos'];
     if (paginasAdministrativas.some(pagina => paginaAtualPath.startsWith(pagina))) {
         console.log("Página administrativa detectada. Rotação de página desabilitada.");
+        
+        // ======================================================
+        // SEÇÃO 4: INICIALIZAÇÃO PARA PÁGINAS ADMINISTRATIVAS
+        // ======================================================
+        // Inicializar funções específicas para páginas admin
+        atualizarCamposConteudo();
+        
+        // Adicionar contadores para todos os campos de texto
+        adicionarContadorCaracteres("conteudo_noticia", 150);
+        adicionarContadorCaracteres("descricao_evento", 250);
+        adicionarContadorCaracteres("descricao_evento_video", 250);
+        adicionarContadorCaracteres("titulo_evento", 50);
+        adicionarContadorCaracteres("titulo_evento_video", 50);
+        
+        // Inicializar validação de IP (se estiver na página de adicionar dispositivo)
+        const ipInput = document.getElementById('ip');
+        if (ipInput) {
+            ipInput.addEventListener('input', function(e) {
+                const ip = e.target.value;
+                const pattern = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+                
+                if (ip && !pattern.test(ip)) {
+                    e.target.style.borderColor = 'red';
+                } else {
+                    e.target.style.borderColor = '';
+                }
+            });
+        }
+        
         return; // Sai da função, não faz rotação
     }
 
@@ -204,7 +233,304 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         window.location.href = "/login";
     }
 });
+
+function previewImagem(input) {
+  const container = document.getElementById("preview-container");
+  container.innerHTML = "";
+
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.className = "preview-imagem";
+      img.alt = "Preview da imagem";
+      container.appendChild(img);
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function atualizarCamposConteudo() {
+  const tipo = document.getElementById("tipo_conteudo").value;
+  document.getElementById("campo_noticia").style.display =
+    tipo === "noticia" ? "block" : "none";
+  document.getElementById("campo_imagem").style.display =
+    tipo === "imagem" ? "block" : "none";
+  document.getElementById("campo_video").style.display =
+    tipo === "video" ? "block" : "none";
+}
+
+function adicionarContadorCaracteres(elementId, maxLength) {
+  const elemento = document.getElementById(elementId);
+  if (elemento) {
+    elemento.addEventListener("input", function (e) {
+      const currentLength = e.target.value.length;
+      const remaining = maxLength - currentLength;
+
+      // Remove contador anterior se existir
+      const existingCounter = e.target.parentNode.querySelector(".char-counter");
+      if (existingCounter) {
+        existingCounter.remove();
+      }
+
+      // Adiciona novo contador
+      const counter = document.createElement("small");
+      counter.className = "char-counter";
+      counter.style.color = remaining < 20 ? "#dc3545" : "#666";
+      counter.style.display = "block";
+      counter.style.marginTop = "5px";
+      counter.textContent = `${currentLength}/${maxLength} caracteres (${remaining} restantes)`;
+      
+      // Insere o contador logo após o elemento de input/textarea
+      e.target.insertAdjacentElement('afterend', counter);
+    });
+  }
+}
+
+function testarConexao() {
+  const ip = document.getElementById('ip').value;
+  if (!ip) {
+    alert('Digite um IP primeiro!');
+    return;
+  }
+  
+  // Fazer requisição AJAX para testar a conexão
+  fetch(`/testar_dispositivo/${ip}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.sucesso) {
+        alert('✅ Dispositivo respondeu! Status: ' + data.status);
+      } else {
+        alert('❌ Dispositivo não responde: ' + data.erro);
+      }
+    })
+    .catch(error => {
+      alert('❌ Erro ao testar conexão: ' + error);
+    });
+}
+
+// Função para edição de dispositivo
+    function configurarEdicaoDispositivo() {
+        const form = document.getElementById('editar-dispositivo-form');
+        const testarBtn = document.getElementById('testar-conexao');
+        const excluirBtn = document.getElementById('excluir-dispositivo');
+        const modal = document.getElementById('modal-exclusao');
+        const confirmarBtn = document.getElementById('confirmar-exclusao');
+        const cancelarBtn = document.getElementById('cancelar-exclusao');
+
+        if (!form) return;
+
+        // Configurar contadores de caracteres
+        configurarContador('nome', 50);
+        configurarContador('local', 50);
+        configurarContador('observacoes', 500);
+
+        // Testar conexão
+        if (testarBtn) {
+            testarBtn.addEventListener('click', function() {
+                const ip = document.getElementById('ip').value;
+                if (!ip) {
+                    mostrarResultadoTeste('Por favor, digite um IP primeiro.', false);
+                    return;
+                }
+
+                if (!validarIP(ip)) {
+                    mostrarResultadoTeste('Por favor, digite um IP válido.', false);
+                    return;
+                }
+
+                testarBtn.disabled = true;
+                testarBtn.textContent = 'Testando...';
+                
+                testarConexao(ip).finally(() => {
+                    testarBtn.disabled = false;
+                    testarBtn.textContent = 'Testar Conexão';
+                });
+            });
+        }
+
+        // Submit do formulário
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Salvando...';
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sucesso) {
+                    alert('✅ ' + data.mensagem);
+                    // Opcionalmente redirecionar ou atualizar a página
+                    window.location.href = '/listar_dispositivos';
+                } else {
+                    alert('❌ ' + data.erro);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('❌ Erro ao salvar dispositivo. Tente novamente.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 Salvar Alterações';
+            });
+        });
+
+        // Modal de exclusão
+        if (excluirBtn && modal) {
+            excluirBtn.addEventListener('click', function() {
+                modal.style.display = 'block';
+            });
+
+            cancelarBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            confirmarBtn.addEventListener('click', function() {
+                const dispositivoId = form.action.split('/').pop();
+                
+                confirmarBtn.disabled = true;
+                confirmarBtn.textContent = 'Excluindo...';
+                
+                fetch(`/excluir_dispositivo/${dispositivoId}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        alert('✅ ' + data.mensagem);
+                        window.location.href = '/listar_dispositivos';
+                    } else {
+                        alert('❌ ' + data.erro);
+                        modal.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('❌ Erro ao excluir dispositivo. Tente novamente.');
+                    modal.style.display = 'none';
+                })
+                .finally(() => {
+                    confirmarBtn.disabled = false;
+                    confirmarBtn.textContent = 'Sim, Excluir';
+                });
+            });
+
+            // Fechar modal clicando fora
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    function mostrarResultadoTeste(mensagem, sucesso) {
+        const resultado = document.getElementById('resultado-teste');
+        if (resultado) {
+            resultado.textContent = mensagem;
+            resultado.className = 'teste-resultado ' + (sucesso ? 'sucesso' : 'erro');
+        }
+    }
+
+    // Função para configurar contadores existente, mas vou atualizar para funcionar na página de edição
+    function configurarContador(campoId, limite) {
+        const campo = document.getElementById(campoId);
+        const contador = document.getElementById(`contador-${campoId}`);
+        
+        if (campo && contador) {
+            // Atualizar contador inicial
+            const valorInicial = campo.value || '';
+            contador.textContent = `${valorInicial.length}/${limite}`;
+            
+            campo.addEventListener('input', function() {
+                const tamanho = this.value.length;
+                contador.textContent = `${tamanho}/${limite}`;
+                
+                if (tamanho > limite * 0.8) {
+                    contador.style.color = '#ff6b00';
+                } else {
+                    contador.style.color = '#666';
+                }
+            });
+        }
+    }
+
+    // Adicionar inicialização da edição de dispositivo
+    configurarEdicaoDispositivo();
+
+    // Função para testar dispositivo da lista
+    window.testarDispositivo = function(ip, botao) {
+        const botaoOriginal = botao.textContent;
+        botao.disabled = true;
+        botao.textContent = 'Testando...';
+        
+        fetch(`/testar_dispositivo/${ip}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.sucesso) {
+                botao.textContent = '✅ Online';
+                botao.style.background = '#28a745';
+                setTimeout(() => {
+                    botao.textContent = botaoOriginal;
+                    botao.style.background = '';
+                    botao.disabled = false;
+                }, 3000);
+            } else {
+                botao.textContent = '❌ Offline';
+                botao.style.background = '#dc3545';
+                setTimeout(() => {
+                    botao.textContent = botaoOriginal;
+                    botao.style.background = '';
+                    botao.disabled = false;
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            botao.textContent = '❌ Erro';
+            botao.style.background = '#dc3545';
+            setTimeout(() => {
+                botao.textContent = botaoOriginal;
+                botao.style.background = '';
+                botao.disabled = false;
+            }, 3000);
+        });
+    };
+
+    // Função para mostrar dicas sobre problemas de conexão
+    function mostrarDicasConexao() {
+        const deviceCards = document.querySelectorAll('.dispositivo-card.inativo');
+        
+        deviceCards.forEach(card => {
+            const ip = card.querySelector('.info-row').textContent.match(/IP: (.+)/)?.[1];
+            if (ip && (ip === '192.168.0.1' || ip.startsWith('192.168.0.'))) {
+                const dica = document.createElement('div');
+                dica.className = 'conexao-dica';
+                dica.innerHTML = `
+                    <small>💡 <strong>Dica:</strong> Este parece ser um IP de exemplo. 
+                    <a href="#" onclick="alert('Para resolver:\\n1. Edite este dispositivo\\n2. Altere o IP para o endereço real do seu Raspberry Pi\\n3. Ou defina como inativo se não for usar')">
+                        Como resolver?
+                    </a></small>
+                `;
+                card.appendChild(dica);
+            }
+        });
+    }
+
+    // Executar dicas após carregar a página
+    if (window.location.pathname.includes('dispositivos')) {
+        setTimeout(mostrarDicasConexao, 500);
+    }

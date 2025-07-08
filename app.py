@@ -422,52 +422,166 @@ def listar_dispositivos():
     dispositivos = Dispositivo.query.all()
     return render_template('gerenciador_deconteudo/dispositivos.html', dispositivos=dispositivos)
 
+@app.route('/editar_dispositivo/<int:dispositivo_id>', methods=['GET', 'POST'])
+@login_required
+def editar_dispositivo(dispositivo_id):
+    dispositivo = Dispositivo.query.get_or_404(dispositivo_id)
+    
+    if request.method == 'POST':
+        nome = request.form['nome']
+        local = request.form['local']
+        ip = request.form['ip']
+        status = request.form.get('status', 'ativo')
+        observacoes = request.form.get('observacoes', '')
+        
+        # Verificar se IP já existe (exceto no dispositivo atual)
+        dispositivo_existente = Dispositivo.query.filter(
+            Dispositivo.ip == ip, 
+            Dispositivo.id != dispositivo_id
+        ).first()
+        
+        if dispositivo_existente:
+            return jsonify({
+                'sucesso': False, 
+                'erro': 'Já existe um dispositivo com este IP!'
+            })
+        
+        try:
+            # Atualizar dados do dispositivo
+            dispositivo.nome = nome
+            dispositivo.local = local
+            dispositivo.ip = ip
+            dispositivo.status = status
+            dispositivo.observacoes = observacoes
+            dispositivo.ultima_atualizacao = datetime.now()
+            
+            db.session.commit()
+            return jsonify({
+                'sucesso': True, 
+                'mensagem': f'Dispositivo {nome} atualizado com sucesso!'
+            })
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                'sucesso': False, 
+                'erro': f'Erro ao atualizar dispositivo: {str(e)}'
+            })
+    
+    # GET - retorna os dados do dispositivo
+    return render_template('gerenciador_deconteudo/editar_dispositivo.html', dispositivo=dispositivo)
+
+@app.route('/excluir_dispositivo/<int:dispositivo_id>', methods=['POST'])
+@login_required
+def excluir_dispositivo(dispositivo_id):
+    dispositivo = Dispositivo.query.get_or_404(dispositivo_id)
+    
+    try:
+        # Excluir eventos e notícias relacionados primeiro
+        Evento.query.filter_by(dispositivo_id=dispositivo_id).delete()
+        Noticia.query.filter_by(dispositivo_id=dispositivo_id).delete()
+        Mensagem_Temporaria.query.filter_by(dispositivo_id=dispositivo_id).delete()
+        
+        # Excluir o dispositivo
+        db.session.delete(dispositivo)
+        db.session.commit()
+        
+        return jsonify({
+            'sucesso': True, 
+            'mensagem': f'Dispositivo {dispositivo.nome} excluído com sucesso!'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'sucesso': False, 
+            'erro': f'Erro ao excluir dispositivo: {str(e)}'
+        })
+
 @app.route('/testar_dispositivo/<ip>')
 @login_required
 def testar_dispositivo(ip):
     try:
         import subprocess
-        result = subprocess.run(['ping', '-c', '1', '-W', '3', ip], 
-                              capture_output=True, text=True)
+        import platform
+        
+        # Usar comando ping apropriado para Windows ou Linux
+        if platform.system().lower() == 'windows':
+            result = subprocess.run(['ping', '-n', '1', '-w', '3000', ip], 
+                                  capture_output=True, text=True)
+        else:
+            result = subprocess.run(['ping', '-c', '1', '-W', '3', ip], 
+                                  capture_output=True, text=True)
         
         if result.returncode == 0:
             # Atualizar última conexão
             dispositivo = Dispositivo.query.filter_by(ip=ip).first()
             if dispositivo:
-                dispositivo.ultima_conexao = datetime.utcnow()
+                dispositivo.ultima_conexao = datetime.now()
                 db.session.commit()
             
-            return jsonify({'sucesso': True, 'status': 'Online'})  # CORRIGIR
+            return jsonify({'sucesso': True, 'status': 'Online'})
         else:
-            return jsonify({'sucesso': False, 'erro': 'Dispositivo não responde ao ping'})  # CORRIGIR
+            return jsonify({'sucesso': False, 'erro': 'Dispositivo não responde ao ping'})
     
     except Exception as e:
-        return jsonify({'sucesso': False, 'erro': str(e)})  # CORRIGIR
+        return jsonify({'sucesso': False, 'erro': str(e)})
     
 @app.route('/enviar_conteudo/<int:dispositivo_id>')
 @login_required
 def enviar_conteudo(dispositivo_id):
     dispositivo = Dispositivo.query.get_or_404(dispositivo_id)
     
-    # Aqui você pode enviar comandos específicos para o Raspberry Pi
-    # Por exemplo, alterar qual página deve ser exibida
+    # Verificar se o dispositivo está ativo
+    if dispositivo.status != 'ativo':
+        flash(f'Dispositivo {dispositivo.nome} está inativo. Ative-o primeiro para enviar conteúdo.', 'warning')
+        return redirect(url_for('listar_dispositivos'))
+    
+    # Primeiro, testar se o dispositivo responde
     try:
-        # Exemplo: enviar comando HTTP para o Raspberry Pi
+        import subprocess
+        import platform
+        
+        # Usar comando ping apropriado para Windows
+        if platform.system().lower() == 'windows':
+            result = subprocess.run(['ping', '-n', '1', '-w', '3000', dispositivo.ip], 
+                                  capture_output=True, text=True)
+        else:
+            result = subprocess.run(['ping', '-c', '1', '-W', '3', dispositivo.ip], 
+                                  capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            flash(f'Dispositivo {dispositivo.nome} ({dispositivo.ip}) não está respondendo ao ping. Verifique a conexão.', 'error')
+            return redirect(url_for('listar_dispositivos'))
+    
+    except Exception as e:
+        flash(f'Erro ao testar conexão com {dispositivo.nome}: {str(e)}', 'error')
+        return redirect(url_for('listar_dispositivos'))
+    
+    # Se chegou aqui, o dispositivo responde ao ping
+    try:
+        # Tentar enviar comando HTTP para o Raspberry Pi
         url = f"http://{dispositivo.ip}:5000/atualizar_conteudo"
         data = {
             'pagina': request.args.get('pagina', '/'),
             'comando': request.args.get('comando', 'reload')
         }
         
-        response = requests.post(url, json=data, timeout=5)
+        response = requests.post(url, json=data, timeout=10)
         
         if response.status_code == 200:
-            flash(f'Conteúdo enviado para {dispositivo.nome}!', 'success')
+            dispositivo.ultima_conexao = datetime.now()
+            db.session.commit()
+            flash(f'✅ Conteúdo enviado para {dispositivo.nome} com sucesso!', 'success')
         else:
-            flash(f'Erro ao comunicar com {dispositivo.nome}', 'error')
+            flash(f'❌ O dispositivo {dispositivo.nome} respondeu, mas com erro HTTP {response.status_code}', 'error')
     
+    except requests.exceptions.ConnectTimeout:
+        flash(f'⏱️ Timeout ao conectar com {dispositivo.nome}. O dispositivo pode estar ocupado.', 'warning')
+    except requests.exceptions.ConnectionError:
+        flash(f'🔌 Falha na conexão com {dispositivo.nome}. Verifique se o serviço está rodando na porta 5000.', 'error')
+    except requests.exceptions.RequestException as e:
+        flash(f'❌ Erro de rede com {dispositivo.nome}: {str(e)}', 'error')
     except Exception as e:
-        flash(f'Erro de conexão com {dispositivo.nome}: {str(e)}', 'error')
+        flash(f'❌ Erro inesperado ao comunicar com {dispositivo.nome}: {str(e)}', 'error')
     
     return redirect(url_for('listar_dispositivos'))
 
@@ -495,94 +609,129 @@ def admin():
     if request.method == 'POST':
         print("=== DEBUG FORMULÁRIO ===")
         dispositivos_ids = request.form.getlist('dispositivos')
-        conteudo_noticia = request.form.get('conteudo_noticia')
-        link_qrcode = request.form.get('link_qrcode')
-
+        tipo_conteudo = request.form.get('tipo_conteudo')
+        
+        # Campos de agendamento
+        data_inicio_str = request.form.get('data_inicio')
+        data_fim_str = request.form.get('data_fim')
+        
+        print(f"Tipo de conteúdo: {tipo_conteudo}")
         print(f"Dispositivos selecionados: {dispositivos_ids}")
-        print(f"Conteúdo notícia: '{conteudo_noticia}'")
-        print(f"Link QR Code: '{link_qrcode}'")
-        print(f"Arquivos recebidos: {list(request.files.keys())}")
+        print(f"Data início: {data_inicio_str}")
+        print(f"Data fim: {data_fim_str}")
 
         if not dispositivos_ids:
             flash("Você deve selecionar ao menos um dispositivo.", "danger")
             return redirect(url_for('admin'))
 
-        # Processamento de imagem (se houver)
-        imagem_filename = None
-        if 'imagem' in request.files:
-            file = request.files['imagem']
-            print(f"Arquivo de imagem: {file}")
-            print(f"Nome do arquivo: {file.filename}")
-            if file and file.filename != '':
-                print("Processando upload da imagem...")
-                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
-                os.makedirs(upload_folder, exist_ok=True)
-                print(f"Diretório de upload: {upload_folder}")
-                
-                filename = secure_filename(file.filename)
-                unique_filename = f"{uuid.uuid4()}_{filename}"
-                file_path = os.path.join(upload_folder, unique_filename)
-                file.save(file_path)
-                imagem_filename = f"uploads/{unique_filename}"
-                print(f"Imagem salva como: {imagem_filename}")
-            else:
-                print("Nenhuma imagem foi enviada ou arquivo vazio")
-        else:
-            print("Campo 'imagem' não encontrado no formulário")
+        # Processar datas
+        data_inicio = None
+        data_fim = None
+        
+        if data_inicio_str:
+            try:
+                data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de início inválido.", "danger")
+                return redirect(url_for('admin'))
+        
+        if data_fim_str:
+            try:
+                data_fim = datetime.strptime(data_fim_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de fim inválido.", "danger")
+                return redirect(url_for('admin'))
 
-        print(f"Imagem final: {imagem_filename}")
-
-        # Processamento de vídeo (se houver)
-        video_filename = None
-        if 'video' in request.files:
-            video_file = request.files['video']
-            if video_file and video_file.filename != '':
-                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
-                os.makedirs(upload_folder, exist_ok=True)
-                filename = secure_filename(video_file.filename)
-                unique_filename = f"{uuid.uuid4()}_{filename}"
-                file_path = os.path.join(upload_folder, unique_filename)
-                video_file.save(file_path)
-                video_filename = f"uploads/{unique_filename}"
-                print(f"Vídeo salvo como: {video_filename}")
-            else:
-                print("Nenhum vídeo foi enviado ou arquivo vazio")
-        else:
-            print("Campo 'video' não encontrado no formulário")
-
-        # Verificar se pelo menos uma coisa foi preenchida
-        if not conteudo_noticia and not imagem_filename and not link_qrcode:
-            print("ERRO: Nenhum conteúdo foi preenchido!")
-            flash("Você deve adicionar pelo menos um conteúdo: texto, imagem ou link.", "danger")
-            return redirect(url_for('admin'))
-
-        for id_dispositivo in dispositivos_ids:
-            print(f"Processando dispositivo {id_dispositivo}...")
+        # Processar baseado no tipo de conteúdo
+        if tipo_conteudo == 'noticia':
+            # NOTÍCIA RÁPIDA
+            conteudo_noticia = request.form.get('conteudo_noticia')
             
-            # Criar notícia APENAS se houver texto
-            if conteudo_noticia:
-                print("Criando notícia...")
+            if not conteudo_noticia or conteudo_noticia.strip() == '':
+                flash("Você deve preencher o texto da notícia rápida.", "danger")
+                return redirect(url_for('admin'))
+            
+            for id_dispositivo in dispositivos_ids:
                 nova_noticia = Noticia(
-                    conteudo=conteudo_noticia,
+                    conteudo=conteudo_noticia.strip(),
                     status="ativa",
-                    dispositivo_id=id_dispositivo
+                    dispositivo_id=id_dispositivo,
+                    data_inicio=data_inicio or datetime.now(),
+                    data_fim=data_fim
                 )
                 db.session.add(nova_noticia)
+                print(f"Notícia criada para dispositivo {id_dispositivo}")
+        
+        elif tipo_conteudo in ['imagem', 'video']:
+            # EVENTO COM IMAGEM OU VÍDEO
+            titulo_evento = request.form.get('titulo_evento')
+            descricao_evento = request.form.get('descricao_evento')
+            link_qrcode = request.form.get('link_qrcode')
             
-            # Criar evento se houver imagem OU link
-            if link_qrcode or imagem_filename or video_filename:
-                print("Criando evento...")
-                evento_qr = Evento(
+            if not titulo_evento or titulo_evento.strip() == '':
+                flash("Você deve preencher o título do evento.", "danger")
+                return redirect(url_for('admin'))
+            
+            # Processamento de arquivo (imagem ou vídeo)
+            arquivo_filename = None
+            
+            if tipo_conteudo == 'imagem':
+                if 'imagem' in request.files:
+                    file = request.files['imagem']
+                    if file and file.filename != '':
+                        upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                        os.makedirs(upload_folder, exist_ok=True)
+                        filename = secure_filename(file.filename)
+                        unique_filename = f"{uuid.uuid4()}_{filename}"
+                        file_path = os.path.join(upload_folder, unique_filename)
+                        file.save(file_path)
+                        arquivo_filename = f"uploads/{unique_filename}"
+                        print(f"Imagem salva como: {arquivo_filename}")
+                    else:
+                        flash("Você deve selecionar uma imagem.", "danger")
+                        return redirect(url_for('admin'))
+                else:
+                    flash("Você deve selecionar uma imagem.", "danger")
+                    return redirect(url_for('admin'))
+            
+            elif tipo_conteudo == 'video':
+                if 'video' in request.files:
+                    file = request.files['video']
+                    if file and file.filename != '':
+                        upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                        os.makedirs(upload_folder, exist_ok=True)
+                        filename = secure_filename(file.filename)
+                        unique_filename = f"{uuid.uuid4()}_{filename}"
+                        file_path = os.path.join(upload_folder, unique_filename)
+                        file.save(file_path)
+                        arquivo_filename = f"uploads/{unique_filename}"
+                        print(f"Vídeo salvo como: {arquivo_filename}")
+                    else:
+                        flash("Você deve selecionar um vídeo.", "danger")
+                        return redirect(url_for('admin'))
+                else:
+                    flash("Você deve selecionar um vídeo.", "danger")
+                    return redirect(url_for('admin'))
+            
+            # Criar evento para cada dispositivo
+            for id_dispositivo in dispositivos_ids:
+                novo_evento = Evento(
                     dispositivo_id=id_dispositivo,
-                    titulo="Conteúdo - " + (conteudo_noticia[:30] + "..." if conteudo_noticia and len(conteudo_noticia) > 30 else conteudo_noticia if conteudo_noticia else "Imagem de fundo"),
-                    descricao="Conteúdo relacionado à publicação",
-                    link=link_qrcode if link_qrcode else "",
-                    imagem=imagem_filename if imagem_filename else "",
-                    video=video_filename if video_filename else "",  # Adicionando o vídeo
-                    status="ativo"
+                    titulo=titulo_evento.strip(),
+                    descricao=descricao_evento.strip() if descricao_evento else "",
+                    link=link_qrcode.strip() if link_qrcode else "",
+                    imagem=arquivo_filename if tipo_conteudo == 'imagem' else "",
+                    video=arquivo_filename if tipo_conteudo == 'video' else "",
+                    status="ativo",
+                    data_inicio=data_inicio or datetime.now(),
+                    data_fim=data_fim
                 )
-                db.session.add(evento_qr)
-                print(f"Evento criado: titulo='{evento_qr.titulo}', imagem='{evento_qr.imagem}', link='{evento_qr.link}'")
+                db.session.add(novo_evento)
+                print(f"Evento criado para dispositivo {id_dispositivo}: {titulo_evento}")
+        
+        else:
+            flash("Tipo de conteúdo inválido.", "danger")
+            return redirect(url_for('admin'))
         
         try:
             db.session.commit()
@@ -612,29 +761,39 @@ def admin():
 @login_required
 def excluir_noticia(id):
     noticia = Noticia.query.get_or_404(id)
-    
-    # Remover eventos relacionados (que começam com "QR Code -" OU "Conteúdo -")
-    eventos_relacionados = Evento.query.filter(
-        (Evento.titulo.like('QR Code -%') | Evento.titulo.like('Conteúdo -%')),
-        Evento.dispositivo_id == noticia.dispositivo_id
-    ).all()
-    
-    for evento in eventos_relacionados:
-        # Remover arquivo de imagem se existir
-        if evento.imagem:
-            arquivo_path = os.path.join(app.root_path, 'static', evento.imagem)
-            if os.path.exists(arquivo_path):
-                try:
-                    os.remove(arquivo_path)
-                    print(f"Arquivo removido: {arquivo_path}")
-                except Exception as e:
-                    print(f"Erro ao remover arquivo: {e}")
-        
-        db.session.delete(evento)
-    
     db.session.delete(noticia)
     db.session.commit()
-    flash("Publicação excluída com sucesso!", "success")
+    flash("Notícia excluída com sucesso!", "success")
+    return redirect(url_for('admin'))
+
+@app.route('/excluir_evento/<int:id>', methods=['POST'])
+@login_required
+def excluir_evento(id):
+    evento = Evento.query.get_or_404(id)
+    
+    # Remover arquivo de imagem se existir
+    if evento.imagem:
+        arquivo_path = os.path.join(app.root_path, 'static', evento.imagem)
+        if os.path.exists(arquivo_path):
+            try:
+                os.remove(arquivo_path)
+                print(f"Arquivo de imagem removido: {arquivo_path}")
+            except Exception as e:
+                print(f"Erro ao remover arquivo de imagem: {e}")
+    
+    # Remover arquivo de vídeo se existir
+    if evento.video:
+        arquivo_path = os.path.join(app.root_path, 'static', evento.video)
+        if os.path.exists(arquivo_path):
+            try:
+                os.remove(arquivo_path)
+                print(f"Arquivo de vídeo removido: {arquivo_path}")
+            except Exception as e:
+                print(f"Erro ao remover arquivo de vídeo: {e}")
+    
+    db.session.delete(evento)
+    db.session.commit()
+    flash("Evento excluído com sucesso!", "success")
     return redirect(url_for('admin'))
 
 @app.route('/excluir_mensagem/<int:id>', methods=['POST'])
@@ -702,6 +861,19 @@ def clima():
         **status_intervalo
     )
 
+
+@app.route('/configurar_dispositivo_exemplo')
+@login_required 
+def configurar_dispositivo_exemplo():
+    """Rota para ajudar a configurar o dispositivo de exemplo"""
+    dispositivo_exemplo = Dispositivo.query.filter_by(ip='192.168.0.1').first()
+    
+    if dispositivo_exemplo:
+        # Redirecionar para edição do dispositivo
+        return redirect(url_for('editar_dispositivo', dispositivo_id=dispositivo_exemplo.id))
+    else:
+        flash('Dispositivo de exemplo não encontrado.', 'info')
+        return redirect(url_for('listar_dispositivos'))
 
 if __name__ == '__main__':
     print("Executando a busca inicial de clima antes de iniciar o servidor...")

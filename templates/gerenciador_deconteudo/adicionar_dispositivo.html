@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/adicionar_dispositivo.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <title>Adicionar Dispositivo</title>
 </head>
@@ -60,41 +61,5 @@
         {% endif %}
         {% endwith %}
     </div>
-
-    <script>
-        function testarConexao() {
-            const ip = document.getElementById('ip').value;
-            if (!ip) {
-                alert('Digite um IP primeiro!');
-                return;
-            }
-            
-            // Aqui você pode fazer uma requisição AJAX para testar a conexão
-            fetch(`/testar_dispositivo/${ip}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        alert('✅ Dispositivo respondeu! Status: ' + data.status);
-                    } else {
-                        alert('❌ Dispositivo não responde: ' + data.erro);
-                    }
-                })
-                .catch(error => {
-                    alert('❌ Erro ao testar conexão: ' + error);
-                });
-        }
-
-        // Validação do IP em tempo real
-        document.getElementById('ip').addEventListener('input', function(e) {
-            const ip = e.target.value;
-            const pattern = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
-            
-            if (ip && !pattern.test(ip)) {
-                e.target.style.borderColor = 'red';
-            } else {
-                e.target.style.borderColor = '';
-            }
-        });
-    </script>
 </body>
 </html>

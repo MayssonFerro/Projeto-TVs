@@ -6,6 +6,7 @@
     <title>Adicionar Conteúdo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 <body>
     <!-- Mensagens Flash -->
@@ -36,34 +37,74 @@
         <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
             <label for="tipo_conteudo">Tipo de Conteúdo:</label>
             <select name="tipo_conteudo" id="tipo_conteudo" onchange="atualizarCamposConteudo()">
-                <option value="rapido">Texto rápido</option>
-                <option value="imagem">Imagem</option>
-                <option value="video">Vídeo</option>
+                <option value="noticia">📝 Notícia Rápida (Barra Inferior)</option>
+                <option value="imagem">🖼️ Evento com Imagem</option>
+                <option value="video">🎬 Evento com Vídeo</option>
             </select>
 
-            <div id="campo_texto">
+            <!-- NOTÍCIA RÁPIDA -->
+            <div id="campo_noticia">
                 <label for="conteudo_noticia">📝 Texto da Notícia Rápida:</label>
                 <textarea name="conteudo_noticia" id="conteudo_noticia" maxlength="150" rows="3"
                     placeholder="Ex: Reunião de pais hoje às 19h no auditório. Compareçam!"></textarea>
                 <small style="color: #666;">Este texto aparecerá na barra inferior</small>
             </div>
 
+            <!-- EVENTO COM IMAGEM -->
             <div id="campo_imagem" style="display: none;">
+                <label for="titulo_evento">📋 Título do Evento:</label>
+                <input type="text" name="titulo_evento" id="titulo_evento" maxlength="50" 
+                    placeholder="Ex: Feira de Ciências 2025">
+
+                <label for="descricao_evento">📄 Descrição (opcional):</label>
+                <textarea name="descricao_evento" id="descricao_evento" maxlength="250" rows="3"
+                    placeholder="Ex: Venha conhecer os projetos dos nossos alunos..."></textarea>
+
                 <label for="imagem">🖼️ Imagem de Fundo:</label>
                 <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImagem(this)">
                 <div id="preview-container"></div>
                 <small style="color: #666;"><strong>A imagem será exibida como papel de parede da tela principal</strong></small>
+
+                <label for="link_qrcode_imagem">🔗 Link para QR Code (opcional):</label>
+                <input type="url" name="link_qrcode" id="link_qrcode_imagem" placeholder="https://exemplo.com">
+                <small style="color: #666;">Se preenchido, será gerado um QR Code no canto direito da tela</small>
             </div>
 
+            <!-- EVENTO COM VÍDEO -->
             <div id="campo_video" style="display: none;">
+                <label for="titulo_evento_video">📋 Título do Evento:</label>
+                <input type="text" name="titulo_evento" id="titulo_evento_video" maxlength="50" 
+                    placeholder="Ex: Apresentação Musical">
+
+                <label for="descricao_evento_video">📄 Descrição (opcional):</label>
+                <textarea name="descricao_evento" id="descricao_evento_video" maxlength="250" rows="3"
+                    placeholder="Ex: Coral do IFMS apresenta repertório natalino..."></textarea>
+
                 <label for="video">🎬 Vídeo de Fundo:</label>
                 <input type="file" name="video" id="video" accept="video/mp4,video/webm,video/ogg">
                 <small style="color: #666;"><strong>O vídeo será exibido como papel de parede da tela principal (formato recomendado: MP4)</strong></small>
+
+                <label for="link_qrcode_video">🔗 Link para QR Code (opcional):</label>
+                <input type="url" name="link_qrcode" id="link_qrcode_video" placeholder="https://exemplo.com">
+                <small style="color: #666;">Se preenchido, será gerado um QR Code no canto direito da tela</small>
             </div>
 
-            <label for="link_qrcode">🔗 Link para QR Code (opcional):</label>
-            <input type="url" name="link_qrcode" id="link_qrcode" placeholder="https://exemplo.com">
-            <small style="color: #666;">Se preenchido, será gerado um QR Code no canto direito da tela</small>
+            <!-- AGENDAMENTO -->
+            <div class="agendamento-section">
+                <h3>📅 Agendamento</h3>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_inicio">Data/Hora de Início:</label>
+                        <input type="datetime-local" name="data_inicio" id="data_inicio">
+                        <small style="color: #666;">Quando começar a exibir (deixe vazio para começar agora)</small>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_fim">Data/Hora de Fim:</label>
+                        <input type="datetime-local" name="data_fim" id="data_fim">
+                        <small style="color: #666;">Quando parar de exibir (deixe vazio para não expirar)</small>
+                    </div>
+                </div>
+            </div>
 
             <!-- Dispositivos -->
             <h3>📍 Publicar nas TVs:</h3>
@@ -90,87 +131,68 @@
     <div class="container">
         <h2>📋 Publicações Ativas</h2>
         
+        <!-- NOTÍCIAS RÁPIDAS -->
         {% if noticias %}
+            <h3>📝 Notícias Rápidas (Barra Inferior)</h3>
             {% for noticia in noticias %}
                 <div class="item-conteudo">
                     <p><strong>📝 Texto:</strong> {{ noticia.conteudo }}</p>
+                    <p><strong>📱 TV:</strong> {{ noticia.dispositivo.nome }} - {{ noticia.dispositivo.local }}</p>
                     <p><strong>📅 Publicado em:</strong> {{ noticia.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    
-                    <!-- Verificar se existe QR code ou imagem associada -->
-                    {% for evento in eventos %}
-                        {% if (evento.titulo.startswith('QR Code -') or evento.titulo.startswith('Conteúdo -')) and evento.dispositivo_id == noticia.dispositivo_id %}
-                            {% if evento.link %}
-                                <p><strong>🔗 QR Code:</strong> 
-                                    <a href="{{ evento.link }}" target="_blank" class="qrcode-link">
-                                        {{ evento.link }}
-                                    </a>
-                                </p>
-                            {% endif %}
-                            {% if evento.imagem %}
-                                <p><strong>🖼️ Imagem:</strong> 
-                                    <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem da publicação">
-                                </p>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
+                    {% if noticia.data_fim %}
+                        <p><strong>⏰ Expira em:</strong> {{ noticia.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
+                    {% endif %}
                     
                     <form method="POST" action="{{ url_for('excluir_noticia', id=noticia.id) }}" style="display: inline;">
-                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir esta publicação?')">🗑️ Excluir</button>
+                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir esta notícia?')">🗑️ Excluir Notícia</button>
                     </form>
                 </div>
             {% endfor %}
-        {% else %}
+        {% endif %}
+
+        <!-- EVENTOS (IMAGEM/VÍDEO) -->
+        {% if eventos %}
+            <h3>🎬 Eventos (Imagem/Vídeo + Descrição)</h3>
+            {% for evento in eventos %}
+                <div class="item-conteudo">
+                    <p><strong>📋 Título:</strong> {{ evento.titulo }}</p>
+                    {% if evento.descricao %}
+                        <p><strong>📄 Descrição:</strong> {{ evento.descricao }}</p>
+                    {% endif %}
+                    <p><strong>📱 TV:</strong> {{ evento.dispositivo.nome }} - {{ evento.dispositivo.local }}</p>
+                    <p><strong>📅 Publicado em:</strong> {{ evento.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
+                    {% if evento.data_fim %}
+                        <p><strong>⏰ Expira em:</strong> {{ evento.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
+                    {% endif %}
+                    
+                    {% if evento.link %}
+                        <p><strong>🔗 QR Code:</strong> 
+                            <a href="{{ evento.link }}" target="_blank" class="qrcode-link">
+                                {{ evento.link }}
+                            </a>
+                        </p>
+                    {% endif %}
+                    
+                    {% if evento.imagem %}
+                        <p><strong>🖼️ Imagem:</strong> 
+                            <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem do evento">
+                        </p>
+                    {% endif %}
+                    
+                    {% if evento.video %}
+                        <p><strong>🎬 Vídeo:</strong> {{ evento.video }}</p>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('excluir_evento', id=evento.id) }}" style="display: inline;">
+                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir este evento?')">🗑️ Excluir Evento</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if not noticias and not eventos %}
             <p>📭 Nenhuma publicação ativa no momento.</p>
         {% endif %}
     </div>
-
-    <script>
-        function previewImagem(input) {
-            const container = document.getElementById('preview-container');
-            container.innerHTML = '';
-            
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'preview-imagem';
-                    img.alt = 'Preview da imagem';
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-
-        function atualizarCamposConteudo() {
-            const tipo = document.getElementById('tipo_conteudo').value;
-            document.getElementById('campo_texto').style.display = (tipo === 'rapido') ? 'block' : 'none';
-            document.getElementById('campo_imagem').style.display = (tipo === 'imagem') ? 'block' : 'none';
-            document.getElementById('campo_video').style.display = (tipo === 'video') ? 'block' : 'none';
-        }
-        // Chama ao carregar a página para garantir o estado inicial correto
-        document.addEventListener('DOMContentLoaded', atualizarCamposConteudo);
-
-        // Contador de caracteres
-        document.getElementById('conteudo_noticia').addEventListener('input', function(e) {
-            const maxLength = 150;
-            const currentLength = e.target.value.length;
-            const remaining = maxLength - currentLength;
-            
-            // Remove contador anterior se existir
-            const existingCounter = e.target.parentNode.querySelector('.char-counter');
-            if (existingCounter) {
-                existingCounter.remove();
-            }
-            
-            // Adiciona novo contador
-            const counter = document.createElement('small');
-            counter.className = 'char-counter';
-            counter.style.color = remaining < 20 ? '#dc3545' : '#666';
-            counter.textContent = `${currentLength}/${maxLength} caracteres (${remaining} restantes)`;
-            e.target.parentNode.appendChild(counter);
-        });
-    </script>
 </body>
 </html>

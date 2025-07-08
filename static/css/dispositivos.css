@@ -1,0 +1,216 @@
+/* Layout principal */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+/* Grid de dispositivos */
+.dispositivos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Cards de dispositivos */
+.dispositivo-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+    position: relative;
+}
+
+.dispositivo-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Status dos dispositivos */
+.dispositivo-card.inativo {
+    opacity: 0.7;
+    border-left: 4px solid #dc3545;
+}
+
+.dispositivo-card.manutencao {
+    border-left: 4px solid #ffc107;
+}
+
+.dispositivo-card.ativo {
+    border-left: 4px solid #28a745;
+}
+
+/* Header do card */
+.dispositivo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.dispositivo-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+/* Badges de status */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-ativo {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inativo {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-manutencao {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Informações do dispositivo */
+.dispositivo-info {
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.info-row strong {
+    color: #555;
+    min-width: 140px;
+    display: inline-block;
+}
+
+/* Ações do dispositivo */
+.dispositivo-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.btn-test {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-test:hover {
+    background: #218838;
+}
+
+.btn-disabled {
+    background: #6c757d !important;
+    color: #fff !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    background: #6c757d !important;
+    opacity: 0.6;
+}
+
+/* Estado vazio */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.empty-state h3 {
+    margin-top: 0;
+    color: #6c757d;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+/* Banner de alerta */
+.alert-banner {
+    grid-column: 1 / -1;
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+.alert details {
+    margin-top: 1rem;
+}
+
+.alert details summary {
+    cursor: pointer;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.alert details ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+.alert details li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Dica de conexão */
+.conexao-dica {
+    background: #e9ecef;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    border-left: 3px solid #ffc107;
+}
+
+.conexao-dica small {
+    color: #495057;
+}
+
+.conexao-dica a {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
