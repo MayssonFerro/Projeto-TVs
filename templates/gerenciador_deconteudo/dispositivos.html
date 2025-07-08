@@ -12,33 +12,15 @@
     <div class="container">
         <div class="header">
             <h1>Dispositivos Cadastrados</h1>
+            <a href="{{ url_for('admin') }}" class="btn left floating">
+                ← Voltar ao Painel
+            </a>
+            <a href="{{ url_for('adicionar_dispositivo') }}" class="btn right floating">
+                + Novo Dispositivo
+            </a>
         </div>
 
-        <div class="dispositivos-grid">
-            {% if dispositivos %}
-                <!-- Alertas de problemas -->
-                {% set dispositivos_inativos = dispositivos | selectattr('status', 'ne', 'ativo') | list %}
-                {% if dispositivos_inativos %}
-                <div class="alert-banner">
-                    <div class="alert alert-warning">
-                        <strong>⚠️ Atenção:</strong> 
-                        {{ dispositivos_inativos | length }} dispositivo(s) não está(ão) ativo(s).
-                        <details>
-                            <summary>Ver detalhes</summary>
-                            <ul>
-                                {% for disp in dispositivos_inativos %}
-                                <li>
-                                    <strong>{{ disp.nome }}</strong> ({{ disp.ip }}) - Status: {{ disp.status | title }}
-                                    <a href="{{ url_for('editar_dispositivo', dispositivo_id=disp.id) }}" 
-                                       class="btn btn-small btn-secondary">Editar</a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </details>
-                    </div>
-                </div>
-                {% endif %}
-                
+        <div class="dispositivos-grid">    
                 {% for dispositivo in dispositivos %}
                 <div class="dispositivo-card {{ dispositivo.status }}">
                     <div class="dispositivo-header">
@@ -77,11 +59,6 @@
                            class="btn btn-secondary btn-small">
                             ✏️ Editar
                         </a>
-                        <button type="button" 
-                                class="btn btn-test btn-small" 
-                                onclick="testarDispositivo('{{ dispositivo.ip }}', this)">
-                            🔍 Testar
-                        </button>
                         {% if dispositivo.status == 'ativo' %}
                         <a href="{{ url_for('enviar_conteudo', dispositivo_id=dispositivo.id) }}" 
                            class="btn btn-primary btn-small">
@@ -95,9 +72,37 @@
                             📤 Enviar Conteúdo
                         </button>
                         {% endif %}
+                        <button type="button" 
+                                class="btn btn-test btn-small" 
+                                onclick="testarDispositivo('{{ dispositivo.ip }}', this)">
+                            🔍 Testar
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
+                        {% if dispositivos %}
+                <!-- Alertas de problemas -->
+                {% set dispositivos_inativos = dispositivos | selectattr('status', 'ne', 'ativo') | list %}
+                {% if dispositivos_inativos %}
+                <div class="alert-banner">
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Atenção:</strong> 
+                        {{ dispositivos_inativos | length }} dispositivo(s) não está(ão) ativo(s).
+                        <details>
+                            <summary>Ver detalhes</summary>
+                            <ul>
+                                {% for disp in dispositivos_inativos %}
+                                <li>
+                                    <strong>{{ disp.nome }}</strong> ({{ disp.ip }}) - Status: {{ disp.status | title }}
+                                    <a href="{{ url_for('editar_dispositivo', dispositivo_id=disp.id) }}" 
+                                       class="btn btn-small btn-secondary">Editar</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+                {% endif %}     
             {% else %}
                 <div class="empty-state">
                     <h3>Nenhum dispositivo cadastrado</h3>
@@ -107,16 +112,6 @@
                     </a>
                 </div>
             {% endif %}
-        </div>
-
-        <div class="footer">
-            <a href="{{ url_for('admin') }}" class="btn btn-secondary">
-                Voltar ao Painel
-            </a>
-            
-            <a href="{{ url_for('adicionar_dispositivo') }}" class="btn btn-primary">
-                + Novo Dispositivo
-            </a>
         </div>
     </div>
 </body>

@@ -89,22 +89,26 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Página atual:", paginaAtualPath);
 
     // Verificar se deve desabilitar rotação para páginas administrativas
-    const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos'];
+    const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos', '/editar_dispositivo'];
     if (paginasAdministrativas.some(pagina => paginaAtualPath.startsWith(pagina))) {
         console.log("Página administrativa detectada. Rotação de página desabilitada.");
         
         // ======================================================
         // SEÇÃO 4: INICIALIZAÇÃO PARA PÁGINAS ADMINISTRATIVAS
         // ======================================================
-        // Inicializar funções específicas para páginas admin
-        atualizarCamposConteudo();
+        // Inicializar funções específicas baseadas na página atual
         
-        // Adicionar contadores para todos os campos de texto
-        adicionarContadorCaracteres("conteudo_noticia", 150);
-        adicionarContadorCaracteres("descricao_evento", 250);
-        adicionarContadorCaracteres("descricao_evento_video", 250);
-        adicionarContadorCaracteres("titulo_evento", 50);
-        adicionarContadorCaracteres("titulo_evento_video", 50);
+        // Só executar se estiver na página de adicionar conteúdo
+        if (document.getElementById("tipo_conteudo")) {
+            atualizarCamposConteudo();
+            
+            // Adicionar contadores para campos de conteúdo
+            adicionarContadorCaracteres("conteudo_noticia", 150);
+            adicionarContadorCaracteres("descricao_evento", 250);
+            adicionarContadorCaracteres("descricao_evento_video", 250);
+            adicionarContadorCaracteres("titulo_evento", 50);
+            adicionarContadorCaracteres("titulo_evento_video", 50);
+        }
         
         // Inicializar validação de IP (se estiver na página de adicionar dispositivo)
         const ipInput = document.getElementById('ip');
@@ -119,6 +123,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     e.target.style.borderColor = '';
                 }
             });
+        }
+        
+        // Inicializar edição de dispositivo se estiver na página correta
+        configurarEdicaoDispositivo();
+        
+        // Executar dicas de conexão se estiver na página de dispositivos
+        if (paginaAtualPath.includes('/listar_dispositivos')) {
+            setTimeout(mostrarDicasConexao, 500);
         }
         
         return; // Sai da função, não faz rotação
@@ -256,13 +268,27 @@ function previewImagem(input) {
 }
 
 function atualizarCamposConteudo() {
-  const tipo = document.getElementById("tipo_conteudo").value;
-  document.getElementById("campo_noticia").style.display =
-    tipo === "noticia" ? "block" : "none";
-  document.getElementById("campo_imagem").style.display =
-    tipo === "imagem" ? "block" : "none";
-  document.getElementById("campo_video").style.display =
-    tipo === "video" ? "block" : "none";
+  const tipoElement = document.getElementById("tipo_conteudo");
+  if (!tipoElement) return; // Sai se o elemento não existir
+  
+  const tipo = tipoElement.value;
+  
+  // Verificar se os elementos existem antes de tentar alterar
+  const campoNoticia = document.getElementById("campo_noticia");
+  const campoImagem = document.getElementById("campo_imagem");
+  const campoVideo = document.getElementById("campo_video");
+  
+  if (campoNoticia) {
+    campoNoticia.style.display = tipo === "noticia" ? "block" : "none";
+  }
+  
+  if (campoImagem) {
+    campoImagem.style.display = tipo === "imagem" ? "block" : "none";
+  }
+  
+  if (campoVideo) {
+    campoVideo.style.display = tipo === "video" ? "block" : "none";
+  }
 }
 
 function adicionarContadorCaracteres(elementId, maxLength) {
@@ -468,9 +494,6 @@ function testarConexao() {
         }
     }
 
-    // Adicionar inicialização da edição de dispositivo
-    configurarEdicaoDispositivo();
-
     // Função para testar dispositivo da lista
     window.testarDispositivo = function(ip, botao) {
         const botaoOriginal = botao.textContent;
@@ -528,9 +551,4 @@ function testarConexao() {
                 card.appendChild(dica);
             }
         });
-    }
-
-    // Executar dicas após carregar a página
-    if (window.location.pathname.includes('dispositivos')) {
-        setTimeout(mostrarDicasConexao, 500);
     }
