@@ -6,6 +6,7 @@
     <title>Adicionar Conteúdo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 <body>
@@ -22,13 +23,13 @@
         <h1>Gerenciar Conteúdo das TVs</h1>
     </div>
     <div class="exemplo-toggle-container">
-        <button type="button" id="toggle-exemplo" class="btn btn-info floating">
-            💡 Como funciona?
+        <button type="button" id="toggle-exemplo" class="btn btn-info floating round ">
+            <i class='bx bx-help-circle'></i>
         </button>
 
         <div class="exemplo-card" id="exemplo-card" style="display: none;">
             <div class="exemplo-header">
-                <h3>💡 Como funciona:</h3>
+                <i class='bx bx-help-circle'></i>
                 <button type="button" class="exemplo-close" id="exemplo-close">✕</button>
             </div>
             <div class="exemplo-content">
@@ -36,7 +37,6 @@
                     <li><strong>Texto:</strong> Aparece na barra inferior (notícia rápida) passando da direita para esquerda</li>
                     <li><strong>Imagem:</strong> Aparece como papel de parede da tela principal</li>
                     <li><strong>QR Code:</strong> Aparece no cantinho direito quando você adiciona um link</li>
-                    <li><strong>Combinação:</strong> Você pode usar texto + imagem + QR code juntos!</li>
                 </ul>
             </div>
         </div>
@@ -44,7 +44,6 @@
 
     <!-- Formulário para adicionar novo conteúdo -->
     <div class="container">
-        <h2>➕ Adicionar Nova Publicação</h2>
         <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
             <label for="tipo_conteudo">Tipo de Conteúdo:</label>
             <select name="tipo_conteudo" id="tipo_conteudo" onchange="atualizarCamposConteudo()">
@@ -63,22 +62,24 @@
 
             <!-- EVENTO COM IMAGEM -->
             <div id="campo_imagem" style="display: none;">
-                <label for="titulo_evento">📋 Título do Evento:</label>
-                <input type="text" name="titulo_evento" id="titulo_evento" maxlength="50" 
-                    placeholder="Ex: Feira de Ciências 2025">
+                
+                <div class="campo_imagem_left">
+                    <div class="upload-area" id="upload-area">
+                        <i class='bx bx-cloud-upload'></i>
+                        <span>Clique ou arraste<br>uma imagem aqui</span>
+                        <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImagem(this)">
+                        <div id="preview-container"></div>
+                    </div>
+                </div>
 
-                <label for="descricao_evento">📄 Descrição (opcional):</label>
-                <textarea name="descricao_evento" id="descricao_evento" maxlength="250" rows="3"
-                    placeholder="Ex: Venha conhecer os projetos dos nossos alunos..."></textarea>
-
-                <label for="imagem">🖼️ Imagem de Fundo:</label>
-                <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImagem(this)">
-                <div id="preview-container"></div>
-                <small style="color: #666;"><strong>A imagem será exibida como papel de parede da tela principal</strong></small>
-
-                <label for="link_qrcode_imagem">🔗 Link para QR Code (opcional):</label>
-                <input type="url" name="link_qrcode" id="link_qrcode_imagem" placeholder="https://exemplo.com">
-                <small style="color: #666;">Se preenchido, será gerado um QR Code no canto direito da tela</small>
+                <div class="campo_imagem_right">
+                    <input type="text" name="titulo_evento" id="titulo_evento" maxlength="50" placeholder="Título:">
+                
+                    <textarea name="descricao_evento" id="descricao_evento" maxlength="250" rows="3"
+                        placeholder="Descrição:"></textarea>
+                
+                    <input type="url" name="link_qrcode" id="link_qrcode_imagem" placeholder="Link para QR Code:">
+                </div>
             </div>
 
             <!-- EVENTO COM VÍDEO -->

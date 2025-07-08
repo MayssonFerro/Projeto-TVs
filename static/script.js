@@ -254,9 +254,14 @@ document.addEventListener('keydown', function (e) {
 });
 
 function previewImagem(input) {
+  const uploadArea = document.querySelector('.upload-area');
   const container = document.getElementById("preview-container");
+  
+  if (!uploadArea || !container) return;
+  
+  // Remove qualquer preview anterior
   container.innerHTML = "";
-
+  
   if (input.files && input.files[0]) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -264,9 +269,17 @@ function previewImagem(input) {
       img.src = e.target.result;
       img.className = "preview-imagem";
       img.alt = "Preview da imagem";
+      
+      // Adiciona a imagem no container
       container.appendChild(img);
+      
+      // Adiciona classe para esconder o conteúdo de upload
+      uploadArea.classList.add('has-image');
     };
     reader.readAsDataURL(input.files[0]);
+  } else {
+    // Remove a classe se não há imagem
+    uploadArea.classList.remove('has-image');
   }
 }
 
@@ -286,7 +299,7 @@ function atualizarCamposConteudo() {
   }
   
   if (campoImagem) {
-    campoImagem.style.display = tipo === "imagem" ? "block" : "none";
+    campoImagem.style.display = tipo === "imagem" ? "grid" : "none";
   }
   
   if (campoVideo) {
@@ -634,6 +647,11 @@ function configurarAdicaoDispositivo() {
         if (document.getElementById('toggle-exemplo')) {
             configurarToggleExemplo();
         }
+        
+        // Configurar upload de imagem
+        if (document.getElementById('upload-area')) {
+            configurarUploadImagem();
+        }
     });
 
 // Função para configurar o toggle do exemplo
@@ -682,5 +700,64 @@ function configurarToggleExemplo() {
         });
     } else {
         console.error('Elementos não encontrados:', {toggleBtn, exemploCard}); // Debug
+    }
+}
+
+// Função para configurar upload de imagem
+function configurarUploadImagem() {
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('imagem');
+    const previewContainer = document.getElementById('preview-container');
+
+    if (!uploadArea || !fileInput) return;
+
+    // Drag & Drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            previewImagem(fileInput);
+        }
+    });
+
+    // Click para abrir seletor
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Preview quando arquivo é selecionado
+    fileInput.addEventListener('change', () => {
+        previewImagem(fileInput);
+    });
+}
+
+// Função melhorada para preview
+function previewImagem(input) {
+    const file = input.files[0];
+    const uploadArea = document.getElementById('upload-area');
+    const previewContainer = document.getElementById('preview-container');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadArea.classList.add('has-image');
+            previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" object-fit: cover; border-radius: 12px;">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        uploadArea.classList.remove('has-image');
+        previewContainer.innerHTML = '';
     }
 }

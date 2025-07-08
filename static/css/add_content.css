@@ -87,6 +87,22 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    z-index: 1000;
+}
+
+.round {
+    border-radius: 50% !important;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+        font-size: 2.5rem;
+}
+
+.round:hover {
+    background-color: #0056b3;
 }
 
 button:hover {
@@ -302,4 +318,159 @@ button:hover {
         flex-direction: column;
         gap: 15px;
     }
+}
+
+form {
+    max-width: 1000px;
+}
+
+#campo_imagem {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#campo_imagem input[type="text"], input[type="url"] {
+    width: auto;
+}
+
+#campo_imagem textarea {
+    width: auto;
+    height: 200px;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1rem;
+    background: #d2cccc;
+}
+
+.campo_imagem_left {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo_imagem_right {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+
+.campo_imagem_left label,
+.campo_imagem_right label {
+    margin-bottom: 8px;
+    margin-top: 15px;
+}
+
+.campo_imagem_left label:first-child,
+.campo_imagem_right label:first-child {
+    margin-top: 0;
+}
+
+#preview-container {
+    margin: 10px 0;
+}
+
+#preview-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade - em mobile fica em coluna única */
+@media (max-width: 768px) {
+    #campo_imagem {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .campo_imagem_left,
+    .campo_imagem_right {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .upload-area {
+        width: 200px;
+        height: 200px;
+        margin: 10px auto;
+    }
+}
+
+/* Input customizado para upload de imagem */
+.upload-area {
+    width: 100%;
+    height: 350px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #d2cccc;
+    position: relative;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.upload-area:hover {
+    border-color: #007bff;
+    background: #f0f8ff;
+}
+
+.upload-area.dragover {
+    border-color: #28a745;
+    background: #f0fff0;
+}
+
+.upload-area i {
+    font-size: 3rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.upload-area span {
+    color: #666;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.upload-area input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Quando há preview, esconde o conteúdo de upload */
+.upload-area.has-image i,
+.upload-area.has-image span {
+    display: none;
+}
+
+/* Preview da imagem aparece exatamente no lugar do input */
+.upload-area.has-image {
+    padding: 0;
+    border: 2px solid #007acc;
+    background: transparent;
+}
+
+#preview-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
 }

@@ -3,6 +3,7 @@
     padding: 0.5rem !important;
     max-width: 100% !important;
     color: #333;
+    background-color: #f5f5f5;
 }
 
 /* Header da página */
@@ -201,7 +202,7 @@
 
 /* Informações do dispositivo */
 .device-info {
-    background: #f8f9fa;
+    background: white;
     padding: 1.5rem;
     border-radius: 8px;
     margin-top: 2rem;
@@ -220,7 +221,7 @@
 }
 
 .info-item {
-    background: white;
+    background-color: #f5f5f5;
     padding: 0.75rem;
     border-radius: 4px;
     border-left: 3px solid #007bff;
