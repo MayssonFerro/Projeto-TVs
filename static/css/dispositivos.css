@@ -201,31 +201,6 @@ body {
     background: #b4afaf !important;
 }
 
-.floating {
-    position: fixed;
-    z-index: 1000;
-    background: #469C42;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease;
-}
-
-.floating:hover {
-    background: #218838;
-}
-
-.left.floating {
-    left: 2rem;
-    right: auto;
-}
-
-.right.floating {
-    right: 2rem;
-    left: auto;
-}
-
 /* Estado vazio */
 .empty-state {
     grid-column: 1 / -1;

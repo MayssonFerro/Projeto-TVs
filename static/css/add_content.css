@@ -1,8 +1,7 @@
 body {
-    font-family: Arial, sans-serif;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0;
     background-color: #f5f5f5;
 }
 
@@ -14,7 +13,8 @@ body {
 
 .header h1 {
     color: #333;
-    margin: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
 }
 
 .container {
@@ -23,11 +23,13 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    min-height: auto;
 }
 
 h1, h2, h3 {
     color: #333;
     margin-bottom: 15px;
+    margin-top: 0;
 }
 
 label {
@@ -37,14 +39,21 @@ label {
     color: #555;
 }
 
+small {
+    margin-bottom: 15px;
+}
+
 input,
 textarea,
 select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box;
+    background: #d2cccc;
+    font-family: ubuntu, sans-serif;
+    font-size: 1rem;
 }
 
 .botoes {
@@ -75,19 +84,6 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.floating {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #007bff;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    z-index: 1000;
 }
 
 .round {
@@ -127,16 +123,26 @@ button:hover {
     background-color: #f9f9f9;
 }
 
+.tv-select {
+    margin-top: 1rem;
+    width: 100%;
+}
+
 .checkbox-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background: #d2cccc;
 }
 
 .checkbox-group label {
     display: flex;
     align-items: center;
     font-weight: normal;
+    color: #000;
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -205,12 +211,10 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Form inline para botões de excluir */
 .form-inline {
     display: inline;
 }
 
-/* Empty state */
 .empty-state {
     text-align: center;
     padding: 2rem;
@@ -222,7 +226,6 @@ button:hover {
     font-size: 1.1rem;
 }
 
-/* Header e exemplo flutuante */
 .exemplo-toggle-container {
     position: relative;
 }
@@ -324,7 +327,7 @@ form {
     max-width: 1000px;
 }
 
-#campo_imagem {
+#campo_imagem, #campo_video {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
@@ -333,14 +336,15 @@ form {
     max-width: 1200px;
 }
 
-#campo_imagem input[type="text"], input[type="url"] {
+#campo_imagem input[type="text"], #campo_imagem input[type="url"],
+#campo_video input[type="text"], #campo_video input[type="url"] {
     width: auto;
 }
 
-#campo_imagem textarea {
+#campo_imagem textarea,
+#campo_video textarea {
     width: auto;
     height: 200px;
-    font-family: 'Ubuntu', sans-serif;
     font-size: 1rem;
     background: #d2cccc;
 }
@@ -352,19 +356,34 @@ form {
 
 .campo_imagem_right {
     display: flex;
-    flex-direction: column;
-    padding-top: 10px;
+    flex-direction: column; 
 }
 
 .campo_imagem_left label,
 .campo_imagem_right label {
-    margin-bottom: 8px;
+    margin-bottom: 0;
     margin-top: 15px;
 }
 
 .campo_imagem_left label:first-child,
 .campo_imagem_right label:first-child {
     margin-top: 0;
+}
+
+/* Estilos para labels dentro do campo_video */
+#campo_video .campo_imagem_left label,
+#campo_video .campo_imagem_right label {
+    margin-bottom: 0;
+    margin-top: 15px;
+}
+
+#campo_video .campo_imagem_left label:first-child,
+#campo_video .campo_imagem_right label:first-child {
+    margin-top: 0;
+}
+
+#titulo_evento_label {
+    margin-bottom: 10px;
 }
 
 #preview-container {
@@ -381,6 +400,11 @@ form {
 /* Responsividade - em mobile fica em coluna única */
 @media (max-width: 768px) {
     #campo_imagem {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    #campo_video {
         grid-template-columns: 1fr;
         gap: 20px;
     }
@@ -435,6 +459,13 @@ form {
     color: #666;
     text-align: center;
     font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.upload-area span small {
+    font-size: 0.8rem;
+    color: #999;
+    font-style: italic;
 }
 
 .upload-area input[type="file"] {
@@ -454,7 +485,6 @@ form {
 /* Preview da imagem aparece exatamente no lugar do input */
 .upload-area.has-image {
     padding: 0;
-    border: 2px solid #007acc;
     background: transparent;
 }
 
@@ -473,4 +503,43 @@ form {
     object-fit: cover;
     border-radius: 12px;
     display: block;
+}
+
+/* Grupo de cor de fundo */
+.cor-fundo-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.cor-fundo-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    padding: 2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cor-fundo-group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.labeldiv {
+    width: 100%;
+    align-items: start;
+}
+
+#campo_noticia {
+    width: 100%;
+}
+
+#campo_noticia textarea {
+    height: 50px;
 }

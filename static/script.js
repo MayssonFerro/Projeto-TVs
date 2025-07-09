@@ -217,14 +217,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 midiaContainer.style.backgroundRepeat = 'no-repeat';
             } else {
                 midiaContainer.innerHTML = '';
-                midiaContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                // Usar a cor de fundo personalizada do evento, ou cor padrão
+                const corFundo = ev.cor_fundo || '#667eea';
+                console.log('Aplicando cor de fundo:', corFundo, 'para evento:', ev.titulo);
+                midiaContainer.style.background = `${corFundo}`;
                 midiaContainer.style.backgroundImage = '';
             }
 
-            if (ev.titulo !== "Conteúdo - Imagem de fundo") {
-                descricaoContainer.innerHTML = `<h2>${ev.titulo || ''}</h2><p>${ev.descricao || ''}</p>`;
+            // Só mostra título/descrição se houver descrição (para ambos imagem e vídeo)
+            if (ev.titulo !== "Conteúdo - Imagem de fundo" && ev.descricao) {
+                const tituloHTML = ev.titulo ? `<h2>${ev.titulo}</h2>` : '';
+                const descricaoHTML = `<p>${ev.descricao}</p>`;
+                
+                descricaoContainer.innerHTML = tituloHTML + descricaoHTML;
+                descricaoContainer.style.display = 'flex'; // Mostrar o container quando há conteúdo
             } else {
                 descricaoContainer.innerHTML = '';
+                descricaoContainer.style.display = 'none'; // Esconder quando não há conteúdo
             }
 
             if (ev.link) {
@@ -283,6 +292,56 @@ function previewImagem(input) {
   }
 }
 
+// Função melhorada para preview
+function previewImagem(input) {
+    if (!input || !input.files) return;
+    
+    const file = input.files[0];
+    const uploadArea = document.getElementById('upload-area');
+    const previewContainer = document.getElementById('preview-container');
+    
+    if (!uploadArea || !previewContainer) return;
+    
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                uploadArea.classList.add('has-image');
+                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" style="object-fit: cover; border-radius: 12px;">`;
+            } catch (error) {
+                console.error('Erro ao criar preview:', error);
+            }
+        };
+        
+        reader.readAsDataURL(file);
+    }
+}
+
+// Função para preview de vídeo
+function previewVideo(input) {
+    if (!input || !input.files) return;
+    
+    const file = input.files[0];
+    const uploadArea = document.getElementById('upload-area-video');
+    const previewContainer = document.getElementById('preview-container-video');
+    
+    if (!uploadArea || !previewContainer) return;
+    
+    if (file && file.type.startsWith('video/')) {
+        const url = URL.createObjectURL(file);
+        
+        try {
+            uploadArea.classList.add('has-image'); // Usar a mesma classe para comportamento consistente
+            previewContainer.innerHTML = `<video src="${url}" controls style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>`;
+        } catch (error) {
+            console.error('Erro ao criar preview de vídeo:', error);
+        }
+    }
+}
+
 function atualizarCamposConteudo() {
   const tipoElement = document.getElementById("tipo_conteudo");
   if (!tipoElement) return; // Sai se o elemento não existir
@@ -294,16 +353,45 @@ function atualizarCamposConteudo() {
   const campoImagem = document.getElementById("campo_imagem");
   const campoVideo = document.getElementById("campo_video");
   
+  // Campos que podem ter required
+  const tituloImagem = document.getElementById("titulo_evento");
+  const tituloVideo = document.getElementById("titulo_evento_video");
+  const videoInput = document.getElementById("video");
+  const conteudoNoticia = document.getElementById("conteudo_noticia");
+  
+  // Remover required de todos os campos primeiro
+  if (tituloImagem) tituloImagem.removeAttribute('required');
+  if (tituloVideo) tituloVideo.removeAttribute('required');
+  if (videoInput) videoInput.removeAttribute('required');
+  if (conteudoNoticia) conteudoNoticia.removeAttribute('required');
+  
+  // Mostrar/ocultar campos e adicionar required conforme necessário
   if (campoNoticia) {
     campoNoticia.style.display = tipo === "noticia" ? "block" : "none";
+    if (tipo === "noticia" && conteudoNoticia) {
+      conteudoNoticia.setAttribute('required', 'required');
+    }
   }
   
   if (campoImagem) {
     campoImagem.style.display = tipo === "imagem" ? "grid" : "none";
+    if (tipo === "imagem") {
+      if (tituloImagem) tituloImagem.setAttribute('required', 'required');
+      setTimeout(() => {
+        configurarUploadImagem();
+      }, 100);
+    }
   }
   
   if (campoVideo) {
-    campoVideo.style.display = tipo === "video" ? "block" : "none";
+    campoVideo.style.display = tipo === "video" ? "grid" : "none";
+    if (tipo === "video") {
+      if (tituloVideo) tituloVideo.setAttribute('required', 'required');
+      if (videoInput) videoInput.setAttribute('required', 'required');
+      setTimeout(() => {
+        configurarUploadVideo();
+      }, 100);
+    }
   }
 }
 
@@ -634,23 +722,43 @@ function configurarAdicaoDispositivo() {
 
     // Inicializar funcionalidades quando a página carregar
     document.addEventListener('DOMContentLoaded', function() {
-        // Verificar qual página estamos e inicializar as funções apropriadas
-        if (document.getElementById('editar-dispositivo-form')) {
-            configurarEdicaoDispositivo();
-        }
-        
-        if (document.querySelector('form[action="/adicionar_dispositivo"]')) {
-            configurarAdicaoDispositivo();
-        }
-        
-        // Configurar toggle do exemplo na página de adicionar conteúdo
-        if (document.getElementById('toggle-exemplo')) {
-            configurarToggleExemplo();
-        }
-        
-        // Configurar upload de imagem
-        if (document.getElementById('upload-area')) {
-            configurarUploadImagem();
+        try {
+            // Verificar qual página estamos e inicializar as funções apropriadas
+            if (document.getElementById('editar-dispositivo-form')) {
+                configurarEdicaoDispositivo();
+            }
+            
+            if (document.querySelector('form[action="/adicionar_dispositivo"]')) {
+                configurarAdicaoDispositivo();
+            }
+            
+            // Configurar toggle do exemplo na página de adicionar conteúdo
+            if (document.getElementById('toggle-exemplo')) {
+                configurarToggleExemplo();
+            }
+            
+            // Configurar tipo de conteúdo
+            const tipoConteudo = document.getElementById('tipo_conteudo');
+            if (tipoConteudo) {
+                tipoConteudo.addEventListener('change', atualizarCamposConteudo);
+                // Chamar uma vez para configurar o estado inicial
+                atualizarCamposConteudo();
+            }
+            
+            // Configurar upload de imagem
+            if (document.getElementById('upload-area')) {
+                configurarUploadImagem();
+            }
+            
+            // Configurar upload de vídeo
+            if (document.getElementById('upload-area-video')) {
+                configurarUploadVideo();
+            }
+            
+            // Configurar validação do formulário de conteúdo
+            configurarValidacaoFormularioConteudo();
+        } catch (error) {
+            console.error('Erro na inicialização:', error);
         }
     });
 
@@ -660,37 +768,37 @@ function configurarToggleExemplo() {
     const exemploCard = document.getElementById('exemplo-card');
     const closeBtn = document.getElementById('exemplo-close');
     
-    console.log('Configurando toggle exemplo:', {toggleBtn, exemploCard, closeBtn}); // Debug
+    if (!toggleBtn || !exemploCard) return;
     
-    if (toggleBtn && exemploCard) {
+    try {
         // Abrir card ao clicar no botão
         toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
-            console.log('Botão clicado, mostrando card'); // Debug
-            // Esconder botão e mostrar card
             toggleBtn.style.display = 'none';
+            exemploCard.style.display = 'block';
             exemploCard.classList.add('show');
         });
-        
-        // Fechar card ao clicar no X
+
+        // Fechar card
         if (closeBtn) {
             closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                console.log('Botão X clicado, fechando card'); // Debug
-                // Esconder card e mostrar botão
+                exemploCard.style.display = 'none';
                 exemploCard.classList.remove('show');
-                toggleBtn.style.display = 'inline-block';
+                toggleBtn.style.display = 'flex';
             });
         }
-        
+
         // Fechar card ao clicar fora dele
         document.addEventListener('click', function(e) {
-            if (!exemploCard.contains(e.target) && !toggleBtn.contains(e.target)) {
-                if (exemploCard.classList.contains('show')) {
-                    console.log('Clique fora, fechando card'); // Debug
-                    exemploCard.classList.remove('show');
-                    toggleBtn.style.display = 'inline-block';
-                }
+            if (exemploCard.style.display === 'block' && 
+                !exemploCard.contains(e.target) && 
+                !toggleBtn.contains(e.target)) {
+                exemploCard.style.display = 'none';
+                exemploCard.classList.remove('show');
+                toggleBtn.style.display = 'flex';
             }
         });
         
@@ -698,66 +806,246 @@ function configurarToggleExemplo() {
         exemploCard.addEventListener('click', function(e) {
             e.stopPropagation();
         });
-    } else {
-        console.error('Elementos não encontrados:', {toggleBtn, exemploCard}); // Debug
+    } catch (error) {
+        console.error('Erro ao configurar toggle do exemplo:', error);
     }
 }
 
 // Função para configurar upload de imagem
 function configurarUploadImagem() {
+    console.log('Tentando configurar upload...');
+    
     const uploadArea = document.getElementById('upload-area');
     const fileInput = document.getElementById('imagem');
-    const previewContainer = document.getElementById('preview-container');
-
-    if (!uploadArea || !fileInput) return;
-
-    // Drag & Drop
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
+    
+    console.log('Elementos encontrados:', {
+        uploadArea: !!uploadArea,
+        fileInput: !!fileInput
     });
+    
+    if (!uploadArea || !fileInput) {
+        console.log('Elementos não encontrados, saindo...');
+        return;
+    }
 
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover');
-    });
-
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-        
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            previewImagem(fileInput);
-        }
-    });
-
-    // Click para abrir seletor
-    uploadArea.addEventListener('click', () => {
-        fileInput.click();
+    console.log('Configurando upload de imagem...');
+    
+    // Remover listeners existentes
+    const newUploadArea = uploadArea.cloneNode(true);
+    uploadArea.parentNode.replaceChild(newUploadArea, uploadArea);
+    
+    // Obter nova referência ao input
+    const newFileInput = newUploadArea.querySelector('#imagem');
+    
+    // Click para abrir seletor - versão simples
+    newUploadArea.addEventListener('click', function(e) {
+        console.log('Upload area clicada!');
+        newFileInput.click();
     });
 
     // Preview quando arquivo é selecionado
-    fileInput.addEventListener('change', () => {
-        previewImagem(fileInput);
+    newFileInput.addEventListener('change', function(e) {
+        console.log('Arquivo selecionado:', this.files);
+        if (this.files && this.files[0]) {
+            previewImagem(this);
+        }
     });
+    
+    console.log('Upload configurado com sucesso!');
 }
 
-// Função melhorada para preview
-function previewImagem(input) {
-    const file = input.files[0];
-    const uploadArea = document.getElementById('upload-area');
-    const previewContainer = document.getElementById('preview-container');
+// Função para configurar upload de vídeo
+function configurarUploadVideo() {
+    console.log('Tentando configurar upload de vídeo...');
     
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            uploadArea.classList.add('has-image');
-            previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" object-fit: cover; border-radius: 12px;">`;
-        };
-        reader.readAsDataURL(file);
-    } else {
-        uploadArea.classList.remove('has-image');
-        previewContainer.innerHTML = '';
+    const uploadArea = document.getElementById('upload-area-video');
+    const fileInput = document.getElementById('video');
+    
+    console.log('Elementos encontrados:', {
+        uploadArea: !!uploadArea,
+        fileInput: !!fileInput
+    });
+    
+    if (!uploadArea || !fileInput) {
+        console.log('Elementos de vídeo não encontrados, saindo...');
+        return;
     }
+
+    console.log('Configurando upload de vídeo...');
+    
+    // Remover listeners existentes
+    const newUploadArea = uploadArea.cloneNode(true);
+    uploadArea.parentNode.replaceChild(newUploadArea, uploadArea);
+    
+    // Obter nova referência ao input
+    const newFileInput = newUploadArea.querySelector('#video');
+    
+    // Click para abrir seletor
+    newUploadArea.addEventListener('click', function(e) {
+        console.log('Upload area de vídeo clicada!');
+        newFileInput.click();
+    });
+
+    // Preview quando arquivo é selecionado
+    newFileInput.addEventListener('change', function(e) {
+        console.log('Vídeo selecionado:', this.files);
+        if (this.files && this.files[0]) {
+            previewVideo(this);
+        }
+    });
+
+    // Drag & drop events
+    newUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    newUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    newUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('video/')) {
+                newFileInput.files = files;
+                previewVideo(newFileInput);
+            } else {
+                alert('Por favor, selecione apenas arquivos de vídeo.');
+            }
+        }
+    });
+    
+    console.log('Upload de vídeo configurado com sucesso!');
+}
+
+// Função para configurar upload de vídeo
+function configurarUploadVideo() {
+    console.log('Tentando configurar upload de vídeo...');
+    
+    const uploadArea = document.getElementById('upload-area-video');
+    const fileInput = document.getElementById('video');
+    
+    console.log('Elementos encontrados:', {
+        uploadArea: !!uploadArea,
+        fileInput: !!fileInput
+    });
+    
+    if (!uploadArea || !fileInput) {
+        console.log('Elementos de vídeo não encontrados, saindo...');
+        return;
+    }
+
+    console.log('Configurando upload de vídeo...');
+    
+    // Remover listeners existentes
+    const newUploadArea = uploadArea.cloneNode(true);
+    uploadArea.parentNode.replaceChild(newUploadArea, uploadArea);
+    
+    // Obter nova referência ao input
+    const newFileInput = newUploadArea.querySelector('#video');
+    
+    // Click para abrir seletor
+    newUploadArea.addEventListener('click', function(e) {
+        console.log('Upload area de vídeo clicada!');
+        newFileInput.click();
+    });
+
+    // Preview quando arquivo é selecionado
+    newFileInput.addEventListener('change', function(e) {
+        console.log('Vídeo selecionado:', this.files);
+        if (this.files && this.files[0]) {
+            previewVideo(this);
+        }
+    });
+
+    // Drag & drop events
+    newUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    newUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    newUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('video/')) {
+                newFileInput.files = files;
+                previewVideo(newFileInput);
+            } else {
+                alert('Por favor, selecione apenas arquivos de vídeo.');
+            }
+        }
+    });
+    
+    console.log('Upload de vídeo configurado com sucesso!');
+}
+
+// Função para preview de vídeo
+function previewVideo(input) {
+    if (!input || !input.files) return;
+    
+    const file = input.files[0];
+    const uploadArea = document.getElementById('upload-area-video');
+    const previewContainer = document.getElementById('preview-container-video');
+    
+    if (!uploadArea || !previewContainer) return;
+    
+    if (file && file.type.startsWith('video/')) {
+        const url = URL.createObjectURL(file);
+        
+        try {
+            uploadArea.classList.add('has-image'); // Usar a mesma classe para comportamento consistente
+            previewContainer.innerHTML = `<video src="${url}" controls style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>`;
+        } catch (error) {
+            console.error('Erro ao criar preview de vídeo:', error);
+        }
+    }
+}
+
+// Validação do formulário de conteúdo
+function configurarValidacaoFormularioConteudo() {
+    const form = document.querySelector('form[action*="admin"]');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+        const tipoConteudo = document.getElementById('tipo_conteudo');
+        if (!tipoConteudo) return;
+        
+        // Validação específica para eventos do tipo "imagem"
+        if (tipoConteudo.value === 'imagem') {
+            const descricao = document.getElementById('descricao_evento');
+            const imagemInput = document.getElementById('imagem');
+            
+            const temDescricao = descricao && descricao.value.trim() !== '';
+            const temImagem = imagemInput && imagemInput.files && imagemInput.files.length > 0;
+            
+            if (!temDescricao && !temImagem) {
+                e.preventDefault();
+                alert('⚠️ Para eventos com imagem, você deve preencher pelo menos a descrição ou enviar uma imagem.');
+                return false;
+            }
+        }
+    });
 }

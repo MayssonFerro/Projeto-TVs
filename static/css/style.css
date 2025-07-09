@@ -113,7 +113,9 @@ input {
     background-color: #D2CCCC;
     border: none;
     border-radius: 4px;
+    font-family: 'Ubuntu', sans-serif;
 }
+
 
 .btn {
     padding: 10px 20px;
@@ -130,6 +132,40 @@ input {
     background-color: #28A745;
 }
 
+.floating {
+    position: fixed;
+    z-index: 1000;
+    background: #469C42;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
+}
+
+.floating:hover {
+    background: #218838;
+}
+
+.left.floating {
+    left: 2rem;
+    right: auto;
+}
+
+.right.floating {
+    right: 2rem;
+    left: auto;
+}
+
+.bottom.floating {
+    bottom: 2rem;
+}
+
+.top.floating {
+    top: 1rem;
+}
+
+
 .flash-messages {
     list-style: none;
     padding: 0;
@@ -143,7 +179,6 @@ input {
 }
 
 .painel {
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(157, 255, 0, 0.67) 100%), #28A745;
     background-size: cover;
     position: relative;
     box-sizing: border-box;
@@ -368,3 +403,52 @@ footer {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.link {
+    width: 100vw;
+}
+
+#descricao-container {
+    position: absolute;
+    bottom: 125px;
+    left: 30px;
+    z-index: 10;
+    height: auto;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
+}
+
+#descricao-container h2 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 500;
+}
+
+#descricao-container p {
+    color: white;
+    margin: 0;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+.green {
+    background: #28a745;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.green:hover {
+    background: #218838;
+}

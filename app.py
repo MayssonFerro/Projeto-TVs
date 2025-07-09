@@ -18,6 +18,9 @@ api_key = '4cd224af1c46c58cf99cdbd798e13931'
 city = 'Três Lagoas, br'
 CACHE_FILE = 'clima.json'
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dispositivos.db'
+db = SQLAlchemy(app)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -221,9 +224,6 @@ def fetch_and_cache_weather():
     except requests.exceptions.RequestException as e:
         print(f"!!!!!!!!!! AGENDADOR: Erro ao chamar a API: {e} !!!!!!!!!!!")
     print("--------------------------------------------------")
- 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dispositivos_novo.db'
-db = SQLAlchemy(app)
 
 
 class Dispositivo(db.Model):
@@ -242,10 +242,11 @@ class Evento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     dispositivo_id = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     titulo = db.Column(db.String(50), nullable=False)
-    descricao = db.Column(db.String(250), nullable=False)
+    descricao = db.Column(db.String(250))
     link = db.Column(db.String(250))
     imagem = db.Column(db.String(250))
-    video = db.Column(db.String(250))  # <-- Adicione esta linha
+    video = db.Column(db.String(250))
+    cor_fundo = db.Column(db.String(7), default='#667eea')
     status = db.Column(db.String(20), nullable=False)
     data_inicio = db.Column(db.DateTime, default=datetime.now)
     data_fim = db.Column(db.DateTime)
@@ -352,18 +353,20 @@ def testar_sistema():
 @app.route("/")
 def show_painel():
     noticia = Noticia.query.filter_by(status='ativa').all()
-    # Filtra eventos ativos com imagem ou vídeo não nulos e não vazios
+    # Filtra eventos ativos que tenham pelo menos título ou descrição
     evento = Evento.query.filter(
         Evento.status == 'ativo',
         or_(
             and_(Evento.imagem != None, Evento.imagem != ""),
-            and_(Evento.video != None, Evento.video != "")
+            and_(Evento.video != None, Evento.video != ""),
+            and_(Evento.titulo != None, Evento.titulo != ""),
+            and_(Evento.descricao != None, Evento.descricao != "")
         )
     ).order_by(Evento.data_inicio.desc()).all()
     
     print(f"DEBUG - Eventos encontrados: {len(evento)}")
     for e in evento:
-        print(f"  - Evento: {e.titulo}, Imagem: {e.imagem}, Vídeo: {e.video}, Link: {e.link}")
+        print(f"  - Evento: {e.titulo}, Descrição: {e.descricao}, Cor: {getattr(e, 'cor_fundo', 'N/A')}, Imagem: {e.imagem}, Vídeo: {e.video}, Link: {e.link}")
     status_intervalo = get_status_intervalo()
     return render_template(
         "painel.html",
@@ -646,31 +649,61 @@ def admin():
         if tipo_conteudo == 'noticia':
             # NOTÍCIA RÁPIDA
             conteudo_noticia = request.form.get('conteudo_noticia')
+            print(f"Conteúdo da notícia recebido: '{conteudo_noticia}'")
             
             if not conteudo_noticia or conteudo_noticia.strip() == '':
                 flash("Você deve preencher o texto da notícia rápida.", "danger")
                 return redirect(url_for('admin'))
             
+            conteudo_limpo = conteudo_noticia.strip()
+            print(f"Conteúdo limpo: '{conteudo_limpo}' (tamanho: {len(conteudo_limpo)})")
+            
+            # Validar tamanho do conteúdo
+            if len(conteudo_limpo) > 250:
+                flash("O texto da notícia é muito longo (máximo 250 caracteres).", "danger")
+                return redirect(url_for('admin'))
+            
             for id_dispositivo in dispositivos_ids:
+                print(f"Criando notícia para dispositivo ID: {id_dispositivo}")
+                
+                # Validar se o dispositivo existe
+                dispositivo = Dispositivo.query.get(id_dispositivo)
+                if not dispositivo:
+                    print(f"⚠️ Dispositivo {id_dispositivo} não encontrado!")
+                    flash(f"Dispositivo ID {id_dispositivo} não foi encontrado.", "danger")
+                    return redirect(url_for('admin'))
+                
                 nova_noticia = Noticia(
-                    conteudo=conteudo_noticia.strip(),
+                    conteudo=conteudo_limpo,
                     status="ativa",
-                    dispositivo_id=id_dispositivo,
+                    dispositivo_id=int(id_dispositivo),
                     data_inicio=data_inicio or datetime.now(),
                     data_fim=data_fim
                 )
                 db.session.add(nova_noticia)
-                print(f"Notícia criada para dispositivo {id_dispositivo}")
+                print(f"✅ Notícia adicionada à sessão para dispositivo {id_dispositivo} ({dispositivo.nome})")
         
         elif tipo_conteudo in ['imagem', 'video']:
             # EVENTO COM IMAGEM OU VÍDEO
-            titulo_evento = request.form.get('titulo_evento')
-            descricao_evento = request.form.get('descricao_evento')
-            link_qrcode = request.form.get('link_qrcode')
+            if tipo_conteudo == 'imagem':
+                titulo_evento = request.form.get('titulo_evento_imagem')
+                descricao_evento = request.form.get('descricao_evento_imagem')
+            else:  # tipo_conteudo == 'video'
+                titulo_evento = request.form.get('titulo_evento_video')
+                descricao_evento = request.form.get('descricao_evento_video')
             
-            if not titulo_evento or titulo_evento.strip() == '':
+            link_qrcode = request.form.get('link_qrcode')
+            cor_fundo = request.form.get('cor_fundo', '#667eea')  # Cor padrão se não especificada
+            
+            # Validação: título é obrigatório
+            if not titulo_evento or not titulo_evento.strip():
                 flash("Você deve preencher o título do evento.", "danger")
                 return redirect(url_for('admin'))
+            
+            titulo_final = titulo_evento.strip()
+            descricao_final = descricao_evento.strip() if descricao_evento else ""
+            
+            print(f"Validação - Título: '{titulo_final}', Descrição: '{descricao_final}'")
             
             # Processamento de arquivo (imagem ou vídeo)
             arquivo_filename = None
@@ -687,11 +720,12 @@ def admin():
                         file.save(file_path)
                         arquivo_filename = f"uploads/{unique_filename}"
                         print(f"Imagem salva como: {arquivo_filename}")
-                    else:
-                        flash("Você deve selecionar uma imagem.", "danger")
-                        return redirect(url_for('admin'))
-                else:
-                    flash("Você deve selecionar uma imagem.", "danger")
+                    
+                print(f"Arquivo de imagem: {arquivo_filename or 'Nenhum'}")
+                
+                # VALIDAÇÃO: Para eventos do tipo "imagem", deve ter pelo menos descrição OU imagem
+                if not descricao_final and not arquivo_filename:
+                    flash("Para eventos com imagem, você deve preencher pelo menos a descrição ou enviar uma imagem.", "danger")
                     return redirect(url_for('admin'))
             
             elif tipo_conteudo == 'video':
@@ -717,30 +751,35 @@ def admin():
             for id_dispositivo in dispositivos_ids:
                 novo_evento = Evento(
                     dispositivo_id=id_dispositivo,
-                    titulo=titulo_evento.strip(),
-                    descricao=descricao_evento.strip() if descricao_evento else "",
+                    titulo=titulo_final,
+                    descricao=descricao_final,
                     link=link_qrcode.strip() if link_qrcode else "",
                     imagem=arquivo_filename if tipo_conteudo == 'imagem' else "",
                     video=arquivo_filename if tipo_conteudo == 'video' else "",
+                    cor_fundo=cor_fundo,
                     status="ativo",
                     data_inicio=data_inicio or datetime.now(),
                     data_fim=data_fim
                 )
                 db.session.add(novo_evento)
-                print(f"Evento criado para dispositivo {id_dispositivo}: {titulo_evento}")
+                print(f"Evento criado para dispositivo {id_dispositivo}: {titulo_final}")
         
         else:
             flash("Tipo de conteúdo inválido.", "danger")
             return redirect(url_for('admin'))
         
         try:
+            print("Tentando fazer commit no banco de dados...")
             db.session.commit()
-            print("Dados salvos no banco com sucesso!")
+            print("✅ Dados salvos no banco com sucesso!")
             flash("Conteúdo adicionado com sucesso!", "success")
         except Exception as e:
-            print(f"ERRO ao salvar no banco: {e}")
+            print(f"❌ ERRO ao salvar no banco: {e}")
+            print(f"Tipo do erro: {type(e)}")
+            import traceback
+            print(f"Traceback completo: {traceback.format_exc()}")
             db.session.rollback()
-            flash(f"Erro ao salvar: {str(e)}", "danger")
+            flash(f"Erro ao salvar no banco de dados: {str(e)}", "danger")
             
         return redirect(url_for('admin'))
 

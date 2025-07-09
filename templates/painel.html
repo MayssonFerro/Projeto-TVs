@@ -15,7 +15,8 @@
                     video: "{{ url_for('static', filename=ev.video) if ev.video else '' }}",
                     link: "{{ ev.link or '' }}",
                     titulo: "{{ ev.titulo|e }}",
-                    descricao: "{{ ev.descricao|e }}"
+                    descricao: "{{ ev.descricao|e }}",
+                    cor_fundo: "{{ ev.cor_fundo or '#667eea' }}"
                 }{% if not loop.last %},{% endif %}
             {% endfor %}
         ];
@@ -30,8 +31,8 @@
                 <h1 id="data"></h1>
                 <h1 id="hora"></h1>
             </div>
-            <div class="descricao" id="descricao-container"></div>
             <div class="link">
+                <div class="descricao" id="descricao-container" style="display: none;"></div>
                 <div id="qrcode" style="display: none;"></div>
             </div>
         </div>

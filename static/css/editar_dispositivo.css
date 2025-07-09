@@ -151,20 +151,6 @@
     transition: background-color 0.3s ease;
 }
 
-.green {
-    background: #28a745;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.green:hover {
-    background: #218838;
-}
-
 .btn-danger:hover {
     background: #c82333;
 }
@@ -181,23 +167,6 @@
 
 .btn-secondary:hover {
     background: #5a6268;
-}
-
-.floating {
-    position: fixed;
-    top: 1rem;
-    left: 2rem;
-    z-index: 1000;
-    background: #469C42;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease;
-}
-
-.floating:hover {
-    background: #218838;
 }
 
 /* Informações do dispositivo */
