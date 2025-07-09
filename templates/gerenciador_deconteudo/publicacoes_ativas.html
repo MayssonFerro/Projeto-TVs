@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicações Ativas - Sistema de TVs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publicacoes_ativas.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 <body>
@@ -18,87 +19,140 @@
         {% endif %}
     {% endwith %}
 
-    <div class="header">
-        <h1>📋 Publicações Ativas</h1>
-        <a href="{{ url_for('show_painel') }}" class="btn top left floating">
-            ← Voltar ao Painel
-        </a>
-    </div>
-
-    <!-- Seção de conteúdos existentes -->
     <div class="container">
-        <!-- NOTÍCIAS RÁPIDAS -->
-        {% if noticias %}
-            <h3>📝 Notícias Rápidas (Barra Inferior)</h3>
-            {% for noticia in noticias %}
-                <div class="item-conteudo">
-                    <p><strong>📝 Texto:</strong> {{ noticia.conteudo }}</p>
-                    <p><strong>📱 TV:</strong> {{ noticia.dispositivo.nome }} - {{ noticia.dispositivo.local }}</p>
-                    <p><strong>📅 Publicado em:</strong> {{ noticia.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% if noticia.data_fim %}
-                        <p><strong>⏰ Expira em:</strong> {{ noticia.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% endif %}
-                    
-                    <form method="POST" action="{{ url_for('excluir_noticia', id=noticia.id) }}" class="form-inline">
-                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir esta notícia?')">🗑️ Excluir Notícia</button>
-                    </form>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- EVENTOS (IMAGEM/VÍDEO) -->
-        {% if eventos %}
-            <h3>🎬 Eventos (Imagem/Vídeo + Descrição)</h3>
-            {% for evento in eventos %}
-                <div class="item-conteudo">
-                    <p><strong>📋 Título:</strong> {{ evento.titulo }}</p>
-                    {% if evento.descricao %}
-                        <p><strong>📄 Descrição:</strong> {{ evento.descricao }}</p>
-                    {% endif %}
-                    <p><strong>📱 TV:</strong> {{ evento.dispositivo.nome }} - {{ evento.dispositivo.local }}</p>
-                    <p><strong>📅 Publicado em:</strong> {{ evento.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% if evento.data_fim %}
-                        <p><strong>⏰ Expira em:</strong> {{ evento.data_fim.strftime('%d/%m/%Y às %H:%M') }}</p>
-                    {% endif %}
-                    
-                    {% if evento.link %}
-                        <p><strong>🔗 QR Code:</strong> 
-                            <a href="{{ evento.link }}" target="_blank" class="qrcode-link">
-                                {{ evento.link }}
+        <div class="header">
+            <h1>Publicações Ativas</h1>
+            <a href="{{ url_for('show_painel') }}" class="btn left top floating">
+                Mostrar Painel
+            </a>
+            <a href="{{ url_for('admin') }}" class="btn right bottom floating round">
+                <i class='bx bx-plus'></i>
+            </a>
+        </div>
+        <div class="dispositivos-grid">
+            <!-- NOTÍCIAS RÁPIDAS -->
+            {% if noticias %}
+                {% for item in noticias %}
+                    <div class="dispositivo-card noticia-card">
+                        <div class="dispositivo-header">
+                            <h3>Notícia Rápida</h3>
+                            <a href="{{ url_for('editar_noticia', id=item.noticia.id) }}" class="edit-button">
+                                <i class='bx bx-edit'></i>
                             </a>
-                        </p>
-                    {% endif %}
-                    
-                    {% if evento.imagem %}
-                        <p><strong>🖼️ Imagem:</strong> 
-                            <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem do evento">
-                        </p>
-                    {% endif %}
-                    
-                    {% if evento.video %}
-                        <p><strong>🎬 Vídeo:</strong> {{ evento.video }}</p>
-                    {% endif %}
-                    
-                    <form method="POST" action="{{ url_for('excluir_evento', id=evento.id) }}" class="form-inline">
-                        <button type="submit" class="btn-excluir" onclick="return confirm('❌ Tem certeza que deseja excluir este evento?')">🗑️ Excluir Evento</button>
-                    </form>
-                </div>
-            {% endfor %}
-        {% endif %}
+                        </div>
+                        
+                        <div class="dispositivo-info">
+                            <div class="info-row">
+                                <strong>Texto:</strong><br>{{ item.noticia.conteudo }}
+                            </div>
+                            <div class="info-row">
+                                <strong>TVs:</strong><br>
+                                {% for dispositivo in item.dispositivos %}
+                                    <span class="tv-tag">{{ dispositivo.nome }} - {{ dispositivo.local }}</span>{% if not loop.last %} <br> {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="info-row">
+                                <strong>
+                                    <i class='bx bx-calendar-check' ></i>
+                                    Publicado em:
+                                </strong><br>{{ item.noticia.data_inicio.strftime('%d/%m/%Y às %H:%M') }}
+                            </div>
+                            {% if item.noticia.data_fim %}
+                            <div class="info-row">
+                                <strong>
+                                    <i class='bx bx-calendar-x' ></i>
+                                    Expira em:
+                                </strong><br>{{ item.noticia.data_fim.strftime('%d/%m/%Y às %H:%M') }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- EVENTOS (IMAGEM/VÍDEO) -->
+            {% if eventos %}
+                {% for item in eventos %}
+                    <div class="dispositivo-card evento-card">
+                        <div class="dispositivo-header">
+                            <h3>{{ item.evento.titulo }}</h3>
+
+                            {% if item.evento.video %}
+                                <a href="{{ url_for('editar_evento_video', id=item.evento.id) }}" class="edit-button">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('editar_evento_imagem', id=item.evento.id) }}" class="edit-button">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="dispositivo-info">
+                            {% if item.evento.descricao %}
+                            <div class="info-row">
+                                <strong>Descrição:</strong><br>
+                                {{ item.evento.descricao }}
+                            </div>
+                            {% endif %}
+                            <div class="info-row">
+                                <strong>TVs:</strong><br> 
+                                {% for dispositivo in item.dispositivos %}
+                                    <span class="tv-tag">{{ dispositivo.nome }} - {{ dispositivo.local }}</span>{% if not loop.last %} <br> {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="info-row">
+                                <strong>
+                                    <i class='bx bx-calendar-check' ></i>
+                                    Publicado em:
+                                </strong><br> {{ item.evento.data_inicio.strftime('%d/%m/%Y às %H:%M') }}
+                            </div>
+                            {% if item.evento.data_fim %}
+                            <div class="info-row">
+                                <strong>
+                                    <i class='bx bx-calendar-x' ></i>
+                                    Expira em:
+                                </strong><br>{{ item.evento.data_fim.strftime('%d/%m/%Y às %H:%M') }}
+                            </div>
+                            {% endif %}
+                            
+                            {% if item.evento.link %}
+                            <div class="info-row">
+                                <strong>QR Code:</strong><br>
+                                <a href="{{ item.evento.link }}" target="_blank" class="qrcode-link">
+                                    {{ item.evento.link[:30] }}{% if item.evento.link|length > 30 %}...{% endif %}
+                                </a>
+                            </div>
+                            {% endif %}
+                            
+                            {% if item.evento.imagem %}
+                            <div class="info-row">
+                                <strong>Imagem:</strong><br>
+                                <img src="{{ url_for('static', filename=item.evento.imagem) }}" class="preview-imagem" alt="Imagem do evento">
+                            </div>
+                            {% endif %}
+                            
+                            {% if item.evento.video %}
+                            <div class="info-row">
+                                <strong>Vídeo:</strong><br>{{ item.evento.video.split('/')[-1] }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
 
         {% if not noticias and not eventos %}
             <div class="empty-state">
-                <p>📭 Nenhuma publicação ativa no momento.</p>
-                <a href="{{ url_for('admin') }}" class="btn btn-primary">
-                    ➕ Adicionar Primeira Publicação
-                </a>
+                <div class="alert alert-info">
+                    <p>Nenhuma publicação ativa no momento.</p>
+                    <a href="{{ url_for('admin') }}" class="btn btn-primary">
+                        Adicionar Primeira Publicação
+                    </a>
+                </div>
             </div>
         {% endif %}
-    </div>
-
-    <div class="botoes">
-        <a href="{{ url_for('admin') }}" class="btn-voltar">← Adicionar Conteúdo</a>
-        <a href="{{ url_for('listar_dispositivos') }}" class="btn-dispositivos">Gerenciar TVs</a>
     </div>
 </body>
 </html>

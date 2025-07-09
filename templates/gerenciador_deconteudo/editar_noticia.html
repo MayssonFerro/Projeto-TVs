@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Notícia - Sistema de TVs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-messages {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>Editar Notícia Rápida</h1>
+    </div>
+
+    <div class="container">
+        <form action="{{ url_for('editar_noticia', id=noticia.id) }}" method="POST">
+            <!-- Seção de Notícia Rápida -->
+            <div id="campo_noticia">
+                <label for="conteudo_noticia">
+                    Texto da Notícia:
+                </label>
+                <textarea 
+                    id="conteudo_noticia" 
+                    name="conteudo_noticia" 
+                    maxlength="250" 
+                    placeholder="Digite aqui o texto que aparecerá passando na parte inferior da tela..."
+                    required>{{ noticia.conteudo }}</textarea>
+                <small class="char-count">
+                    <span id="char-count-noticia">{{ noticia.conteudo|length }}</span>/250 caracteres
+                </small>
+            </div>
+
+            <!-- Seção de Agendamento -->
+            <div class="agendamento-section">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_inicio">Data e Hora de Início:</label>
+                        <input type="datetime-local" name="data_inicio" id="data_inicio"
+                            value="{% if noticia.data_inicio %}{{ noticia.data_inicio.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                        <small style="color: #666;">(deixe vazio para começar agora)</small>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_fim">Data e Hora de Fim:</label>
+                        <input type="datetime-local" name="data_fim" id="data_fim"
+                            value="{% if noticia.data_fim %}{{ noticia.data_fim.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                        <small style="color: #666;">(deixe vazio para não expirar)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dispositivos -->
+            <div class="tv-select">
+                <label for="checkbox-group">Publicar em:</label>
+                <div class="checkbox-group" id="checkbox-group">
+                    {% if dispositivos %}
+                        {% for dispositivo in dispositivos %}
+                        <label>
+                            <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}"
+                                   {% if dispositivo.id in dispositivos_selecionados %}checked{% endif %}>
+                            {{ dispositivo.nome }} - {{ dispositivo.local }} ({{ dispositivo.ip }})
+                        </label>
+                        {% endfor %}
+                    {% else %}
+                        <p>Nenhuma TV cadastrada. <a href="{{ url_for('adicionar_dispositivo') }}">Cadastre uma primeiro</a>.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-bts">
+                <a href="{{ url_for('publicacoes_ativas') }}" class="btn btn-danger">Cancelar</a>
+                <button type="submit" class="btn green">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Contador de caracteres para notícia
+        const textarea = document.getElementById('conteudo_noticia');
+        const counter = document.getElementById('char-count-noticia');
+        
+        textarea.addEventListener('input', function() {
+            const count = this.value.length;
+            counter.textContent = count;
+            
+            if (count > 200) {
+                counter.style.color = '#e74c3c';
+            } else if (count > 150) {
+                counter.style.color = '#f39c12';
+            } else {
+                counter.style.color = '#27ae60';
+            }
+        });
+    </script>
+</body>
+</html>

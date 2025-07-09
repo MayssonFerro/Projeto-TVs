@@ -86,25 +86,6 @@ button {
     cursor: pointer;
 }
 
-.round {
-    border-radius: 50% !important;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-        font-size: 2.5rem;
-}
-
-.round:hover {
-    background-color: #0056b3;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
 .btn-excluir {
     background-color: #dc3545;
     padding: 5px 10px;
@@ -300,7 +281,7 @@ button:hover {
 }
 
 .exemplo-content strong {
-    color: #007bff;
+    color: #28a745;
 }
 
 /* Responsividade para o card */
@@ -542,4 +523,74 @@ form {
 
 #campo_noticia textarea {
     height: 50px;
+}
+
+.form-bts {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Estilos para páginas de edição */
+.current-file {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.current-file strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.current-file .preview-imagem {
+    max-width: 200px;
+    max-height: 120px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.video-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+}
+
+.video-info i {
+    font-size: 1.2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.form-actions .btn {
+    min-width: 140px;
+}
+
+/* Responsividade para páginas de edição */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        min-width: unset;
+    }
+    
+    .current-file .preview-imagem {
+        max-width: 100%;
+        height: auto;
+    }
 }

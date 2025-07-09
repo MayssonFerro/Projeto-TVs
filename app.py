@@ -649,7 +649,10 @@ def admin():
         if tipo_conteudo == 'noticia':
             # NOTÍCIA RÁPIDA
             conteudo_noticia = request.form.get('conteudo_noticia')
+            print(f"=== CRIANDO NOTÍCIA ===")
             print(f"Conteúdo da notícia recebido: '{conteudo_noticia}'")
+            print(f"Dispositivos selecionados: {dispositivos_ids}")
+            print(f"Total de dispositivos: {len(dispositivos_ids)}")
             
             if not conteudo_noticia or conteudo_noticia.strip() == '':
                 flash("Você deve preencher o texto da notícia rápida.", "danger")
@@ -661,6 +664,18 @@ def admin():
             # Validar tamanho do conteúdo
             if len(conteudo_limpo) > 250:
                 flash("O texto da notícia é muito longo (máximo 250 caracteres).", "danger")
+                return redirect(url_for('admin'))
+            
+            # Verificar se já existe uma notícia idêntica nos últimos 5 segundos (prevenção contra duplicação)
+            cinco_segundos_atras = datetime.now() - timedelta(seconds=5)
+            noticia_recente = Noticia.query.filter(
+                Noticia.conteudo == conteudo_limpo,
+                Noticia.data_inicio >= cinco_segundos_atras
+            ).first()
+            
+            if noticia_recente:
+                print(f"⚠️ NOTÍCIA DUPLICADA DETECTADA! Ignorando submissão.")
+                flash("Esta notícia já foi criada recentemente.", "warning")
                 return redirect(url_for('admin'))
             
             for id_dispositivo in dispositivos_ids:
@@ -682,6 +697,8 @@ def admin():
                 )
                 db.session.add(nova_noticia)
                 print(f"✅ Notícia adicionada à sessão para dispositivo {id_dispositivo} ({dispositivo.nome})")
+            
+            print(f"=== FIM CRIAÇÃO NOTÍCIA ===")
         
         elif tipo_conteudo in ['imagem', 'video']:
             # EVENTO COM IMAGEM OU VÍDEO
@@ -747,8 +764,26 @@ def admin():
                     flash("Você deve selecionar um vídeo.", "danger")
                     return redirect(url_for('admin'))
             
+            # Verificar se já existe um evento idêntico nos últimos 5 segundos (prevenção contra duplicação)
+            cinco_segundos_atras = datetime.now() - timedelta(seconds=5)
+            evento_recente = Evento.query.filter(
+                Evento.titulo == titulo_final,
+                Evento.data_inicio >= cinco_segundos_atras
+            ).first()
+            
+            if evento_recente:
+                print(f"⚠️ EVENTO DUPLICADO DETECTADO! Ignorando submissão.")
+                flash("Este evento já foi criado recentemente.", "warning")
+                return redirect(url_for('admin'))
+            
+            print(f"=== CRIANDO EVENTOS ===")
+            print(f"Título: '{titulo_final}'")
+            print(f"Dispositivos selecionados: {dispositivos_ids}")
+            print(f"Total de dispositivos: {len(dispositivos_ids)}")
+            
             # Criar evento para cada dispositivo
             for id_dispositivo in dispositivos_ids:
+                print(f"Criando evento para dispositivo ID: {id_dispositivo}")
                 novo_evento = Evento(
                     dispositivo_id=id_dispositivo,
                     titulo=titulo_final,
@@ -762,7 +797,9 @@ def admin():
                     data_fim=data_fim
                 )
                 db.session.add(novo_evento)
-                print(f"Evento criado para dispositivo {id_dispositivo}: {titulo_final}")
+                print(f"✅ Evento criado para dispositivo {id_dispositivo}: {titulo_final}")
+            
+            print(f"=== FIM CRIAÇÃO EVENTOS ===")
         
         else:
             flash("Tipo de conteúdo inválido.", "danger")
@@ -800,13 +837,39 @@ def admin():
 @login_required
 def publicacoes_ativas():
     # Buscar todas as notícias e eventos ativos
-    noticias = Noticia.query.filter_by(status='ativo').all()
-    eventos = Evento.query.filter_by(status='ativo').all()
+    noticias_raw = Noticia.query.filter_by(status='ativa').all()  # Corrigido: notícias usam 'ativa'
+    eventos_raw = Evento.query.filter_by(status='ativo').all()    # Eventos usam 'ativo'
+    
+    # Agrupar notícias por conteúdo
+    noticias_agrupadas = {}
+    for noticia in noticias_raw:
+        key = (noticia.conteudo, noticia.data_inicio, noticia.data_fim)
+        if key not in noticias_agrupadas:
+            noticias_agrupadas[key] = {
+                'noticia': noticia,
+                'dispositivos': []
+            }
+        noticias_agrupadas[key]['dispositivos'].append(noticia.dispositivo)
+    
+    # Agrupar eventos por título, descrição, imagem e vídeo
+    eventos_agrupados = {}
+    for evento in eventos_raw:
+        key = (evento.titulo, evento.descricao, evento.imagem, evento.video, evento.data_inicio, evento.data_fim)
+        if key not in eventos_agrupados:
+            eventos_agrupados[key] = {
+                'evento': evento,
+                'dispositivos': []
+            }
+        eventos_agrupados[key]['dispositivos'].append(evento.dispositivo)
+    
+    # Converter para listas
+    noticias_finais = list(noticias_agrupadas.values())
+    eventos_finais = list(eventos_agrupados.values())
     
     return render_template(
         "gerenciador_deconteudo/publicacoes_ativas.html", 
-        noticias=noticias,
-        eventos=eventos
+        noticias=noticias_finais,
+        eventos=eventos_finais
     )
 
 
@@ -814,9 +877,21 @@ def publicacoes_ativas():
 @login_required
 def excluir_noticia(id):
     noticia = Noticia.query.get_or_404(id)
-    db.session.delete(noticia)
+    
+    # Buscar todas as notícias com o mesmo conteúdo e período
+    noticias_similares = Noticia.query.filter(
+        Noticia.conteudo == noticia.conteudo,
+        Noticia.data_inicio == noticia.data_inicio,
+        Noticia.data_fim == noticia.data_fim,
+        Noticia.status == 'ativa'
+    ).all()
+    
+    # Excluir todas as notícias similares (de todas as TVs)
+    for noticia_similar in noticias_similares:
+        db.session.delete(noticia_similar)
+    
     db.session.commit()
-    flash("Notícia excluída com sucesso!", "success")
+    flash(f"Notícia excluída de {len(noticias_similares)} TV(s) com sucesso!", "success")
     return redirect(url_for('publicacoes_ativas'))
 
 @app.route('/excluir_evento/<int:id>', methods=['POST'])
@@ -824,7 +899,18 @@ def excluir_noticia(id):
 def excluir_evento(id):
     evento = Evento.query.get_or_404(id)
     
-    # Remover arquivo de imagem se existir
+    # Buscar todos os eventos similares (mesmo título, descrição, imagem, vídeo e período)
+    eventos_similares = Evento.query.filter(
+        Evento.titulo == evento.titulo,
+        Evento.descricao == evento.descricao,
+        Evento.imagem == evento.imagem,
+        Evento.video == evento.video,
+        Evento.data_inicio == evento.data_inicio,
+        Evento.data_fim == evento.data_fim,
+        Evento.status == 'ativo'
+    ).all()
+    
+    # Remover arquivos apenas uma vez (eles são compartilhados)
     if evento.imagem:
         arquivo_path = os.path.join(app.root_path, 'static', evento.imagem)
         if os.path.exists(arquivo_path):
@@ -834,7 +920,6 @@ def excluir_evento(id):
             except Exception as e:
                 print(f"Erro ao remover arquivo de imagem: {e}")
     
-    # Remover arquivo de vídeo se existir
     if evento.video:
         arquivo_path = os.path.join(app.root_path, 'static', evento.video)
         if os.path.exists(arquivo_path):
@@ -844,9 +929,12 @@ def excluir_evento(id):
             except Exception as e:
                 print(f"Erro ao remover arquivo de vídeo: {e}")
     
-    db.session.delete(evento)
+    # Excluir todos os eventos similares (de todas as TVs)
+    for evento_similar in eventos_similares:
+        db.session.delete(evento_similar)
+    
     db.session.commit()
-    flash("Evento excluído com sucesso!", "success")
+    flash(f"Evento excluído de {len(eventos_similares)} TV(s) com sucesso!", "success")
     return redirect(url_for('publicacoes_ativas'))
 
 @app.route('/excluir_mensagem/<int:id>', methods=['POST'])
@@ -927,6 +1015,359 @@ def configurar_dispositivo_exemplo():
     else:
         flash('Dispositivo de exemplo não encontrado.', 'info')
         return redirect(url_for('listar_dispositivos'))
+
+# Rotas para edição de publicações
+@app.route('/editar_noticia/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_noticia(id):
+    noticia = Noticia.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        conteudo_noticia = request.form.get('conteudo_noticia')
+        data_inicio_str = request.form.get('data_inicio')
+        data_fim_str = request.form.get('data_fim')
+        
+        if not conteudo_noticia or conteudo_noticia.strip() == '':
+            flash("Você deve preencher o texto da notícia rápida.", "danger")
+            return redirect(url_for('editar_noticia', id=id))
+        
+        conteudo_limpo = conteudo_noticia.strip()
+        
+        if len(conteudo_limpo) > 250:
+            flash("O texto da notícia é muito longo (máximo 250 caracteres).", "danger")
+            return redirect(url_for('editar_noticia', id=id))
+        
+        # Processar datas
+        data_inicio = None
+        data_fim = None
+        
+        if data_inicio_str:
+            try:
+                data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de início inválido.", "danger")
+                return redirect(url_for('editar_noticia', id=id))
+        
+        if data_fim_str:
+            try:
+                data_fim = datetime.strptime(data_fim_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de fim inválido.", "danger")
+                return redirect(url_for('editar_noticia', id=id))
+        
+        # Obter dispositivos selecionados
+        dispositivos_selecionados = request.form.getlist('dispositivos')
+        
+        if not dispositivos_selecionados:
+            flash("Você deve selecionar pelo menos uma TV.", "danger")
+            return redirect(url_for('editar_noticia', id=id))
+        
+        # Remover todas as notícias similares existentes
+        noticias_para_remover = Noticia.query.filter(
+            Noticia.conteudo == noticia.conteudo,
+            Noticia.data_inicio == noticia.data_inicio,
+            Noticia.data_fim == noticia.data_fim,
+            Noticia.status == 'ativa'
+        ).all()
+        
+        for not_rem in noticias_para_remover:
+            db.session.delete(not_rem)
+        
+        # Criar novas notícias para os dispositivos selecionados
+        for dispositivo_id in dispositivos_selecionados:
+            nova_noticia = Noticia(
+                conteudo=conteudo_limpo,
+                data_inicio=data_inicio or datetime.now(),
+                data_fim=data_fim,
+                dispositivo_id=int(dispositivo_id),
+                status='ativa'
+            )
+            db.session.add(nova_noticia)
+        
+        try:
+            db.session.commit()
+            flash(f"Notícia atualizada em {len(dispositivos_selecionados)} TV(s) com sucesso!", "success")
+            return redirect(url_for('publicacoes_ativas'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao atualizar notícia: {str(e)}", "danger")
+    
+    # Para GET, buscar dispositivos disponíveis e selecionados
+    dispositivos = Dispositivo.query.all()
+    print(f"DEBUG: Encontrados {len(dispositivos)} dispositivos")
+    
+    # Buscar quais dispositivos têm esta notícia
+    dispositivos_com_noticia = db.session.query(Dispositivo.id).join(Noticia).filter(
+        Noticia.conteudo == noticia.conteudo,
+        Noticia.data_inicio == noticia.data_inicio,
+        Noticia.data_fim == noticia.data_fim,
+        Noticia.status == 'ativa'
+    ).all()
+    dispositivos_selecionados = [d.id for d in dispositivos_com_noticia]
+    print(f"DEBUG: Dispositivos selecionados: {dispositivos_selecionados}")
+    
+    return render_template('gerenciador_deconteudo/editar_noticia.html', 
+                         noticia=noticia, 
+                         dispositivos=dispositivos,
+                         dispositivos_selecionados=dispositivos_selecionados)
+
+@app.route('/editar_evento_imagem/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_evento_imagem(id):
+    evento = Evento.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        titulo_evento = request.form.get('titulo_evento_imagem')
+        descricao_evento = request.form.get('descricao_evento_imagem')
+        link_qrcode = request.form.get('link_qrcode')
+        cor_fundo = request.form.get('cor_fundo', '#667eea')
+        data_inicio_str = request.form.get('data_inicio')
+        data_fim_str = request.form.get('data_fim')
+        
+        if not titulo_evento or not titulo_evento.strip():
+            flash("Você deve preencher o título do evento.", "danger")
+            return redirect(url_for('editar_evento_imagem', id=id))
+        
+        titulo_final = titulo_evento.strip()
+        descricao_final = descricao_evento.strip() if descricao_evento else ""
+        
+        # Processar datas
+        data_inicio = None
+        data_fim = None
+        
+        if data_inicio_str:
+            try:
+                data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de início inválido.", "danger")
+                return redirect(url_for('editar_evento_imagem', id=id))
+        
+        if data_fim_str:
+            try:
+                data_fim = datetime.strptime(data_fim_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de fim inválido.", "danger")
+                return redirect(url_for('editar_evento_imagem', id=id))
+        
+        # Processamento de nova imagem (opcional)
+        arquivo_filename = evento.imagem  # Manter imagem atual por padrão
+        
+        if 'imagem' in request.files:
+            file = request.files['imagem']
+            if file and file.filename != '':
+                # Remover imagem antiga se existir
+                if evento.imagem:
+                    arquivo_path_antigo = os.path.join(app.root_path, 'static', evento.imagem)
+                    if os.path.exists(arquivo_path_antigo):
+                        try:
+                            os.remove(arquivo_path_antigo)
+                        except Exception as e:
+                            print(f"Erro ao remover arquivo antigo: {e}")
+                
+                # Salvar nova imagem
+                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                filename = secure_filename(file.filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                file_path = os.path.join(upload_folder, unique_filename)
+                file.save(file_path)
+                arquivo_filename = f"uploads/{unique_filename}"
+        
+        # Validação: Para eventos do tipo "imagem", deve ter pelo menos descrição OU imagem
+        if not descricao_final and not arquivo_filename:
+            flash("Para eventos com imagem, você deve preencher pelo menos a descrição ou enviar uma imagem.", "danger")
+            return redirect(url_for('editar_evento_imagem', id=id))
+        
+        # Obter dispositivos selecionados
+        dispositivos_selecionados = request.form.getlist('dispositivos')
+        
+        if not dispositivos_selecionados:
+            flash("Você deve selecionar pelo menos uma TV.", "danger")
+            return redirect(url_for('editar_evento_imagem', id=id))
+        
+        # Remover todos os eventos similares existentes
+        eventos_para_remover = Evento.query.filter(
+            Evento.titulo == evento.titulo,
+            Evento.descricao == evento.descricao,
+            Evento.imagem == evento.imagem,
+            Evento.video == evento.video,
+            Evento.data_inicio == evento.data_inicio,
+            Evento.data_fim == evento.data_fim,
+            Evento.status == 'ativo'
+        ).all()
+        
+        for ev in eventos_para_remover:
+            db.session.delete(ev)
+        
+        # Criar novos eventos para os dispositivos selecionados
+        for dispositivo_id in dispositivos_selecionados:
+            novo_evento = Evento(
+                titulo=titulo_final,
+                descricao=descricao_final,
+                link=link_qrcode.strip() if link_qrcode else "",
+                imagem=arquivo_filename,
+                cor_fundo=cor_fundo,
+                data_inicio=data_inicio or datetime.now(),
+                data_fim=data_fim,
+                dispositivo_id=int(dispositivo_id),
+                status='ativo'
+            )
+            db.session.add(novo_evento)
+        
+        try:
+            db.session.commit()
+            flash(f"Evento atualizado em {len(dispositivos_selecionados)} TV(s) com sucesso!", "success")
+            return redirect(url_for('publicacoes_ativas'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao atualizar evento: {str(e)}", "danger")
+    
+    # Para GET, buscar dispositivos disponíveis e selecionados
+    dispositivos = Dispositivo.query.all()
+    print(f"DEBUG evento imagem: Encontrados {len(dispositivos)} dispositivos")
+    
+    # Buscar quais dispositivos têm este evento
+    dispositivos_com_evento = db.session.query(Dispositivo.id).join(Evento).filter(
+        Evento.titulo == evento.titulo,
+        Evento.descricao == evento.descricao,
+        Evento.imagem == evento.imagem,
+        Evento.status == 'ativo'
+    ).all()
+    dispositivos_selecionados = [d.id for d in dispositivos_com_evento]
+    print(f"DEBUG evento imagem: Dispositivos selecionados: {dispositivos_selecionados}")
+    
+    return render_template('gerenciador_deconteudo/editar_evento_imagem.html', 
+                         evento=evento, 
+                         dispositivos=dispositivos,
+                         dispositivos_selecionados=dispositivos_selecionados)
+
+@app.route('/editar_evento_video/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_evento_video(id):
+    evento = Evento.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        titulo_evento = request.form.get('titulo_evento_video')
+        descricao_evento = request.form.get('descricao_evento_video')
+        link_qrcode = request.form.get('link_qrcode')
+        data_inicio_str = request.form.get('data_inicio')
+        data_fim_str = request.form.get('data_fim')
+        
+        if not titulo_evento or not titulo_evento.strip():
+            flash("Você deve preencher o título do evento.", "danger")
+            return redirect(url_for('editar_evento_video', id=id))
+        
+        titulo_final = titulo_evento.strip()
+        descricao_final = descricao_evento.strip() if descricao_evento else ""
+        
+        # Processar datas
+        data_inicio = None
+        data_fim = None
+        
+        if data_inicio_str:
+            try:
+                data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de início inválido.", "danger")
+                return redirect(url_for('editar_evento_video', id=id))
+        
+        if data_fim_str:
+            try:
+                data_fim = datetime.strptime(data_fim_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Formato de data de fim inválido.", "danger")
+                return redirect(url_for('editar_evento_video', id=id))
+        
+        # Processamento de novo vídeo (opcional)
+        arquivo_filename = evento.video  # Manter vídeo atual por padrão
+        
+        if 'video' in request.files:
+            file = request.files['video']
+            if file and file.filename != '':
+                # Remover vídeo antigo se existir
+                if evento.video:
+                    arquivo_path_antigo = os.path.join(app.root_path, 'static', evento.video)
+                    if os.path.exists(arquivo_path_antigo):
+                        try:
+                            os.remove(arquivo_path_antigo)
+                        except Exception as e:
+                            print(f"Erro ao remover arquivo antigo: {e}")
+                
+                # Salvar novo vídeo
+                upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                filename = secure_filename(file.filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                file_path = os.path.join(upload_folder, unique_filename)
+                file.save(file_path)
+                arquivo_filename = f"uploads/{unique_filename}"
+        
+        # Validação: vídeo é obrigatório
+        if not arquivo_filename:
+            flash("Você deve manter ou selecionar um vídeo.", "danger")
+            return redirect(url_for('editar_evento_video', id=id))
+        
+        # Obter dispositivos selecionados
+        dispositivos_selecionados = request.form.getlist('dispositivos')
+        
+        if not dispositivos_selecionados:
+            flash("Você deve selecionar pelo menos uma TV.", "danger")
+            return redirect(url_for('editar_evento_video', id=id))
+        
+        # Remover todos os eventos similares existentes
+        eventos_para_remover = Evento.query.filter(
+            Evento.titulo == evento.titulo,
+            Evento.descricao == evento.descricao,
+            Evento.imagem == evento.imagem,
+            Evento.video == evento.video,
+            Evento.data_inicio == evento.data_inicio,
+            Evento.data_fim == evento.data_fim,
+            Evento.status == 'ativo'
+        ).all()
+        
+        for ev in eventos_para_remover:
+            db.session.delete(ev)
+        
+        # Criar novos eventos para os dispositivos selecionados
+        for dispositivo_id in dispositivos_selecionados:
+            novo_evento = Evento(
+                titulo=titulo_final,
+                descricao=descricao_final,
+                link=link_qrcode.strip() if link_qrcode else "",
+                video=arquivo_filename,
+                data_inicio=data_inicio or datetime.now(),
+                data_fim=data_fim,
+                dispositivo_id=int(dispositivo_id),
+                status='ativo'
+            )
+            db.session.add(novo_evento)
+        
+        try:
+            db.session.commit()
+            flash(f"Evento atualizado em {len(dispositivos_selecionados)} TV(s) com sucesso!", "success")
+            return redirect(url_for('publicacoes_ativas'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao atualizar evento: {str(e)}", "danger")
+    
+    # Para GET, buscar dispositivos disponíveis e selecionados
+    dispositivos = Dispositivo.query.all()
+    print(f"DEBUG evento video: Encontrados {len(dispositivos)} dispositivos")
+    
+    # Buscar quais dispositivos têm este evento
+    dispositivos_com_evento = db.session.query(Dispositivo.id).join(Evento).filter(
+        Evento.titulo == evento.titulo,
+        Evento.descricao == evento.descricao,
+        Evento.video == evento.video,
+        Evento.status == 'ativo'
+    ).all()
+    dispositivos_selecionados = [d.id for d in dispositivos_com_evento]
+    print(f"DEBUG evento video: Dispositivos selecionados: {dispositivos_selecionados}")
+    
+    return render_template('gerenciador_deconteudo/editar_evento_video.html', 
+                         evento=evento, 
+                         dispositivos=dispositivos,
+                         dispositivos_selecionados=dispositivos_selecionados)
 
 if __name__ == '__main__':
     print("Executando a busca inicial de clima antes de iniciar o servidor...")

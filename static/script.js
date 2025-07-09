@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Página atual:", paginaAtualPath);
 
     // Verificar se deve desabilitar rotação para páginas administrativas
-    const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos', '/editar_dispositivo'];
+    const paginasAdministrativas = ['/admin', '/login', '/adicionar_dispositivo', '/listar_dispositivos', '/editar_dispositivo', '/publicacoes_ativas', '/editar_evento_imagem', '/editar_noticia', '/editar_evento_video'];
     if (paginasAdministrativas.some(pagina => paginaAtualPath.startsWith(pagina))) {
         console.log("Página administrativa detectada. Rotação de página desabilitada.");
         
@@ -720,47 +720,44 @@ function configurarAdicaoDispositivo() {
         });
     }
 
-    // Inicializar funcionalidades quando a página carregar
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            // Verificar qual página estamos e inicializar as funções apropriadas
-            if (document.getElementById('editar-dispositivo-form')) {
-                configurarEdicaoDispositivo();
-            }
-            
-            if (document.querySelector('form[action="/adicionar_dispositivo"]')) {
-                configurarAdicaoDispositivo();
-            }
-            
-            // Configurar toggle do exemplo na página de adicionar conteúdo
-            if (document.getElementById('toggle-exemplo')) {
-                configurarToggleExemplo();
-            }
-            
-            // Configurar tipo de conteúdo
-            const tipoConteudo = document.getElementById('tipo_conteudo');
-            if (tipoConteudo) {
-                tipoConteudo.addEventListener('change', atualizarCamposConteudo);
-                // Chamar uma vez para configurar o estado inicial
-                atualizarCamposConteudo();
-            }
-            
-            // Configurar upload de imagem
-            if (document.getElementById('upload-area')) {
-                configurarUploadImagem();
-            }
-            
-            // Configurar upload de vídeo
-            if (document.getElementById('upload-area-video')) {
-                configurarUploadVideo();
-            }
-            
-            // Configurar validação do formulário de conteúdo
-            configurarValidacaoFormularioConteudo();
-        } catch (error) {
-            console.error('Erro na inicialização:', error);
-        }
-    });
+    // ======================================================
+    // CONFIGURAÇÃO DE PÁGINAS ESPECÍFICAS
+    // ======================================================
+    
+    // Verificar qual página estamos e inicializar as funções apropriadas
+    if (document.getElementById('editar-dispositivo-form')) {
+        configurarEdicaoDispositivo();
+    }
+    
+    if (document.querySelector('form[action="/adicionar_dispositivo"]')) {
+        configurarAdicaoDispositivo();
+    }
+    
+    // Configurar toggle do exemplo na página de adicionar conteúdo
+    if (document.getElementById('toggle-exemplo')) {
+        configurarToggleExemplo();
+    }
+    
+    // Configurar tipo de conteúdo
+    const tipoConteudo = document.getElementById('tipo_conteudo');
+    if (tipoConteudo) {
+        tipoConteudo.addEventListener('change', atualizarCamposConteudo);
+        // Chamar uma vez para configurar o estado inicial
+        atualizarCamposConteudo();
+    }
+    
+    // Configurar upload de imagem
+    if (document.getElementById('upload-area')) {
+        configurarUploadImagem();
+    }
+    
+    // Configurar upload de vídeo
+    if (document.getElementById('upload-area-video')) {
+        configurarUploadVideo();
+    }
+    
+    // Configurar validação do formulário de conteúdo (apenas uma vez)
+    configurarValidacaoFormularioConteudo();
 
 // Função para configurar o toggle do exemplo
 function configurarToggleExemplo() {
@@ -1029,7 +1026,20 @@ function configurarValidacaoFormularioConteudo() {
     const form = document.querySelector('form[action*="admin"]');
     if (!form) return;
     
+    // Verificar se já foi configurado para evitar duplicação
+    if (form.dataset.validacaoConfigurada) return;
+    form.dataset.validacaoConfigurada = 'true';
+    
+    let formularioEnviado = false; // Flag para prevenir múltiplas submissões
+    
     form.addEventListener('submit', function(e) {
+        // Prevenir múltiplas submissões
+        if (formularioEnviado) {
+            e.preventDefault();
+            console.log('Formulário já foi enviado, ignorando nova submissão');
+            return false;
+        }
+        
         const tipoConteudo = document.getElementById('tipo_conteudo');
         if (!tipoConteudo) return;
         
@@ -1047,5 +1057,30 @@ function configurarValidacaoFormularioConteudo() {
                 return false;
             }
         }
+        
+        // Marcar como enviado e desabilitar botão
+        formularioEnviado = true;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publicando...';
+            
+            // Adicionar classe visual
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+        }
+        
+        // Re-habilitar após timeout longo (caso haja erro de rede)
+        setTimeout(() => {
+            formularioEnviado = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publicar Conteúdo';
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            }
+        }, 10000); // 10 segundos
+        
+        console.log('Formulário enviado com sucesso');
     });
 }

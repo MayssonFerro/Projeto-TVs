@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Evento (Vídeo) - Sistema de TVs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_content.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-messages {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>Editar Evento (Vídeo)</h1>
+        <a href="{{ url_for('publicacoes_ativas') }}" class="btn left top floating">
+            <i class='bx bx-arrow-back'></i> Voltar
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>Editar Evento com Vídeo</h2>
+
+        <form action="{{ url_for('editar_evento_video', id=evento.id) }}" method="POST" enctype="multipart/form-data">
+            
+            <div id="campo_video">
+
+                <div class="campo_imagem_left">
+                    <label for="video">Vídeo do Evento:</label>
+                    
+                    {% if evento.video %}
+                    <div class="current-file">
+                        <strong>Vídeo atual:</strong>
+                        <div class="video-info">
+                            <i class='bx bx-video'></i>
+                            <span>{{ evento.video.split('/')[-1] }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="upload-area" id="upload-area-video">
+                        <i class='bx bx-video'></i>
+                        <span>Clique ou arraste<br>um vídeo aqui<br>(recomendado: MP4, 1920x1080px)</span>
+                        <input type="file" name="video" id="video" accept="video/mp4,video/webm,video/ogg">
+                        <div id="preview-container-video"></div>
+                    </div>
+                </div>
+
+                <div class="campo_imagem_right">
+                    <label for="titulo_evento_video">Título:</label>
+                    <input type="text" name="titulo_evento_video" id="titulo_evento_video" maxlength="50"
+                        placeholder="Ex: Festa junina 2025" value="{{ evento.titulo }}">
+                
+                    <label for="descricao_evento_video">Descrição:</label>
+                    <textarea name="descricao_evento_video" id="descricao_evento_video" maxlength="250" rows="3"
+                        placeholder="Ex: Apresentação de dança">{{ evento.descricao or '' }}</textarea>
+
+                    <label for="link_qrcode_video">Link para QR Code:</label>
+                    <input type="url" name="link_qrcode" id="link_qrcode_video" placeholder="https://exemplo.com"
+                           value="{{ evento.link or '' }}">
+                </div>
+            </div>
+
+            <!-- AGENDAMENTO -->
+            <div class="agendamento-section">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_inicio">Data e Hora de Início:</label>
+                        <input type="datetime-local" name="data_inicio" id="data_inicio"
+                               value="{% if evento.data_inicio %}{{ evento.data_inicio.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                        <small style="color: #666;">(deixe vazio para começar agora)</small>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="data_fim">Data e Hora de Fim:</label>
+                        <input type="datetime-local" name="data_fim" id="data_fim"
+                               value="{% if evento.data_fim %}{{ evento.data_fim.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                        <small style="color: #666;">(deixe vazio para não expirar)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dispositivos -->
+            <div class="tv-select">
+                <label for="checkbox-group">Publicar em:</label>
+                <div class="checkbox-group" id="checkbox-group">
+                    {% if dispositivos %}
+                        {% for dispositivo in dispositivos %}
+                        <label>
+                            <input type="checkbox" name="dispositivos" value="{{ dispositivo.id }}"
+                                   {% if dispositivo.id in dispositivos_selecionados %}checked{% endif %}>
+                            {{ dispositivo.nome }} - {{ dispositivo.local }} ({{ dispositivo.ip }})
+                        </label>
+                        {% endfor %}
+                    {% else %}
+                        <p>Nenhuma TV cadastrada. <a href="{{ url_for('adicionar_dispositivo') }}">Cadastre uma primeiro</a>.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-bts">
+                <a href="{{ url_for('publicacoes_ativas') }}" class="btn blue">Ver Publicações Ativas</a>
+                <button type="submit" class="btn green">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="botoes">
+        <a href="{{ url_for('show_painel') }}" class="btn top left floating">Mostrar Painel</a>
+        <a href="{{ url_for('listar_dispositivos') }}" class="btn top right floating">Gerenciar TVs</a>
+    </div>
+
+</body>
+</html>

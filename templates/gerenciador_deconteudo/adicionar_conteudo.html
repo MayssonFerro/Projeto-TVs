@@ -34,10 +34,10 @@
             </div>
             <div class="exemplo-content">
                 <ul>
-                    <li><strong>Texto:</strong> Aparece na barra inferior (notícia rápida) passando da direita para esquerda</li>
-                    <li><strong>Evento (com ou sem Imagem):</strong> Pode ter título (obrigatório), descrição e/ou imagem de fundo. Pelo menos a descrição OU a imagem deve ser preenchida. QR Code é opcional.</li>
-                    <li><strong>Evento com Vídeo:</strong> Título obrigatório, vídeo obrigatório. Descrição e QR Code opcionais.</li>
-                    <li><strong>QR Code:</strong> Aparece no cantinho direito quando você adiciona um link</li>
+                    <li><strong>Notícia Rápida:</strong> Aparece na barra inferior passando da direita para esquerda</li>
+                    <li><strong>Evento (com ou sem Imagem):</strong> Deve ter título, imagem <b>ou</b> cor de fundo, e opcionalmente, um texto pequeno e um link para QR Code. O texto aparecerá no canto inferior esquerdo da tela.</li>
+                    <li><strong>Evento com Vídeo:</strong> Deve ter título e vídeo, e opcionalmente, um texto pequeno e um link para QR Code. O texto aparecerá no canto esquerdo da tela.</li>
+                    <li><strong>QR Code:</strong> Aparece no canto inferior direito quando você adiciona um link</li>
                 </ul>
             </div>
         </div>
@@ -46,6 +46,7 @@
     <!-- Formulário para adicionar novo conteúdo -->
     <div class="container">
         <h2>Adicionar Nova Publicação</h2>
+
         <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
             <div class="labeldiv"><label for="tipo_conteudo">Tipo de Conteúdo:</label></div>
             <select name="tipo_conteudo" id="tipo_conteudo">
@@ -150,14 +151,18 @@
                 </div>
             </div>
 
-                <button type="submit" class="btn green">Publicar Conteúdo</button>
+                <div class="form-bts">
+                    <a href="{{ url_for('publicacoes_ativas') }}" class="btn blue"> Ver Publicações Ativas</a>
+                    <button type="submit" class="btn green">Publicar Conteúdo</button>
+                </div>
         </form>
 
     </div>
+
     <div class="botoes">
-        <a href="{{ url_for('show_painel') }}" class="btn-voltar">← Voltar ao Painel</a>
-        <a href="{{ url_for('listar_dispositivos') }}" class="btn-dispositivos">Gerenciar TVs</a>
-        <a href="{{ url_for('publicacoes_ativas') }}" class="btn btn-primary"> Ver Publicações Ativas</a>
+        <a href="{{ url_for('show_painel') }}" class="btn top left floating">Mostrar Painel</a>
+        <a href="{{ url_for('listar_dispositivos') }}" class="btn top right floating">Gerenciar TVs</a>
     </div>
+
 </body>
 </html>
