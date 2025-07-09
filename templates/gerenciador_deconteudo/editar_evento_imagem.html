@@ -64,7 +64,6 @@
                         
                         {% if evento.imagem %}
                         <div class="current-file">
-                            <strong>Imagem atual:</strong>
                             <img src="{{ url_for('static', filename=evento.imagem) }}" class="preview-imagem" alt="Imagem atual do evento">
                         </div>
                         {% endif %}
