@@ -31,17 +31,17 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
-    // SEÇÃO 2: LÓGICA DA NOTÍCIA RÁPIDA (MÉTODO ROBUSTO)
+    // SEÇÃO 2: LÓGICA DA NOTÍCIA RÁPIDA
     // ======================================================
     const noticiaRapida = document.querySelector('.noticia-rapida');
 
     if (noticiaRapida) {
         // 1. Parâmetros da Animação
-        const velocidadePixelsPorSegundo = 150; // Ajuste a velocidade conforme necessário
+        const velocidadePixelsPorSegundo = 150;
         let posicaoAtual = parseFloat(localStorage.getItem('posicaoAtualNoticiaRapida')) || 0;
         let ultimoTimestamp = null;
 
-        // 2. Função de Animação (o coração da lógica)
+        // 2. Função de Animação
         function animar(timestamp) {
             if (!ultimoTimestamp) {
                 ultimoTimestamp = timestamp;
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ======================================================
-    // SEÇÃO 3: ROTAÇÃO DE PÁGINAS (se necessário)
+    // SEÇÃO 3: ROTAÇÃO DE PÁGINAS
     // ======================================================
     const paginaAtualPath = window.location.pathname;
 
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return; // Sai da função, não faz rotação
     }
 
-    // 1. OBTER DADOS DO PYTHON - Com fallback seguro
+    // 1. OBTER DADOS DO PYTHON
     let deveMostrarAviso = false;
     
     if (typeof window.SHOW_AVISO !== "undefined") {
@@ -639,7 +639,7 @@ function configurarAdicaoDispositivo() {
         }
     }
 
-    // Função para configurar contadores existente, mas vou atualizar para funcionar na página de edição
+    // Função para configurar contadores existente
     function configurarContador(campoId, limite) {
         const campo = document.getElementById(campoId);
         const contador = document.getElementById(`contador-${campoId}`);
@@ -1027,9 +1027,8 @@ function configurarValidacaoFormularioConteudo() {
 // ======================================================
 // Esta seção centraliza todas as funcionalidades JavaScript 
 // das páginas de edição: editar_evento_imagem.html, editar_evento_video.html, editar_noticia.html
-// Substituindo scripts inline por funções organizadas e reutilizáveis.
 
-// Função para contador de caracteres na descrição (páginas de edição)
+// Função para contador de caracteres na descrição
 function configurarContadorCaracteresEdicao() {
     // Contador para página de edição de imagem
     const descTextarea = document.getElementById('descricao_evento_imagem');

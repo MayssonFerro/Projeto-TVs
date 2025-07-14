@@ -759,8 +759,8 @@ def admin():
 @login_required
 def publicacoes_ativas():
     # Buscar todas as notícias e eventos ativos
-    noticias_raw = Noticia.query.filter_by(status='ativa').all()  # Corrigido: notícias usam 'ativa'
-    eventos_raw = Evento.query.filter_by(status='ativo').all()    # Eventos usam 'ativo'
+    noticias_raw = Noticia.query.filter_by(status='ativa').all() 
+    eventos_raw = Evento.query.filter_by(status='ativo').all()
     
     # Agrupar notícias por conteúdo
     noticias_agrupadas = {}
