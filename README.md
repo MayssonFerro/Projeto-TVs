@@ -127,7 +127,9 @@ python app.py
 
 5. **Acesse o sistema**
    - Painel público: `http://localhost:5000`
-   - Área administrativa: `http://localhost:5000/login`
+   - Área administrativa: `http://localhost:5000/login` (ou F2)
+   - Login atual: admin@example.com
+   - Senha: admin
 
 ## 🔧 Configuração
 
