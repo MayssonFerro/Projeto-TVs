@@ -117,6 +117,7 @@ pip install -r requirements.txt
 ```
 
 3. **Configure a API do clima**
+   (opcional, o programa já vem configurado para Três Lagoas - MS)
    - Obtenha uma chave da OpenWeatherMap
    - Edite a variável `api_key` no arquivo `app.py`
 
